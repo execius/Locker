@@ -10,7 +10,9 @@
 #define MAXLEN 4096
 #define MAXNUMBER 9999
 
+
 struct account { 
-  char *array[NUMBEROFINFO][MAXLEN];
+  char *array[MAXLEN];
   int accountnumber;
 } ;
+int changemember(struct account* acc,int index ,char *newval,char *type);
