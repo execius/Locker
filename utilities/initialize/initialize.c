@@ -1,20 +1,24 @@
 // char **initialize(char** listofwantedinfo , int numberofinfos , int maxlengh);
 #include "initialize.h"
+#include "eror_handling.h"
+
+
 
 
 //requests the stuff in a array from the user and returns an array that includes the user answer
 char **getinfo(char** listofwantedinfo , int numberofinfos , int maxlengh){
   char **listofanswers = malloc((numberofinfos)*sizeof(int));
   if (listofanswers == NULL) {
-    perror("Failed to allocate memory");
-    exit(EXIT_FAILURE);
+    log_error("Failed to allocate memory");
+    return (char**) MEMORY_ALOCATION_FAILURE;
+    
   }
   for (int i = 0 ; i < NUMBEROFINF ;i++){
     printf("\n %s > ",*(listofwantedinfo+i));
-    listofanswers[i] = malloc(maxlengh*sizeof(int[69]));
+    listofanswers[i] = malloc(maxlengh*sizeof(char));
     if (listofanswers[i] == NULL) {
-      perror("Failed to allocate memory");
-      exit(EXIT_FAILURE);
+      log_error("Failed to allocate memory");
+      return (char **) MEMORY_ALOCATION_FAILURE;
     }
     fgets(listofanswers[i],maxlengh,stdin);
     size_t len = strlen(listofanswers[i]);
