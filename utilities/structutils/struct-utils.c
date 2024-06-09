@@ -2,8 +2,44 @@
 #include <string.h>
 #include <ctype.h>
 
+
+int initialize_account(account *acc){
+  if (NULL == acc)
+    return ERROR_MEMORY_ALLOCATION;
+  acc->array = malloc(NUMBEROFINFO*sizeof(char *)) ;
+  if(NULL == acc->array)
+      return ERROR_MEMORY_ALLOCATION;
+  
+
+  for(int i = 0;i<NUMBEROFINFO;i++){
+    acc->array[i] = malloc(MAXLEN*sizeof(char)) ;
+    if(NULL == acc->array[i]){
+      for (int j = 0; j < i; j++) {
+        free(acc->array[j]);
+      }
+      return ERROR_MEMORY_ALLOCATION;}
+  }
+  acc->accountnumber = 0;
+  return SUCCESS;
+}
+
+// Free allocated memory in account struct
+int free_account(account *acc){
+  if (NULL == acc || NULL == acc->array) {
+    return SUCCESS;  // Nothing to free
+  }
+  for (int i = 0; i < NUMBEROFINFO; i++) {
+    if (acc->array[i] != NULL) {
+
+      free(acc->array[i]);
+      acc->array[i] = NULL;  // Set to NULL after freeing
+    }
+  }  free(acc->array);
+  return SUCCESS;
+}
+
 int change_char_member(account *acc ,int index , const char *newval){
-  if(index <= NUMBEROFINFO && strlen(newval) <= MAXLEN && *newval){
+  if(index < NUMBEROFINFO && strlen(newval) <= MAXLEN && *newval){
     (acc->array)[index] = strdup(newval);
     return SUCCESS;
 

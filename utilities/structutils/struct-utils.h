@@ -17,7 +17,7 @@
 
 
 typedef struct account { 
-  char *array[MAXLEN];
+  char **array;
   int accountnumber;
 } account ;
 
@@ -25,6 +25,9 @@ typedef struct account {
  enum DataType { CHAR_TYPE, INT_TYPE };
 
 
+int initialize_account(account *acc);
+
+int free_account(account *acc);
 
 
 int changemember(struct account* acc,int index ,const char *newval, enum DataType type);

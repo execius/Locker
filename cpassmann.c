@@ -1,4 +1,4 @@
 #include "cpassmann.h"
-void main(){
-  testeditstruct();
+int main(){
+  return testeditstruct(); 
   }
