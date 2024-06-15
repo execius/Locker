@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "initialize.h"
-#include "struct-utils.h"
+#include "account_utils.h"
 #include "defined_values.h"
 // int testinitialize() {
 //   char **arr = initialize();
@@ -18,9 +18,10 @@ int testeditstruct(){
       printf("%d>",i);
       fgets(accc.array[i],MAXLEN,stdin);}
 
-    printf("%s\n %s\n %s\n %s\n %d\n",accc.array[USERINDEX],accc.array[EMAILINDEX],accc.array[PASSWORDINDEX],accc.array[PLATFORMINDEX],accc.accountnumber);
+    printf("%s\n %s\n %s\n %s\n %d\n",accc.array[USERINDEX],accc.array[EMAILINDEX],accc.array[PASSWORDINDEX],accc.array[PLATFORMINDEX],*accc.accountnumber);
     changemember(&accc,0,"99",INT_TYPE);
-    printf("%s\n %s\n %s\n %s\n %d\n",accc.array[USERINDEX],accc.array[EMAILINDEX],accc.array[PASSWORDINDEX],accc.array[PLATFORMINDEX],accc.accountnumber);
+    changemember(&accc,USERINDEX,"newname",CHAR_TYPE);
+    printf("%s\n %s\n %s\n %s\n %d\n",accc.array[USERINDEX],accc.array[EMAILINDEX],accc.array[PASSWORDINDEX],accc.array[PLATFORMINDEX],*accc.accountnumber);
     free_account(&accc);
     return SUCCESS;
   }

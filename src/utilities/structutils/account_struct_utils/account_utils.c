@@ -1,8 +1,6 @@
-#include "struct-utils.h" 
-#include <math.h>
-#include <string.h>
-#include <ctype.h>
 
+
+#include "account_utils.h" 
 //initialze : alocate memory and set number to 0
 int initialize_account(account *acc){
   if (NULL == acc)
@@ -14,9 +12,9 @@ int initialize_account(account *acc){
 
   for(int i = 0;i<NUMBEROFINFO;i++){
     acc->array[i] = malloc(MAXLEN*sizeof(char)) ;//allocate memory for each object in the array
-    if(NULL == acc->array[i]){
-      for (int j = 0; j < i; j++) {
-        free(acc->array[j]);
+    if(NULL == acc->array[i]){//couldnt allocate
+      for (int j = 0; j < i; j++) {//freeing previous-to-failure alocated memory
+        free(acc->array[j]); 
   }
       log_error("error: memory allocation failed, function: initialize_account");
       return ERROR_MEMORY_ALLOCATION;}//checking for allocation erors
@@ -25,13 +23,14 @@ int initialize_account(account *acc){
   if(NULL == acc->accountnumber) //failed allocation for the accountnumber
       return ERROR_MEMORY_ALLOCATION;
 
-  *acc->accountnumber = 0;
+  *acc->accountnumber = 0; 
   return SUCCESS;
 }
 
 // Free allocated memory in account struct
 int free_account(account *acc){
-  if (NULL == acc || NULL == acc->array) {
+  if (NULL == acc || (NULL == acc->array && NULL == acc->accountnumber)) {
+    fprintf(stderr, "Info: Nothing to free (acc or acc->array is NULL)\n");
     return SUCCESS;  // Nothing to free
   }
   for (int i = 0; i < NUMBEROFINFO; i++) {
@@ -66,7 +65,7 @@ int isinitialized(account *acc){
   return SUCCESS;
 }
 
-int change_char_member(account *acc ,int index , const char *newval){
+int change_char_member(char **account_array_pointer ,int index , const char *newval){
   if (NULL == newval){//check if newval isnt NULL
     log_error("error: NULL value given , function: change_char_member");
         return ERROR_NULL_VALUE_GIVEN ;
@@ -79,12 +78,12 @@ int change_char_member(account *acc ,int index , const char *newval){
     log_error("error: string too long  , function: change_char_member");
         return ERROR_TOO_LONG_STRING ;
   }
-  (acc->array)[index] = strndup(newval,MAXLEN);//copy newval into array[INDEX]
+  strncpy(account_array_pointer[index],newval,MAXLEN);//copy newval into array[INDEX]
     return SUCCESS;
 }
 
 
-int change_int_member(account *acc , const char *newval){
+int change_int_member(int *account_accountnumber_pointer , const char *newval){
   char *endptr;
   long num = strtol(newval, &endptr, 10);//converting char * to int
   if ('\0' != *endptr){ //checking if the string given was valid 
@@ -96,7 +95,7 @@ int change_int_member(account *acc , const char *newval){
     return ERROR_INVALID_INTEGER ;
   }
 
-  *acc->accountnumber = (int)num;
+  *account_accountnumber_pointer = (int)num;
   return SUCCESS;
 }
 
@@ -108,9 +107,9 @@ int changemember( account* acc,int index ,const char *newval,enum DataType type)
   }
   switch (type){ ////checking the type indicator
     case INT_TYPE:
-      return change_int_member(acc,newval);
+      return change_int_member(acc->accountnumber,newval);
     case CHAR_TYPE :
-      return change_char_member(acc,index,newval);
+      return change_char_member(acc->array,index,newval);
     default:
       log_error("error: bad type indicator given, function: changemember\n");
       return ERROR_UNKNOWN_TYPE;
@@ -125,7 +124,7 @@ int accountdup(account *src ,account *dest){
     log_error("error: NULL account pointer given , function : accountdup");
     return ERROR_NULL_VALUE_GIVEN  ;
   } 
-  if (SUCCESS != isinitialized(src) || SUCCESS != isinitialized(dest)){
+  if (SUCCESS != isinitialized(src) || SUCCESS != isinitialized(dest)){//checking id the accounts are initialized
     log_error("error: uninitialized account , function : accountdup");
     return UNINITIALIZED_ACCOUNT_GIVEN  ;
 
@@ -157,4 +156,6 @@ int printaccount(account accc){
          *accc.accountnumber);
   return SUCCESS;
 }
+
+
 

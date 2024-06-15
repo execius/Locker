@@ -1,4 +1,5 @@
 #include "Locker.h"
 int main(){
-  testprdup();
+  testeditstruct();
+  // testprdup();
     }

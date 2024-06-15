@@ -1,4 +1,7 @@
-// char **initialize(char** listofwantedinfo , int numberofinfos , int maxlengh);
+//the eror code is in src/headers/eror_handling/eror_handling.h
+//all the globaly defined values are  src/headers/defined_values/defined_values.h
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
