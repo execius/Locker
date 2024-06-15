@@ -6,7 +6,6 @@
 
 
 
-void log_error(const char *message);
 
 enum ErrorCode {
   SUCCESS = 0,
@@ -19,7 +18,9 @@ enum ErrorCode {
   UNINITIALIZED_ACCOUNT_GIVEN = -7,
   ERROR_TOO_LONG_STRING = -8,
   ERROR_EMPTY_STRING = -9,
-  ERROR_FILE_OPENING_FAILED = -10
+  ERROR_FILE_OPENING_FAILED = -10,
+  ERROR_INVALID_CONFIG_LINE = -11
 };
 
+void log_error( const char *message);
 #endif 

@@ -3,6 +3,7 @@
 #include "initialize.h"
 #include "account_utils.h"
 #include "defined_values.h"
+#include "configs.h"
 // int testinitialize() {
 //   char **arr = initialize();
 //    for (int i = 0 ; i < NUMBER_OF_INIT_VARS ;i++){
@@ -47,4 +48,25 @@ int testprdup(){
   free_account(&ac);
   return SUCCESS;
 
+}
+
+int testparse(){
+  pair **array = malloc(4*sizeof(pair ));
+  for(int i = 0 ; i<NUMBER_OF_CONFIG_INFORMATION;i++){
+    array[i] = malloc(sizeof(pair));
+  }
+
+  if(NULL == array) printf("n"); 
+  printf("%d\n",parsefile(USER_CONFIG_FILE,NUMBER_OF_CONFIG_INFORMATION ,LINE_MAX_LENGHT ,array));
+  for(int i = 0 ; i<NUMBER_OF_CONFIG_INFORMATION;i++){
+    printf("key : %s \nvalue : %s \n",array[i]->key,array[i]->value);
+  }
+  printf("ok");
+  for(int i = 0 ; i<NUMBER_OF_CONFIG_INFORMATION;i++){
+   free_pair(array[i]);
+   free(array[i]);
+  }
+  printf("ok");
+
+  free(array);
 }
