@@ -52,13 +52,19 @@ int testprdup(){
 
 int testparse(){
   int eror_tracker = 0;
+  char** array_strs = malloc(NUMBER_OF_CONFIG_INFORMATION*sizeof(char*));
+  for (int i=0;i<NUMBER_OF_CONFIG_INFORMATION;i++){
+    *(array_strs+i) = malloc(MAXLEN*sizeof(char));
+  }
   pair **array = malloc(4*sizeof(pair ));
   for(int i = 0 ; i<NUMBER_OF_CONFIG_INFORMATION;i++){
     array[i] = malloc(sizeof(pair));
   }
 
   if(NULL == array) printf("n"); 
-  if ( SUCCESS != ( eror_tracker = parsefile(USER_CONFIG_FILE,NUMBER_OF_CONFIG_INFORMATION ,LINE_MAX_LENGHT ,MAXLEN,array))) 
+  if (SUCCESS != (eror_tracker = file_to_buffer(USER_CONFIG_FILE ,array_strs ,linecheck,LINE_MAX_LENGHT,MAXLEN,NUMBER_OF_CONFIG_INFORMATION)))
+    return eror_tracker;
+  if ( SUCCESS != ( eror_tracker = parse_array(array_strs,NUMBER_OF_CONFIG_INFORMATION,LINE_MAX_LENGHT,MAXLEN ,array,linecheck))) 
     return eror_tracker;
   for(int i = 0 ; i<NUMBER_OF_CONFIG_INFORMATION;i++){
     printf("key : %s \nvalue : %s \n",array[i]->key,array[i]->value);
@@ -68,4 +74,8 @@ int testparse(){
    free(array[i]);
   }
   free(array);
+  for (int i=0;i<NUMBER_OF_CONFIG_INFORMATION;i++){
+     free(*(array_strs+i));
+  }
+  free(array_strs);
 }
