@@ -24,7 +24,6 @@ each of maximum lengh MAXLEN plus # and
  * and puts then in a pair struct
  * the line should be in the following format :
  * #key = value; */
-int lineparse(pair *couple,char *line);
-int parsefile(char *user_config_file , int number_of_pairs,int line_max_len , pair **configs_array );
+int parsefile(char *user_config_file , int number_of_pairs,int line_max_len , int str_maxlenght ,pair **configs_array );
 #endif //CONF_PARSE
 

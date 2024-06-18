@@ -1,32 +1,30 @@
 #include "configs.h"
-size_t spaceless_strlen(const char *s) {
+size_t spaceless_strlen(const char *s , int maxlengh) {
+  int lentracker = 0 ;//tracker so the string does not exceed the maximum lenght
   size_t len = 0;
   const unsigned char *us = (const unsigned char *) s;
-  while (*us) {
+  while (*us && lentracker++ < maxlengh) {
     if (!isspace(*us)) len++;
     us++;
   }
+  if (lentracker == maxlengh)
+    return ERROR_TOO_LONG_STRING;
   return len;
 }
 
 
-int  linecheck(char *line){
-if (NULL == line ){//check for NULL values 
+int  linecheck(char *line, int maxlengh){
+  if (NULL == line ){//check for NULL values 
     log_error("error: null value given , function: lineparse");
     return ERROR_NULL_VALUE_GIVEN ;
   }
   int lenght=0; //lengh tracker not to excede the maximum lenght 
 
-  // while('#' != *line && '\0' == *line && lenght< MAXLEN){//skipping untill a # or a null char is spotted , or the lenght limit is exceded
-  //   line++;
-  //   lenght++;
-  //   continue;
-  // }
-  if(0 == spaceless_strlen(line)){//no # is found and the string ended
+  if(0 == spaceless_strlen(line ,maxlengh)){//no # is found and the string ended
     log_error("error: empty line given , function: lineparse");
     return ERROR_EMPTY_STRING ;
   }
- if(NULL != strchr(line ,'#') && NULL != strchr(line,'=') && NULL != strchr(line,';')) {
+  if(NULL != strchr(line ,'#') && NULL != strchr(line,'=') && NULL != strchr(line,';')) {
     //checking if the string contains a #,= and ; , so it matches the congig format
     return SUCCESS ;
   }
@@ -37,10 +35,8 @@ if (NULL == line ){//check for NULL values
 }
 
 
-int lineparse(pair *couple ,char *line){
+int lineparse(pair *couple ,char *line,int str_maxlengh){
   int lenght = 0;
-
-
 
   if ( NULL == couple ||NULL == couple->key || NULL == couple->value ){//check for NULL values 
     log_error("error: null value given , function: lineparse");
@@ -49,8 +45,8 @@ int lineparse(pair *couple ,char *line){
 
   if(*line == '#'){//scanning into infotype after # is found until a = is found
     line++;
-    while('\0' != *line && '=' != *line  && lenght< MAXLEN-1){
-      if(' ' == *line || '\b' == *line ||'\t' == *line  ){
+    while('\0' != *line && '=' != *line  && lenght< str_maxlengh){
+      if(isspace(*line)  ){
         line++;
         continue;}
 
@@ -59,7 +55,8 @@ int lineparse(pair *couple ,char *line){
     }
     *(couple->key+lenght) = '\0';
   }
-  if(lenght > MAXLEN){//checking if the lengh wasnt bigger then MAXLEN
+  printf("%d\n",lenght);
+  if(lenght == str_maxlengh){//checking if the lengh wasnt bigger then MAXLEN
     log_error("error: key too long , function: lineparse");
     return ERROR_TOO_LONG_STRING;
   }
@@ -67,8 +64,8 @@ int lineparse(pair *couple ,char *line){
 
   if(*line == '='){//scanning into infovalue after = is found until a ; is found
     line++;
-    while(';' != *line && lenght< MAXLEN){
-      if(' ' == *line || '\b' == *line ||'\t' == *line  ){//skipping blanks,tabs and spaces
+    while(';' != *line && lenght< str_maxlengh){
+      if(isspace(*line)  ){//skipping blanks,tabs and spaces
         line++;
         continue;}
       *(couple->value+lenght++) = *line++;
@@ -77,7 +74,7 @@ int lineparse(pair *couple ,char *line){
       *(couple->value+lenght) = '\0';
     
   }
-  if(lenght > MAXLEN){//checking if the lengh wasnt bigger then MAXLEN
+  if(lenght == str_maxlengh){//checking if the lengh wasnt bigger then MAXLEN
     log_error("error: value too long , function: lineparse");
     return ERROR_TOO_LONG_STRING;
   }
@@ -89,7 +86,7 @@ int lineparse(pair *couple ,char *line){
 
 
 
-int parsefile(char *user_config_file , int number_of_pairs,int line_max_len , pair **configs_array ){ 
+int parsefile(char *user_config_file , int number_of_pairs,int line_max_len,int str_maxlenght , pair **configs_array ){ 
 
   char *line = malloc(line_max_len*sizeof(char));
   if(NULL == line) {//failed allocation for line
@@ -110,17 +107,17 @@ FILE *config_file_pointer = fopen(user_config_file,"r");
   int error;
   while(fgets(line,line_max_len,config_file_pointer) && i < number_of_pairs ){
     error = 0;
-    if(SUCCESS != linecheck(line)){
+    if(SUCCESS != linecheck(line,str_maxlenght)){
       continue;
     }
-    if(SUCCESS == linecheck(line)){
+    if(SUCCESS == linecheck(line,str_maxlenght)){
 
       if(SUCCESS != (error = initialize_pair(configs_array[i]))){
       log_error("error: could not initialize pair  , function: parsefile");
       return error;
       }
 
-      if(SUCCESS == (error = lineparse(configs_array[i],line))){
+      if(SUCCESS == (error = lineparse(configs_array[i],line,str_maxlenght))){
         i++;
         continue;
       }

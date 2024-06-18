@@ -58,7 +58,7 @@ int testparse(){
   }
 
   if(NULL == array) printf("n"); 
-  if ( SUCCESS != ( eror_tracker = parsefile(USER_CONFIG_FILE,NUMBER_OF_CONFIG_INFORMATION ,LINE_MAX_LENGHT ,array))) 
+  if ( SUCCESS != ( eror_tracker = parsefile(USER_CONFIG_FILE,NUMBER_OF_CONFIG_INFORMATION ,LINE_MAX_LENGHT ,MAXLEN,array))) 
     return eror_tracker;
   for(int i = 0 ; i<NUMBER_OF_CONFIG_INFORMATION;i++){
     printf("key : %s \nvalue : %s \n",array[i]->key,array[i]->value);
