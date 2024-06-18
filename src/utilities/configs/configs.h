@@ -24,8 +24,7 @@ each of maximum lengh MAXLEN plus # and
  * and puts then in a pair struct
  * the line should be in the following format :
  * #key = value; */
-int file_to_buffer(char *filename ,char **array_strs ,int (*line_check)(char* ,int),int line_max_len,int str_maxlengh,int max_numberoflines);
-int parse_array(char** array_strs, int max_numberoflines,int line_max_len,int str_maxlenght , pair **array_of_pairs,int (*line_check)(char* ,int) ); 
 int  linecheck(char *line, int maxlengh);
+int parse_file(char *filename ,pair **array_of_pairs ,int line_max_len,int str_maxlengh,int max_numberoflines);
 #endif //CONF_PARSE
 

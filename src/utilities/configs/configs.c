@@ -1,92 +1,43 @@
 #include "configs.h"
-size_t spaceless_strlen(const char *s , int maxlengh) {
-  int lentracker = 0 ;//tracker so the string does not exceed the maximum lenght
-  size_t len = 0;
-  const unsigned char *us = (const unsigned char *) s;
-  while (*us && lentracker++ < maxlengh) {
-    if (!isspace(*us)) len++;
-    us++;
-  }
-  if (lentracker == maxlengh)
-    return ERROR_TOO_LONG_STRING;
-  return len;
-}
-
-
-
-
+/* checks that:
+ * the line given is in the corect format (#key=value;)
+ * the line is not NULL*/
 int  linecheck(char *line, int maxlengh){
   if (NULL == line ){//check for NULL values 
     log_error("error: null value given , function: lineparse");
     return ERROR_NULL_VALUE_GIVEN ;
   }
-  int lenght=0; //lengh tracker not to excede the maximum lenght 
 
-  if(0 == spaceless_strlen(line ,maxlengh)){//no # is found and the string ended
-    // log_error("error: empty line given , function: lineparse");
-    return ERROR_EMPTY_STRING ;
-  }
   if(NULL != strchr(line ,'#') && NULL != strchr(line,'=') && NULL != strchr(line,';')) {
-    //checking if the string contains a #,= and ; , so it matches the congig format
+    //checking if the string contains a #,= and ; , so it matches the config format
     return SUCCESS ;
   }
   else {
-    // log_error("invalid config line found");
+    // log_error("invalid config line found");    /*for debug*/
     return ERROR_INVALID_CONFIG_LINE;
   }
 }
 
 
-int file_to_buffer(char *filename ,char **array_strs ,int (*line_check)(char* ,int),int line_max_len,int str_maxlengh,int max_numberoflines){
-  if (NULL == array_strs ){//check for null values 
-    log_error("error: null value given , function: file_to_buffer");
-    return ERROR_NULL_VALUE_GIVEN ;
-  }
 
-  char *line = malloc(line_max_len*sizeof(char));
-  if (NULL == line ){//check for NULL values 
-    log_error("error: null value given , function: file_to_buffer");
-    return ERROR_NULL_VALUE_GIVEN ;
-  }
-
-  FILE *file_pointer = fopen(filename,"r");
-
-  if(NULL == file_pointer){
-    log_error("error: could not open file  , function: file_to_buffer");
-    return ERROR_FILE_OPENING_FAILED;
-  }
-  int i = 0;
-  int error = 0;
-  while(  i < max_numberoflines ){
-    fgets(array_strs[i],line_max_len,file_pointer);
-    if(SUCCESS == line_check(array_strs[i],str_maxlengh)){
-      i++;
-      continue;}
-    
-    continue;
-  }
-
-  fclose(file_pointer);
-  return SUCCESS;
-
-} 
-
-
-
-
-
-
-int lineparse(pair *couple ,char *line,int str_maxlengh,int (*line_check)(char* ,int)){
-  int lenght = 0;
-
+/*parses a config line in the form #key=value; and puts the vkey and value in a pair struct
+ * the line should be checked if correct before being passed to this function as it doesnt check*/ 
+int lineparse(pair *couple ,char *line,int str_maxlengh){
+  int lenght = 0;//to keep track of lengh not to exceed the maximum value
   if ( NULL == couple ||NULL == couple->key || NULL == couple->value ){//check for NULL values 
     log_error("error: null value given , function: lineparse");
     return ERROR_NULL_VALUE_GIVEN ;
   }
-   if(*line == '#'){//scanning into infotype after # is found until a = is found
+  while (*line != '#' ) {//skipping until # is found 
     line++;
-    while('\0' != *line && '=' != *line  && lenght< str_maxlengh){
-      if(isspace(*line)  ){
+  }
+
+
+  if(*line == '#'){//scanning into infotype after # is found     
+    line++;//skipping the #
+
+    while('\0' != *line && '=' != *line  && lenght< str_maxlengh){//scanning into the pair's key
+      if(isspace(*line)  ){//skipping blanks,tabs and spaces
         line++;
         continue;}
 
@@ -95,61 +46,86 @@ int lineparse(pair *couple ,char *line,int str_maxlengh,int (*line_check)(char* 
     }
     *(couple->key+lenght) = '\0';
   }
-  if(lenght == str_maxlengh){//checking if the lengh wasnt bigger then MAXLEN
+
+  if(lenght == str_maxlengh){//checking if the lengh  didnt reach MAXLEN
     log_error("error: key too long , function: lineparse");
     return ERROR_TOO_LONG_STRING;
   }
   lenght= 0;
 
+  while (*line != '=' ) {//skipping until = is found 
+    line++;
+  }
+
+
   if(*line == '='){//scanning into infovalue after = is found until a ; is found
     line++;
-    while(';' != *line && lenght< str_maxlengh){
+    while(';' != *line && lenght< str_maxlengh){//scanning into the pair's value
       if(isspace(*line)  ){//skipping blanks,tabs and spaces
         line++;
         continue;}
       *(couple->value+lenght++) = *line++;
 
     }
-      *(couple->value+lenght) = '\0';
-    
+    *(couple->value+lenght) = '\0';
+
   }
-  if(lenght == str_maxlengh){//checking if the lengh wasnt bigger then MAXLEN
+  if(lenght == str_maxlengh){//checking if the lengh  didnt reach MAXLEN
     log_error("error: value too long , function: lineparse");
     return ERROR_TOO_LONG_STRING;
   }
 
-   return SUCCESS ;
+  return SUCCESS ;
 
 
 }
 
 
-
-
-int parse_array(char** array_strs, int numberoflines,int line_max_len,int str_maxlenght , pair **array_of_pairs,int (*line_check)(char* ,int) ){ 
-
-  if(NULL == array_of_pairs){ //failed allocation for the array
-    log_error("error: configs array not allocated  , function: parsefile");
+/*scans a file and returns an array of correctly formated lines in the file ;*/
+int parse_file(char *filename ,pair **array_of_pairs ,int line_max_len,int str_maxlengh,int max_numberoflines){
+  /* the caller of this function should know the maximum number of  config lines are going to be there,
+   * set the maximum str lengh for key and value 
+   * and set maximum line lengh */
+  char *line = malloc(line_max_len*sizeof(char*));
+  
+  if(NULL == array_of_pairs ){ //checking for null values
+    log_error("error: configs array not allocated  , function: parse_file");
     return ERROR_NULL_VALUE_GIVEN;}
 
-  int i = 0;
-  int error;
-  while( i < numberoflines){
-      if(SUCCESS != (error = initialize_pair(array_of_pairs[i]))){
-      log_error("error: could not initialize pair  , function: parsefile");
-      return error;
-    }
+  FILE *file_pointer = fopen(filename,"r");
 
-    if(SUCCESS == (error = lineparse(array_of_pairs[i],array_strs[i],str_maxlenght,linecheck))){
+  if(NULL == file_pointer){//checking if the file has been successfully opened
+    log_error("error: could not open file  , function: parse_file");
+    return ERROR_FILE_OPENING_FAILED;
+  }
+  int i = 0;
+  int error = 0;
+
+  while( fgets(line,line_max_len,file_pointer) && i < max_numberoflines ){ /*putting the line in the array*/
+
+    if(SUCCESS == linecheck(line,str_maxlengh)){//if the line is correctly formated 
+      //initialize  a config pair 
+      if(SUCCESS != (error = initialize_pair(array_of_pairs[i]))){
+        log_error("error: could not initialize pair  , function: parse_file");
+        return error;
+      }//also checking for errors
+
+      if(SUCCESS == (error = lineparse(array_of_pairs[i],line,str_maxlengh))){
+
+            i++;
+        continue;
+      }//parsing the line and checking if the line has been successfully parsed
+      else {
+        return error;
+      }
       i++;
       continue;
     }
-    else {
-      return error;
-    }
-  }
-
- 
-return SUCCESS;
+    continue;
+    /*if the line is not correctly formated , continue to the next*/
+  } 
+  free(line);
+  fclose(file_pointer);
+  return SUCCESS;
 
 }
