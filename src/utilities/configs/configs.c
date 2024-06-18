@@ -1,4 +1,15 @@
 #include "configs.h"
+size_t spaceless_strlen(const char *s) {
+  size_t len = 0;
+  const unsigned char *us = (const unsigned char *) s;
+  while (*us) {
+    if (!isspace(*us)) len++;
+    us++;
+  }
+  return len;
+}
+
+
 int  linecheck(char *line){
 if (NULL == line ){//check for NULL values 
     log_error("error: null value given , function: lineparse");
@@ -6,12 +17,12 @@ if (NULL == line ){//check for NULL values
   }
   int lenght=0; //lengh tracker not to excede the maximum lenght 
 
-  while('#' != *line && '\0' == *line && lenght< MAXLEN){//skipping untill a # or a null char is spotted , or the lenght limit is exceded
-    line++;
-    lenght++;
-    continue;
-  }
-  if(*line == '\0'){//no # is found and the string ended
+  // while('#' != *line && '\0' == *line && lenght< MAXLEN){//skipping untill a # or a null char is spotted , or the lenght limit is exceded
+  //   line++;
+  //   lenght++;
+  //   continue;
+  // }
+  if(0 == spaceless_strlen(line)){//no # is found and the string ended
     log_error("error: empty line given , function: lineparse");
     return ERROR_EMPTY_STRING ;
   }
@@ -23,8 +34,9 @@ if (NULL == line ){//check for NULL values
     log_error("invalid config line found");
     return ERROR_INVALID_CONFIG_LINE;
   }
-
 }
+
+
 int lineparse(pair *couple ,char *line){
   int lenght = 0;
 

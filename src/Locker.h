@@ -51,22 +51,21 @@ int testprdup(){
 }
 
 int testparse(){
+  int eror_tracker = 0;
   pair **array = malloc(4*sizeof(pair ));
   for(int i = 0 ; i<NUMBER_OF_CONFIG_INFORMATION;i++){
     array[i] = malloc(sizeof(pair));
   }
 
   if(NULL == array) printf("n"); 
-  printf("%d\n",parsefile(USER_CONFIG_FILE,NUMBER_OF_CONFIG_INFORMATION ,LINE_MAX_LENGHT ,array));
+  if ( SUCCESS != ( eror_tracker = parsefile(USER_CONFIG_FILE,NUMBER_OF_CONFIG_INFORMATION ,LINE_MAX_LENGHT ,array))) 
+    return eror_tracker;
   for(int i = 0 ; i<NUMBER_OF_CONFIG_INFORMATION;i++){
     printf("key : %s \nvalue : %s \n",array[i]->key,array[i]->value);
   }
-  printf("ok");
   for(int i = 0 ; i<NUMBER_OF_CONFIG_INFORMATION;i++){
    free_pair(array[i]);
    free(array[i]);
   }
-  printf("ok");
-
   free(array);
 }

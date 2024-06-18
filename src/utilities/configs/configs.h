@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
 #include "eror_handling.h"
 #include "defined_values.h"
 #include "pair_utils.h"
