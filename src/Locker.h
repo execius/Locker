@@ -53,12 +53,18 @@ int testprdup(){
 int testparse(){
   int eror_tracker = 0;
   pair **array = malloc(4*sizeof(pair ));
+  FILE *file_pointer = fopen(USER_CONFIG_FILE,"r");
+
+  if(NULL == file_pointer){//checking if the file has been successfully opened
+    log_error("error: could not open file " );
+    return ERROR_FILE_OPENING_FAILED;
+  }
 
   for(int i = 0 ; i<NUMBER_OF_CONFIG_INFORMATION;i++){
     array[i] = malloc(sizeof(pair));
   }
 
-  if (SUCCESS == (eror_tracker = parse_file(USER_CONFIG_FILE ,array,LINE_MAX_LENGHT,MAXLEN,NUMBER_OF_CONFIG_INFORMATION)))
+  if (SUCCESS == (eror_tracker = parse_file(file_pointer ,array,LINE_MAX_LENGHT,MAXLEN,NUMBER_OF_CONFIG_INFORMATION)))
      for(int i = 0 ; i<NUMBER_OF_CONFIG_INFORMATION;i++){
     printf("key : %s \nvalue : %s \n",array[i]->key,array[i]->value);
   }
