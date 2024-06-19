@@ -50,7 +50,6 @@ static int scan_to_char(char *dest , char *src,char start_flag,char end_flag,siz
 /*parses a config line in the form #key=value; and puts the vkey and value in a pair struct
  * the line should be checked if correct before being passed to this function as it doesnt check*/ 
 static int lineparse(pair *couple ,char *line,size_t str_maxlengh){
-  size_t lenght = 0;//to keep track of lengh not to exceed the maximum value
   int eror_track = 0; /*to track the values of erors*/
   if ( NULL == couple ||NULL == couple->key || NULL == couple->value ){//check for NULL values 
     log_error("error: null value given , function: lineparse");

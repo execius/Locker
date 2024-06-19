@@ -73,4 +73,5 @@ int testparse(){
    free(array[i]);
   }
   free(array);
+  return SUCCESS;
 }

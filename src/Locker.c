@@ -1,4 +1,4 @@
 #include "Locker.h"
-void main(){
-  testparse();
+int  main(){
+  return testparse();
     }

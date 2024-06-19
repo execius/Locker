@@ -143,7 +143,7 @@ int accountdup(account *src ,account *dest){
 
 int printaccount(account accc){
 
-  if(NULL == &accc.array[1]){//checking if the account given id uninitialized
+  if(SUCCESS != isinitialized(&accc)){//checking if the account given id uninitialized
     log_error("error: uninitialized account , function : printaccount");
     return UNINITIALIZED_ACCOUNT_GIVEN  ;
   }
