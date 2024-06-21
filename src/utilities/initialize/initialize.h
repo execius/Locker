@@ -2,10 +2,11 @@
 //all the globaly defined values are  src/headers/defined_values/defined_values.h
 
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "defined_values.h"
+#include "includes.h"
+// #include <stdio.h>
+// #include <stdlib.h>
+// #include <string.h>
+// #include "defined_values.h"
 
 #ifndef INITIALIZE_H
 #define INITIALIZE_H

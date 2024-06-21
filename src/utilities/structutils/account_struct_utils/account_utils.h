@@ -1,18 +1,19 @@
 //the eror code is in src/headers/eror_handling/eror_handling.h
 //all the globaly defined values are  src/headers/defined_values/defined_values.h
 
-#ifndef ACCOUNT_UTILS_H_UTILS_H
+#ifndef ACCOUNT_UTILS_H
 #define ACCOUNT_UTILS_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include "eror_handling.h"
-#include "utilities.h"
-#include "defined_values.h"
-#include <math.h>
-#include <string.h>
-#include <ctype.h>
-
+#include "includes.h"
+// #include <stdio.h>
+// #include <stdlib.h>
+// #include "eror_handling.h"
+// #include "utilities.h"
+// #include "defined_values.h"
+// #include <math.h>
+// #include <string.h>
+// #include <ctype.h>
+//
 
 
 //account stuff
@@ -23,7 +24,6 @@ typedef struct account {
 } account ;
 
 enum DataType { CHAR_TYPE, INT_TYPE };
-
 
 
 /**
@@ -59,6 +59,6 @@ int printaccount(account accc);
  * @param dest initialized account struct that will become a copy of src */
 int accountdup(account *src , account *dest);
 
-
+int account_to_json(account *accc, cJSON *json_obj );
 
 #endif //ACCOUNT_UTILS_H

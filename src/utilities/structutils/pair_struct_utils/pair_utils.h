@@ -2,14 +2,15 @@
 //all the globaly defined values are  src/headers/defined_values/defined_values.h
 
 
+#include "includes.h"
 #ifndef PAIR_UTILS_H
 #define PAIR_UTILS_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include "eror_handling.h"
-#include "utilities.h"
-#include "defined_values.h"
+// #include <stdio.h>
+// #include <stdlib.h>
+// #include "eror_handling.h"
+// #include "utilities.h"
+// #include "defined_values.h"
 
 //stuff for a struct for configs that holds a key and value
  typedef struct pair_key_value { 

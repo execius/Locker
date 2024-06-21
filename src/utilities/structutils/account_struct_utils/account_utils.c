@@ -1,5 +1,3 @@
-
-
 #include "account_utils.h" 
 //initialze : alocate memory and set number to 0
 int initialize_account(account *acc){
@@ -158,4 +156,52 @@ int printaccount(account accc){
 }
 
 
+int account_to_json(account *accc, cJSON *json_obj ){
+  int error_tracker;
+  if(SUCCESS != (error_tracker = isinitialized(accc))){
+    log_error("error: uninitialized account , function : printaccount");
+    return error_tracker;
+  }
+  if (NULL == json_obj){
+    log_error("JSON object creation failed , function : account_to_json");
+    return ERROR_JSON_OBJECT_CREATION;
+  }
+  for(int i =0;i<NUMBEROFINFO;++i){
+    switch (i) {
+      case USERINDEX:
+        if (NULL == cJSON_AddStringToObject(json_obj, "user", *accc->array+USERINDEX)){
+          log_error("in funtion account_to_json , null value while adding a string to json object");
+          return ERROR_JSON_ADDING_ITEM_TO_OBJ;
+        }
+        break;
+      case EMAILINDEX:
+        if (NULL == cJSON_AddStringToObject(json_obj, "email", *accc->array+EMAILINDEX)){
+          log_error("in funtion account_to_json , null value while adding a string to json object");
+          return ERROR_JSON_ADDING_ITEM_TO_OBJ;
+        }
+        break;
+      case PASSWORDINDEX:
+        if (NULL == cJSON_AddStringToObject(json_obj, "password", *accc->array+USERINDEX)){
+          log_error("in funtion account_to_json , null value while adding a string to json object");
+          return ERROR_JSON_ADDING_ITEM_TO_OBJ;
+        }
+        break;
+      case PLATFORMINDEX:
+        if (NULL == cJSON_AddStringToObject(json_obj, "plaform", *accc->array+USERINDEX)){
+          log_error("in funtion account_to_json , null value while adding a string to json object");
+          return ERROR_JSON_ADDING_ITEM_TO_OBJ;
+        }
+        break;
+      default:
+        log_error("in funtion account_to_json , index out of bounds while adding account info to json object");
+        return ERROR_JSON_ADDING_ITEM_TO_OBJ;
 
+    }
+  }
+
+  if (cJSON_AddNumberToObject(json_obj, "accountnumber", *accc->accountnumber) == NULL){
+    log_error("in funtion account_to_json , null value while adding a integer to json object");
+    return ERROR_JSON_ADDING_ITEM_TO_OBJ;
+  }
+  return SUCCESS;
+}

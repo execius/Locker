@@ -1,8 +1,9 @@
-#include <stdlib.h>
-#include <stdio.h>
+// #include <stdlib.h>
+// #include <stdio.h>
 #ifndef EROR_HANDLING_H
 
 #define EROR_HANDLING_H
+#include "includes.h"
 
 
 
@@ -19,7 +20,9 @@ enum ErrorCode {
   ERROR_TOO_LONG_STRING = -8,
   ERROR_EMPTY_STRING = -9,
   ERROR_FILE_OPENING_FAILED = -10,
-  ERROR_INVALID_CONFIG_LINE = -11
+  ERROR_INVALID_CONFIG_LINE = -11,
+  ERROR_JSON_ADDING_ITEM_TO_OBJ = -12,
+  ERROR_JSON_OBJECT_CREATION = -13
 };
 
 void log_error( const char *message);
