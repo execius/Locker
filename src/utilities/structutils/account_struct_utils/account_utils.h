@@ -61,4 +61,6 @@ int accountdup(account *src , account *dest);
 
 int account_to_json(account *accc, cJSON *json_obj );
 
+int json_to_account(cJSON *json_obj ,account *accc );
+
 #endif //ACCOUNT_UTILS_H

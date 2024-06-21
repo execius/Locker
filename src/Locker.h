@@ -94,10 +94,20 @@ int testjson(){
     return error_tracker;
   }
   char *string = cJSON_Print(json);
-  free_account(accc);
-  cJSON_Delete(json);
-  free(accc);
   printf("%s\n",string);
   free(string);
+
+  account *acc2 = malloc(sizeof(account));
+  if (SUCCESS != (error_tracker = initialize_account(acc2))){
+    log_error("could not initialize account , locker.h");
+    return error_tracker;
+  }
+  json_to_account(json,acc2);
+  printaccount(*acc2);
+  free_account(accc);
+  free_account(acc2);
+  free(acc2);
+  free(accc);
+  cJSON_Delete(json);
   return SUCCESS;
 }

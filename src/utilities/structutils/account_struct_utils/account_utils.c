@@ -88,7 +88,7 @@ int change_int_member(int *account_accountnumber_pointer , const char *newval){
     log_error("error: newval not a number , function: changemember\n");
     return ERROR_INVALID_INTEGER ;
   }
-  if(index < 0 || num > MAXNUMBER){//checking if the index in in boundaries
+  if(num > MAXNUMBER){//checking if the index in in boundaries
     log_error("error: newval above maximum, function: changemember\n");
     return ERROR_INVALID_INTEGER ;
   }
@@ -158,38 +158,42 @@ int printaccount(account accc){
 
 int account_to_json(account *accc, cJSON *json_obj ){
   int error_tracker;
-  if(SUCCESS != (error_tracker = isinitialized(accc))){
-    log_error("error: uninitialized account , function : printaccount");
+  /* cheking if the account object is initialized*/
+  if(SUCCESS != (error_tracker = isinitialized(accc))){ 
+    log_error("error: uninitialized account , function :account_to_json");
     return error_tracker;
   }
+  /*check if the alocation of the cJSON object went good*/
   if (NULL == json_obj){
     log_error("JSON object creation failed , function : account_to_json");
     return ERROR_JSON_OBJECT_CREATION;
   }
+
+  /*making a json object and linking each string in the account's array struct to a item within the json object*/
   for(int i =0;i<NUMBEROFINFO;++i){
     switch (i) {
       case USERINDEX:
         if (NULL == cJSON_AddStringToObject(json_obj, "user", *accc->array+USERINDEX)){
           log_error("in funtion account_to_json , null value while adding a string to json object");
-          return ERROR_JSON_ADDING_ITEM_TO_OBJ;
+          return ERROR_JSON_ADDING_ITEM_TO_OBJ;/*checking for errors*/
         }
         break;
       case EMAILINDEX:
         if (NULL == cJSON_AddStringToObject(json_obj, "email", *accc->array+EMAILINDEX)){
           log_error("in funtion account_to_json , null value while adding a string to json object");
-          return ERROR_JSON_ADDING_ITEM_TO_OBJ;
+          return ERROR_JSON_ADDING_ITEM_TO_OBJ;/*checking for errors*/
         }
         break;
       case PASSWORDINDEX:
         if (NULL == cJSON_AddStringToObject(json_obj, "password", *accc->array+USERINDEX)){
           log_error("in funtion account_to_json , null value while adding a string to json object");
-          return ERROR_JSON_ADDING_ITEM_TO_OBJ;
+          return ERROR_JSON_ADDING_ITEM_TO_OBJ;/*checking for errors*/
         }
         break;
       case PLATFORMINDEX:
-        if (NULL == cJSON_AddStringToObject(json_obj, "plaform", *accc->array+USERINDEX)){
+        if (NULL == cJSON_AddStringToObject(json_obj, "platform", *accc->array+USERINDEX)){
           log_error("in funtion account_to_json , null value while adding a string to json object");
-          return ERROR_JSON_ADDING_ITEM_TO_OBJ;
+          return ERROR_JSON_ADDING_ITEM_TO_OBJ;/*checking for errors*/
         }
         break;
       default:
@@ -198,10 +202,63 @@ int account_to_json(account *accc, cJSON *json_obj ){
 
     }
   }
-
+/*make the account number into an item in the json object*/
   if (cJSON_AddNumberToObject(json_obj, "accountnumber", *accc->accountnumber) == NULL){
     log_error("in funtion account_to_json , null value while adding a integer to json object");
     return ERROR_JSON_ADDING_ITEM_TO_OBJ;
   }
   return SUCCESS;
 }
+
+
+int json_to_account(cJSON *json_obj ,account *accc ){
+  int error_tracker;
+  /* cheking if the account object is initialized*/
+  if(SUCCESS != (error_tracker = isinitialized(accc))){ 
+    log_error("error: uninitialized account , function : json_to_account");
+    return error_tracker;
+  }
+  /*check if the alocation of the cJSON object went good*/
+  if (NULL == json_obj){
+    log_error("JSON object creation failed , function : json_to_account");
+    return ERROR_JSON_OBJECT_CREATION;
+  }
+
+
+   for(int i =0;i<NUMBEROFINFO;++i){
+    switch (i) {
+      case USERINDEX:
+        if (NULL == strncpy(*(accc->array+USERINDEX),cJSON_GetObjectItemCaseSensitive(json_obj, "user")->valuestring,MAXLEN)){
+          log_error("in funtion json_to_account , null value while getting a string from  json object");
+          return ERROR_JSON_GETTING_ITEM_TO_OBJ;/*checking for errors*/
+        }
+        break;
+      case EMAILINDEX:
+        if (NULL == strncpy(*(accc->array+EMAILINDEX),cJSON_GetObjectItemCaseSensitive(json_obj, "email")->valuestring,MAXLEN)){
+          log_error("in funtion json_to_account , null value while getting a string from  json object");
+          return ERROR_JSON_GETTING_ITEM_TO_OBJ;/*checking for errors*/
+        }
+        break;
+      case PASSWORDINDEX:
+        if (NULL == strncpy(*(accc->array+PASSWORDINDEX),cJSON_GetObjectItemCaseSensitive(json_obj, "password")->valuestring,MAXLEN)){
+          log_error("in funtion json_to_account ,  null value while getting a string from  json object");
+          return ERROR_JSON_GETTING_ITEM_TO_OBJ;/*checking for errors*/
+        }
+        break;
+      case PLATFORMINDEX:
+        if (NULL == strncpy(*(accc->array+PLATFORMINDEX),cJSON_GetObjectItemCaseSensitive(json_obj, "platform")->valuestring,MAXLEN)){
+          log_error("in funtion json_to_account , null value while getting a string from  json object");
+          return ERROR_JSON_GETTING_ITEM_TO_OBJ;/*checking for errors*/
+        }
+        break;
+      default:
+        log_error("in funtion account_to_json , index out of bounds while getting account info from  json object");
+        return ERROR_JSON_GETTING_ITEM_TO_OBJ;
+
+    }
+  }
+  
+  *accc->accountnumber = cJSON_GetObjectItemCaseSensitive(json_obj,"accountnumber")->valuedouble;
+  return SUCCESS;
+}
+
