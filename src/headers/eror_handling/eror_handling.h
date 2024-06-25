@@ -1,9 +1,8 @@
-// #include <stdlib.h>
-// #include <stdio.h>
+#include "includes.h"
+
 #ifndef EROR_HANDLING_H
 
 #define EROR_HANDLING_H
-#include "includes.h"
 
 
 
@@ -23,7 +22,10 @@ enum ErrorCode {
   ERROR_INVALID_CONFIG_LINE = -11,
   ERROR_JSON_ADDING_ITEM_TO_OBJ = -12,
   ERROR_JSON_GETTING_ITEM_TO_OBJ = -13,
-  ERROR_JSON_OBJECT_CREATION = -14
+  ERROR_JSON_OBJECT_CREATION = -14,
+  ERROR_JSON_NOT_STR = -15,
+  ERROR_NULL_JSON_ITEM = -16,
+  ERROR_STDLIB_FUNTION_FAILURE = -17
 };
 
 void log_error( const char *message);
