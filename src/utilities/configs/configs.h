@@ -1,17 +1,10 @@
 //the eror code is in src/headers/eror_handling/eror_handling.h
 //all the globaly defined values are  src/headers/defined_values/defined_values.h
 
-// #include <stdio.h>
-// #include <stdlib.h>
-// #include <ctype.h>
-// #include "eror_handling.h"
-// #include "defined_values.h"
-// #include "pair_utils.h"
-//
+#include "includes.h"
 #ifndef CONF_PARSE
 #define CONF_PARSE
 
-#include "includes.h"
 #define USER_CONFIG_FILE "/home/qbit/coding/c/cpassremake/src/utilities/configs/configs.cpassmann" 
 
 /*each line has infotype and infovalue , 

@@ -1,19 +1,9 @@
 //the eror code is in src/headers/eror_handling/eror_handling.h
 //all the globaly defined values are  src/headers/defined_values/defined_values.h
 
+#include "includes.h"
 #ifndef ACCOUNT_UTILS_H
 #define ACCOUNT_UTILS_H
-
-#include "includes.h"
-// #include <stdio.h>
-// #include <stdlib.h>
-// #include "eror_handling.h"
-// #include "utilities.h"
-// #include "defined_values.h"
-// #include <math.h>
-// #include <string.h>
-// #include <ctype.h>
-//
 
 
 //account stuff
@@ -42,6 +32,7 @@ int initialize_account(account *acc);
  */
 int free_account(account *acc);
 
+int isinitialized(account *acc);
 /* changes a string in acc->array of the account number 
  * @param acc Pointer to account struct to modify
  * @param index the index of the string in the acc->array , in case of changing a string ,
@@ -59,8 +50,5 @@ int printaccount(account accc);
  * @param dest initialized account struct that will become a copy of src */
 int accountdup(account *src , account *dest);
 
-int account_to_json(account *accc, cJSON *json_obj );
-
-int json_to_account(cJSON *json_obj ,account *accc );
 
 #endif //ACCOUNT_UTILS_H

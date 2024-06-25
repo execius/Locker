@@ -1,11 +1,5 @@
 #include "includes.h"
 
-// #include <stdio.h>
-// #include <stdlib.h>
-// #include "initialize.h"
-// #include "account_utils.h"
-// #include "defined_values.h"
-// #include "configs.h"
 // int testinitialize() {
 //   char **arr = initialize();
 //    for (int i = 0 ; i < NUMBER_OF_INIT_VARS ;i++){
@@ -85,7 +79,7 @@ int testjson(){
     log_error("could not initialize account , locker.h");
     return error_tracker;
   }
-  for(int i = 0 ; i<NUMBEROFINFO;i++){
+  for(int i = 0 ; i<NUMBEROFINFO;++i){
       printf("%d>",i);
       fgets(accc->array[i],MAXLEN,stdin);}
 
