@@ -1,4 +1,5 @@
 #include "account_json.h"
+/*READ THE CJSON LIBRARY DOCS TO GET AN IDEA OF WHAT THAT SHIT IS*/
 int account_to_json(account *accc, cJSON *json_obj ){
   int error_tracker;
   /* cheking if the account object is initialized*/
@@ -12,7 +13,7 @@ int account_to_json(account *accc, cJSON *json_obj ){
     return ERROR_JSON_OBJECT_CREATION;
   }
 
-  /*making a json object and linking each string in the account's array struct to a item within the json object*/
+  /*making a json object and copying each string in the account's array struct to a item within the json object*/
   for(int i =0;i<NUMBEROFINFO;++i){
     switch (i) {
       case USERINDEX:
@@ -67,26 +68,31 @@ int json_to_account(cJSON *json_obj ,account *accc ){
     return ERROR_JSON_OBJECT_CREATION;
   }
 
-
+/*for each item in the previously cretaed json object :
+ * this loop gets the obejcts and copies them into a string in a acount's object array 
+ * it depends on the NUMBEROFINFO and the specified index for each account struct information so 
+ be carefull not to fuck up those
+ * */
   for(int i =0;i<NUMBEROFINFO;++i){
     switch (i) {
       case USERINDEX:
         if (!cJSON_IsString(cJSON_GetObjectItemCaseSensitive(json_obj, "user"))){
           log_error("eror getting user string from json to account , funtion : json_to_account");
-          return ERROR_STDLIB_FUNTION_FAILURE;
+          return ERROR_STDLIB_FUNTION_FAILURE;/*check if the item is a string*/
         }
 
         if(!cJSON_GetObjectItemCaseSensitive(json_obj, "user")->valuestring){
           log_error("in funtion json_to_account , null value in the user item's value string");
-          return ERROR_NULL_JSON_ITEM;
+          return ERROR_NULL_JSON_ITEM;/*check that the getting the item does not return a null*/
         }
         if (MAXLEN <= strlcpy(*(accc->array+USERINDEX),cJSON_GetObjectItemCaseSensitive(json_obj, "user")->valuestring,MAXLEN)){
-          log_error("in function json_to_account , strlcpy failed");
+          log_error("in function json_to_account , strlcpy failed due to string being too long");/*copying the item into the account struct MyStruct {
+          };*/
           return ERROR_STDLIB_FUNTION_FAILURE;
         }
         break;
 
-
+/*SAME THINGS APPLY TO ALL THE STUFF BELOW IN THE LOOP*/
       case EMAILINDEX:
         if (!cJSON_IsString(cJSON_GetObjectItemCaseSensitive(json_obj, "email"))){
           log_error("eror getting email string from json to account , funtion : json_to_account");
@@ -146,7 +152,7 @@ int json_to_account(cJSON *json_obj ,account *accc ){
 
         if(!cJSON_IsNumber(cJSON_GetObjectItemCaseSensitive(json_obj,"accountnumber"))){
           log_error("in funtion json_to_account , non int value while getting a int from  json object");
-          return ERROR_JSON_GETTING_ITEM_TO_OBJ;  }
+          return ERROR_JSON_GETTING_ITEM_TO_OBJ;  }/*cheking that the accountnumber item is a int and then copying it into the accountnumber member in the account struct*/
         *accc->accountnumber = cJSON_GetObjectItemCaseSensitive(json_obj,"accountnumber")->valuedouble;
 
         return SUCCESS;

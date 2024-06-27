@@ -1,4 +1,4 @@
 #include "Locker.h"
-int  main(){
+int  main(void){
   return testjson();
     }

@@ -8,6 +8,7 @@
 
 
 enum ErrorCode {
+  LIBSSL_SUCCESS = 1,
   SUCCESS = 0,
   ERROR_INDEX_OUT_OF_BOUNDS = -1,
   ERROR_MEMORY_ALLOCATION = -2,
@@ -25,7 +26,8 @@ enum ErrorCode {
   ERROR_JSON_OBJECT_CREATION = -14,
   ERROR_JSON_NOT_STR = -15,
   ERROR_NULL_JSON_ITEM = -16,
-  ERROR_STDLIB_FUNTION_FAILURE = -17
+  ERROR_STDLIB_FUNTION_FAILURE = -17,
+   ERROR_LIBSSL_FAILURE = -18
 };
 
 void log_error( const char *message);

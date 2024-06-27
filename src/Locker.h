@@ -8,7 +8,7 @@
 //   }
 //    return SUCCESS;
 // }
-int testeditstruct(){
+int testeditstruct(void){
   account accc;
   if(initialize_account(&accc) == SUCCESS ){
     for(int i = 0 ; i<NUMBEROFINFO;i++){
@@ -26,7 +26,7 @@ int testeditstruct(){
     return -1;
 }
 
-int testprdup(){
+int testprdup(void){
    account acc ;
    account ac;
    int error ;
@@ -46,7 +46,7 @@ int testprdup(){
 
 }
 
-int testparse(){
+int testparse(void){
   int eror_tracker = 0;
   pair **array = malloc(4*sizeof(pair ));
   FILE *file_pointer = fopen(USER_CONFIG_FILE,"r");
@@ -71,7 +71,7 @@ int testparse(){
   free(array);
   return SUCCESS;
 }
-int testjson(){
+int testjson(void){
   account *accc = malloc(sizeof(account )) ;
   int error_tracker;
   cJSON *json = cJSON_CreateObject();

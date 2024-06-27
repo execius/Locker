@@ -1,7 +1,9 @@
 #ifndef INCLUDES_H
 #define INCLUDES_H
 
-
+#include <openssl/evp.h>
+#include <openssl/rand.h>
+#include <openssl/err.h>
 #include <cjson/cJSON.h>
 #include <stdio.h>
 #include <stdlib.h>
