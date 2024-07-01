@@ -1,4 +1,4 @@
 #include "Locker.h"
 int  main(void){
-  return testhash();
+  return testenc();
     }

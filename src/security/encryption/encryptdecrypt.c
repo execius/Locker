@@ -6,7 +6,7 @@ int handleErrors(void) {
 }
 
 
-int encrypt_aes256(unsigned char *plaintext, int plaintext_len, unsigned char *key, unsigned char *iv, unsigned char *ciphertext,int *ciphertext_len){
+int encrypt_aes256(const unsigned char *plaintext, int plaintext_len, unsigned char *key, unsigned char *iv, unsigned char *ciphertext){
 
   EVP_CIPHER_CTX *ctx;
   int len;
@@ -19,11 +19,9 @@ int encrypt_aes256(unsigned char *plaintext, int plaintext_len, unsigned char *k
 
   // Provide the message to be encrypted, and obtain the encrypted output
   if (LIBSSL_SUCCESS != EVP_EncryptUpdate(ctx, ciphertext, &len, plaintext, plaintext_len)) handleErrors();
-  *ciphertext_len = len;
 
   // Finalize the encryption
   if (LIBSSL_SUCCESS != EVP_EncryptFinal_ex(ctx, ciphertext + len, &len)) return handleErrors();
-  *ciphertext_len += len;
 
   // Clean up
   EVP_CIPHER_CTX_free(ctx);
@@ -34,7 +32,7 @@ int encrypt_aes256(unsigned char *plaintext, int plaintext_len, unsigned char *k
 
 
 
-int decrypt_aes256(unsigned char *ciphertext, int ciphertext_len, unsigned char *key,unsigned char *iv, unsigned char *plaintext , int *plaintext_len){
+int decrypt_aes256(unsigned char *ciphertext, int ciphertext_len, unsigned char *key,unsigned char *iv, unsigned char *plaintext){
   EVP_CIPHER_CTX *ctx;
 
   int len;
@@ -59,7 +57,6 @@ int decrypt_aes256(unsigned char *ciphertext, int ciphertext_len, unsigned char 
      */
   if(LIBSSL_SUCCESS != EVP_DecryptUpdate(ctx, plaintext, &len, ciphertext, ciphertext_len))
     return handleErrors();
-  *plaintext_len = len;
 
   /*
      * Finalise the decryption. Further plaintext bytes may be written at
@@ -67,7 +64,6 @@ int decrypt_aes256(unsigned char *ciphertext, int ciphertext_len, unsigned char 
      */
   if(LIBSSL_SUCCESS != EVP_DecryptFinal_ex(ctx, plaintext + len, &len))
     return handleErrors();
-  plaintext_len += len;
 
   /* Clean up */
   EVP_CIPHER_CTX_free(ctx);
