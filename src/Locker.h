@@ -105,3 +105,22 @@ int testjson(void){
   cJSON_Delete(json);
   return SUCCESS;
 }
+void base64_encode(const unsigned char *input, size_t length, char *output) {
+    base64_encodestate state;
+    base64_init_encodestate(&state);
+    int cnt = base64_encode_block((const char *)input, length, output, &state);
+    cnt += base64_encode_blockend(output + cnt, &state);
+    output[cnt] = '\0';
+}
+int testhash(void){
+  int err = 0;
+  const char *pass = "holamiamitos";
+  unsigned char *salt = malloc(SHA256_SALT_SIZE);
+  unsigned char *hash = malloc(SHA256_HASH_SIZE);
+  char *b64 = malloc(64*sizeof(char));
+  if (SUCCESS != (err = hash_sha256(pass,salt,hash)))
+    return err;
+  base64_encode(hash,SHA256_HASH_SIZE,b64);
+  printf("%s\n",b64);
+  return SUCCESS;
+}

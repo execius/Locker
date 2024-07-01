@@ -11,7 +11,8 @@
 #include <bsd/string.h>
 #include <math.h>
 #include <ctype.h>
-// #include "cJSON.h"
+#include <b64/cencode.h>
+
 #include "eror_handling.h"
 #include "initialize.h"
 #include "defined_values.h"
@@ -19,6 +20,8 @@
 #include "pair_utils.h"
 #include "configs.h"
 #include "account_json.h"
+#include "encryptdecrypt.h"
+#include "hashing.h"
 
 
 #endif // !INCLUDES_H

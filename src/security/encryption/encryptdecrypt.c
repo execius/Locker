@@ -1,11 +1,10 @@
-#include "encrypt&decrypt.h" 
+#include "encryptdecrypt.h" 
 
-void handleErrors() {
+int handleErrors(void) {
   ERR_print_errors_fp(stderr);
   return ERROR_LIBSSL_FAILURE;
 }
 
-generate
 
 int encrypt_aes256(unsigned char *plaintext, int plaintext_len, unsigned char *key, unsigned char *iv, unsigned char *ciphertext,int *ciphertext_len){
 
@@ -60,7 +59,7 @@ int decrypt_aes256(unsigned char *ciphertext, int ciphertext_len, unsigned char 
      */
   if(LIBSSL_SUCCESS != EVP_DecryptUpdate(ctx, plaintext, &len, ciphertext, ciphertext_len))
     return handleErrors();
-  plaintext_len = len;
+  *plaintext_len = len;
 
   /*
      * Finalise the decryption. Further plaintext bytes may be written at

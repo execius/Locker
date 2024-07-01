@@ -11,6 +11,9 @@ enum constant_values{
  NUMBER_OF_CONFIG_INFORMATION = 4, 
  MAXLEN = 4096,      //maximum string lengh
  MAXNUMBER = 9999,   //maximum int value
- NUMBER_OF_INIT_VARS = 4 //number of thing that we will ask the user for in the initialization
+ NUMBER_OF_INIT_VARS = 4, //number of thing that we will ask the user for in the initialization
+ SHA256_SALT_SIZE = 16,
+ SHA256_HASH_SIZE = 32
 };
+
 #endif 
