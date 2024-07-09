@@ -109,11 +109,11 @@ int testhash(void){
   int err = 0;
   const char *pass = "holamia";
   unsigned char salt[SHA256_SALT_SIZE];
-  unsigned char hash[SHA256_HASH_SIZE];
+  unsigned char hash[SHA256_HASH_SIZE_BYTES];
   if (SUCCESS != (err = hash_sha256(pass,salt,hash)))
     return err;
   printf("hash is:\n");
-    for (int i = 0; i < SHA256_HASH_SIZE; i++) {
+    for (int i = 0; i < SHA256_HASH_SIZE_BYTES; i++) {
         printf("%02x", hash[i]);
     }
     printf("\n");

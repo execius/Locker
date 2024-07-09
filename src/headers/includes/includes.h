@@ -12,6 +12,7 @@
 #include <math.h>
 #include <ctype.h>
 #include <b64/cencode.h>
+#include <unistd.h>
 
 #include "eror_handling.h"
 #include "initialize.h"
@@ -22,6 +23,7 @@
 #include "account_json.h"
 #include "encryptdecrypt.h"
 #include "hashing.h"
+#include "login.h"
 
 
 #endif // !INCLUDES_H
