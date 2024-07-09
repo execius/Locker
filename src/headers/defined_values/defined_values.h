@@ -13,7 +13,7 @@ enum constant_values{
  MAXNUMBER = 9999,   //maximum int value
  NUMBER_OF_INIT_VARS = 4, //number of thing that we will ask the user for in the initialization
  SHA256_SALT_SIZE = 16,
- SHA256_HASH_SIZE = 32,
+ SHA256_HASH_SIZE_BYTES = 32,
  KEY_SIZE_256 = 32,
  AES_256_BLOCK_SIZE = 16,
  MAX_CIPHER_SIZE = MAXLEN+(16-(MAXLEN%16))
