@@ -161,8 +161,8 @@ int testlogin(void){
     return err;
   binary_to_hex(bin_salt,SHA256_SALT_SIZE,hex_salt);
   binary_to_hex(bin_hash,SHA256_HASH_SIZE_BYTES,hex_hash);
-  fputs(hex_salt,file);
-  fputs(hex_hash,file);
+  fputs((const char *)hex_salt,file);
+  fputs((const char *)hex_hash,file);
   fputs("\n",file);
   // fprintf(file, "%s\n%s\n", hex_salt, hex_hash);
   fclose(file);

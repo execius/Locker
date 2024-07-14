@@ -24,6 +24,7 @@
 #include "encryptdecrypt.h"
 #include "hashing.h"
 #include "login.h"
+#include "hex_bin_utils.h"
 
 
 #endif // !INCLUDES_H
