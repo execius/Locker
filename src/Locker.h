@@ -8,6 +8,7 @@
 //   }
 //    return SUCCESS;
 // }
+#define PWD getenv("PWD")
 int testeditstruct(void){
   account accc;
   if(initialize_account(&accc) == SUCCESS ){
@@ -112,11 +113,13 @@ int testhash(void){
   unsigned char hash[SHA256_HASH_SIZE_BYTES];
   if (SUCCESS != (err = hash_sha256(pass,salt,hash)))
     return err;
+  
   printf("hash is:\n");
     for (int i = 0; i < SHA256_HASH_SIZE_BYTES; i++) {
         printf("%02x", hash[i]);
     }
     printf("\n");
+
 
   return SUCCESS;
 }
@@ -143,3 +146,30 @@ int testenc(void){
   return SUCCESS;
 
 }
+
+int testlogin(void){
+  FILE *file = fopen("./user1","w");
+  int err = 0;
+  const char *pass = "holamia";
+  unsigned char bin_salt[SHA256_SALT_SIZE];
+  unsigned char bin_hash[SHA256_HASH_SIZE_BYTES];
+  unsigned char hex_salt[SHA256_SALT_SIZE_HEX];
+  unsigned char hex_hash[SHA256_HASH_SIZE_HEX];
+
+  if (!RAND_bytes(bin_salt, SHA256_SALT_SIZE)) return handleErrors();
+  if (SUCCESS != (err = hash_sha256(pass,bin_salt,bin_hash)))
+    return err;
+  binary_to_hex(bin_salt,SHA256_SALT_SIZE,hex_salt);
+  binary_to_hex(bin_hash,SHA256_HASH_SIZE_BYTES,hex_hash);
+  fputs(hex_salt,file);
+  fputs(hex_hash,file);
+  fputs("\n",file);
+  // fprintf(file, "%s\n%s\n", hex_salt, hex_hash);
+  fclose(file);
+  if (SUCCESS != (err = login(PWD,"user1","holamia",MAXLEN,SHA256_HASH_SIZE_BYTES,SHA256_SALT_SIZE,SHA256_HASH_SIZE_HEX,SHA256_SALT_SIZE_HEX)))
+    return err;
+
+ return SUCCESS;
+}
+
+

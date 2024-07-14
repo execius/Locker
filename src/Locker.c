@@ -1,4 +1,7 @@
 #include "Locker.h"
 int  main(void){
-  return testenc();
+  int err;
+  err = testlogin();
+  printf("%d\n",err);
+  return 0;
     }

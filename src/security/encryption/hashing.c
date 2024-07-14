@@ -1,5 +1,6 @@
 #include "hashing.h"
 
+
 int hash_sha256(const char *password, unsigned char *salt, unsigned char *hash) {
     EVP_MD_CTX *mdctx;
     if (!(mdctx = EVP_MD_CTX_new())) handleErrors();
