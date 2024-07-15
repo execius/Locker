@@ -23,9 +23,10 @@
 #include "account_json.h"
 #include "encryptdecrypt.h"
 #include "hashing.h"
+#include "hex_bin_utils.h"
 #include "user_utils.h"
 #include "login.h"
-#include "hex_bin_utils.h"
+#include "make_user.h"
 
 
 #endif // !INCLUDES_H

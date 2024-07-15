@@ -86,6 +86,7 @@ int login(char *users_path,
                             input_username,
                             str_maxlen)){
 
+    log_error("no such user exists");
     return ERROR_USER_DOESNT_EXIST;
   }
 

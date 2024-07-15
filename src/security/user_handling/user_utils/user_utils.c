@@ -47,7 +47,6 @@ int user_exists(const char *users_path,
     return err;
 
   if(SUCCESS != file_exists(pathtofile)){
-    log_error("no such user exists");
 return ERROR_USER_DOESNT_EXIST;
   }
   return SUCCESS;
