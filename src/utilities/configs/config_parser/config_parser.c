@@ -1,4 +1,4 @@
-#include "configs.h"
+#include "config_parser.h"
 /* checks that:
  * the line given is in the corect format (#key=value;)
  * the line is not NULL*/

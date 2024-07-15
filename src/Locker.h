@@ -155,19 +155,24 @@ int testlogin(void){
   unsigned char bin_hash[SHA256_HASH_SIZE_BYTES];
   unsigned char hex_salt[SHA256_SALT_SIZE_HEX];
   unsigned char hex_hash[SHA256_HASH_SIZE_HEX];
+  char *password = malloc(MAXLEN*sizeof(char*));
+  fgets(password,MAXLEN,stdin);
+  char *username = malloc(MAXLEN*sizeof(char*));
+  fgets(username,MAXLEN,stdin);
 
   if (!RAND_bytes(bin_salt, SHA256_SALT_SIZE)) return handleErrors();
   if (SUCCESS != (err = hash_sha256(pass,bin_salt,bin_hash)))
     return err;
   binary_to_hex(bin_salt,SHA256_SALT_SIZE,hex_salt);
   binary_to_hex(bin_hash,SHA256_HASH_SIZE_BYTES,hex_hash);
-  fputs((const char *)hex_salt,file);
-  fputs((const char *)hex_hash,file);
-  fputs("\n",file);
-  // fprintf(file, "%s\n%s\n", hex_salt, hex_hash);
+  // fputs((const char *)hex_salt,file);
+  // fputs((const char *)hex_hash,file);
+  fprintf(file, "%s%s", hex_salt, hex_hash);
   fclose(file);
-  if (SUCCESS != (err = login(PWD,"user1","holamia",MAXLEN,SHA256_HASH_SIZE_BYTES,SHA256_SALT_SIZE,SHA256_HASH_SIZE_HEX,SHA256_SALT_SIZE_HEX)))
+  if (SUCCESS != (err = login(PWD,username,password,MAXLEN,SHA256_HASH_SIZE_BYTES,SHA256_SALT_SIZE,SHA256_HASH_SIZE_HEX,SHA256_SALT_SIZE_HEX)))
     return err;
+  free(password);
+  free(username);
 
  return SUCCESS;
 }

@@ -19,10 +19,11 @@
 #include "defined_values.h"
 #include "account_utils.h"
 #include "pair_utils.h"
-#include "configs.h"
+#include "config_parser.h"
 #include "account_json.h"
 #include "encryptdecrypt.h"
 #include "hashing.h"
+#include "user_utils.h"
 #include "login.h"
 #include "hex_bin_utils.h"
 
