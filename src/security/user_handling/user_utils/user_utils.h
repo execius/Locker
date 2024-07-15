@@ -1,6 +1,7 @@
 #include "includes.h"
 
 #ifndef USER_UTILS
+#define USER_UTILS
 
 int make_file_path(char *filepath
                           ,const char *path

@@ -27,6 +27,7 @@
 #include "user_utils.h"
 #include "login.h"
 #include "make_user.h"
+#include "change_pass.h"
 
 
 #endif // !INCLUDES_H

@@ -153,6 +153,8 @@ int testlogin(void){
   fgets(password,MAXLEN,stdin);
   char *username = malloc(MAXLEN*sizeof(char*));
   fgets(username,MAXLEN,stdin);
+  // if ( SUCCESS != (err = change_pass(PWD,password,username,MAXLEN,SHA256_HASH_SIZE_HEX,SHA256_SALT_SIZE,SHA256_HASH_SIZE_HEX,SHA256_SALT_SIZE_HEX)))
+  //   return err;
   // if ( SUCCESS != (err = make_user(PWD,password,username,MAXLEN,SHA256_HASH_SIZE_HEX,SHA256_SALT_SIZE,SHA256_HASH_SIZE_HEX,SHA256_SALT_SIZE_HEX)))
   //   return err;
   if (SUCCESS != (err = login(PWD,username,password,MAXLEN,SHA256_HASH_SIZE_BYTES,SHA256_SALT_SIZE,SHA256_HASH_SIZE_HEX,SHA256_SALT_SIZE_HEX)))

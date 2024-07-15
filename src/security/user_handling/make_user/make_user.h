@@ -1,6 +1,7 @@
 #include "includes.h"
 
 #ifndef MAKE_USER
+#define MAKE_USER
 int make_user(
     char *users_files_path,
     char *password,
