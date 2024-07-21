@@ -19,6 +19,18 @@ int initialize_pair(pair* couple){
   return SUCCESS;
 }
 
+int pair_isinitialised(pair *couple){
+  if(NULL == couple){
+    log_error("error: NULL value given , function: pair_isinitialized");
+    return ERROR_NULL_VALUE_GIVEN ;
+
+  }
+  if(!couple->key || !couple->value ){
+    log_error("error: uninitialized pair , function : pair_isinitialized");
+    return UNINITIALIZED_ACCOUNT_GIVEN  ;
+  }
+  return SUCCESS;
+}
 
 
 int free_pair(pair* couple){

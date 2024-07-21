@@ -13,6 +13,7 @@
 #include <ctype.h>
 #include <b64/cencode.h>
 #include <unistd.h>
+#include <assert.h>
 
 #include "eror_handling.h"
 #include "initialize.h"
@@ -28,6 +29,8 @@
 #include "login.h"
 #include "make_user.h"
 #include "change_pass.h"
+#include "config_writer.h"
+ #include "write_config.h"
 
 
 #endif // !INCLUDES_H

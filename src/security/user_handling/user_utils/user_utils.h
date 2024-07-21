@@ -3,6 +3,8 @@
 #ifndef USER_UTILS
 #define USER_UTILS
 
+int file_exists(const char *path , size_t path_maxlen);
+
 int make_file_path(char *filepath
                           ,const char *path
                           ,const char *filename

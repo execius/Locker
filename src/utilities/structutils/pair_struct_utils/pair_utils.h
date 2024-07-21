@@ -18,7 +18,8 @@
  */
 
 int initialize_pair(pair* couple);
-
+/*checks if the pair is properly initialized*/
+int pair_isinitialised(pair *couple);
 
 /**
  * Frees the allocated memory in the pair struct.

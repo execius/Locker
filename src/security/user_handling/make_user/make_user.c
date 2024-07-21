@@ -54,6 +54,7 @@ if (!users_directory || !username || !password ){
 
   if (NULL == (file = fopen(path_userfile,"w"))){
     log_error("eror while making new user : couldnt make userfile");
+    return ERROR_FILE_DOESNT_EXIST;
   }
 
   /*hashing the password*/

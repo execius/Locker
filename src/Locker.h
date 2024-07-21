@@ -28,21 +28,23 @@ int testeditstruct(void){
 }
 
 int testprdup(void){
-   account acc ;
-   account ac;
+   account *acc = malloc(sizeof(account));
+   account *ac = malloc(sizeof(account));
    int error ;
-   if (SUCCESS != ( error = initialize_account(&acc))) return error ;
-   if (SUCCESS != ( error = initialize_account(&ac))) return error ;
+   if (SUCCESS != ( error = initialize_account(acc))) return error ;
+   if (SUCCESS != ( error = initialize_account(ac))) return error ;
 
   for(int i = 0 ; i<NUMBEROFINFO;i++){
       printf("%d>",i);
-      fgets(acc.array[i],MAXLEN,stdin);
+      fgets(acc->array[i],MAXLEN,stdin);
   }
-  *acc.accountnumber = 9;
-  if (SUCCESS != (error = accountdup(&acc,&ac)) ) return error;
-  free_account(&acc);
+  *acc->accountnumber = 9;
+  if (SUCCESS != (error = accountdup(acc,ac)) ) return error;
+  free_account(acc);
   printaccount(ac);
-  free_account(&ac);
+  free_account(ac);
+  free(acc);
+  free(ac);
   return SUCCESS;
 
 }
@@ -98,7 +100,7 @@ int testjson(void){
     return error_tracker;
   }
   json_to_account(json,acc2);
-  printaccount(*acc2);
+  printaccount(acc2);
   free_account(accc);
   free_account(acc2);
   free(acc2);

@@ -25,13 +25,14 @@ int make_file_path(char *filepath
 }
 
 /*checks if a file exists using access check*/
-static int file_exists(const char *path)
+int file_exists(const char *path , size_t path_maxlen)
 {
-    /*if file doesnt exist*/
-    if (access(path, F_OK) == -1)
-        return ERROR_FILE_DOESNT_EXIST;
+  assert(path);
+  /*if file doesnt exist*/
+  if (access(path, F_OK) == -1)
+    return ERROR_FILE_DOESNT_EXIST;
 
-    return SUCCESS;
+  return SUCCESS;
 }
 
 /*checking if a user exists by checking if the user 
@@ -46,7 +47,7 @@ int user_exists(const char *users_path,
     pathtofile,users_path,username,str_maxlen)))
     return err;
 
-  if(SUCCESS != file_exists(pathtofile)){
+  if(SUCCESS != file_exists(pathtofile,2*str_maxlen)){
 return ERROR_USER_DOESNT_EXIST;
   }
   return SUCCESS;

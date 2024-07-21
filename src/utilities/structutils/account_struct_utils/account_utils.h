@@ -43,7 +43,7 @@ int isinitialized(account *acc);
 int changemember(struct account* acc,int index ,const char *newval, enum DataType type);
 
 //simply prints a account struct
-int printaccount(account accc);
+int printaccount(account *accc);
 
 /*duplicates a account struct 
  * @param src pointer to the account struct to duplicate 
