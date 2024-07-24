@@ -20,7 +20,7 @@ int initialize_pair(pair* couple){
 }
 
 int pair_isinitialised(pair *couple){
-  if(NULL == couple){
+  if(!couple){
     log_error("error: NULL value given , function: pair_isinitialized");
     return ERROR_NULL_VALUE_GIVEN ;
 

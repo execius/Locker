@@ -6,6 +6,11 @@ int make_config_line(char *line,
                      char* value
                      ,size_t str_maxlen)
 {
+
+  /*removing newline character*/
+  key[strcspn(key, "\n")] =  '\0';
+  value[strcspn(value, "\n")] =  '\0';
+
   if (NULL == line ||
     NULL == key ||
     NULL == value )
@@ -42,7 +47,7 @@ int write_config_line(
   if(NULL == (file = fopen(config_file,"a")))
     return ERROR_CANNOT_WRITE_TO_FILE;
 
-  if (0 < (err = fprintf(file, "%s\n",line)))
+  if (0 > (err = fprintf(file, "%s\n",line)))
   {
     log_error("write_config_line: error occurred writing to the file\n");
     fclose(file);
@@ -66,6 +71,7 @@ int write_config_pair(
     log_error(
     "uninitialized pair given ,funtion :write_config_pair"
     );
+    return errno;
   }
 
 
@@ -89,8 +95,8 @@ int write_array_of_pairs(
   size_t line_maxlen,
   size_t path_maxlen)
 {
-  int i = 0;
-  while (i++ < number_of_configs) {
+  int i = 0;  
+  while (i < number_of_configs) {
     /*just looping to write each pair */
 
     if (SUCCESS != write_config_pair(
@@ -101,6 +107,7 @@ int write_array_of_pairs(
       path_maxlen
     ))
     return  errno;
+    i++;
     }
   return SUCCESS;
 }

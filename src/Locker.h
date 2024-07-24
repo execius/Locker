@@ -155,14 +155,50 @@ int testlogin(void){
   fgets(password,MAXLEN,stdin);
   char *username = malloc(MAXLEN*sizeof(char*));
   fgets(username,MAXLEN,stdin);
-  // if ( SUCCESS != (err = change_pass(PWD,password,username,MAXLEN,SHA256_HASH_SIZE_HEX,SHA256_SALT_SIZE,SHA256_HASH_SIZE_HEX,SHA256_SALT_SIZE_HEX)))
-  //   return err;
-  // if ( SUCCESS != (err = make_user(PWD,password,username,MAXLEN,SHA256_HASH_SIZE_HEX,SHA256_SALT_SIZE,SHA256_HASH_SIZE_HEX,SHA256_SALT_SIZE_HEX)))
-  //   return err;
   if (SUCCESS != (err = login(PWD,username,password,MAXLEN,SHA256_HASH_SIZE_BYTES,SHA256_SALT_SIZE,SHA256_HASH_SIZE_HEX,SHA256_SALT_SIZE_HEX)))
     return err;
   free(password);
   free(username);
 
  return SUCCESS;
+}
+
+int testconfwriter(void){
+  pair *array[NUMBER_OF_CONFIGS] ;
+  for(int i = 0 ; i<NUMBER_OF_CONFIGS;i++){
+    array[i] = malloc(sizeof(pair));
+    initialize_pair(array[i]);
+  }
+
+
+  for(int i = 0 ; i<NUMBER_OF_CONFIGS;i++){
+    printf("key>");
+    fgets(array[i]->key,MAXLEN,stdin);
+    printf("value>");
+    fgets(array[i]->value,MAXLEN,stdin);
+  }
+
+  if (SUCCESS != write_array_of_pairs(
+        "config.txt",
+        array,
+        NUMBER_OF_CONFIGS,
+        MAXLEN,
+        LINE_MAX_LENGHT,
+        LINE_MAX_LENGHT)){
+    for(int i = 0 ; i<NUMBER_OF_CONFIGS;i++){
+      free_pair(array[i]);
+      free(array[i]);
+    }
+    return errno;
+  }
+  for(int i = 0 ; i<NUMBER_OF_CONFIGS;i++){
+      free_pair(array[i]);
+      free(array[i]);
+    }
+
+
+  return errno;
+
+  return SUCCESS;
+
 }
