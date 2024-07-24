@@ -1,13 +1,21 @@
 #include "config_writer.h"
-int make_config_line(char *line,char *key,char* value,size_t str_maxlen){
+/*take a key and a value and makes a parsable 
+ line out of them  */
+int make_config_line(char *line,
+                     char *key,
+                     char* value
+                     ,size_t str_maxlen)
+{
   if (NULL == line ||
     NULL == key ||
     NULL == value )
-    return ERROR_NULL_VALUE_GIVEN;
+    return ERROR_NULL_VALUE_GIVEN; 
   if(0 > sprintf(line, "#%s=%s;", key,value))
     return ERROR_STDLIB_FUNTION_FAILURE;;
   return SUCCESS;
 }
+/*takes a string config line and writes it 
+ to a config file*/
 int write_config_line(
   char *config_file,
   char *line
@@ -21,7 +29,8 @@ int write_config_line(
       "null string given , in funtion : write_config_line"
     );
     return ERROR_NULL_VALUE_GIVEN;
-  }
+  }/*just checking for null values*/
+
   if (SUCCESS != file_exists(config_file
                              ,path_maxlen)){
     log_error(
@@ -29,7 +38,8 @@ int write_config_line(
     );
     return ERROR_FILE_DOESNT_EXIST;
   }
-if(NULL == (file = fopen(config_file,"a")))
+
+  if(NULL == (file = fopen(config_file,"a")))
     return ERROR_CANNOT_WRITE_TO_FILE;
 
   if (0 < (err = fprintf(file, "%s\n",line)))
@@ -41,7 +51,8 @@ if(NULL == (file = fopen(config_file,"a")))
   fclose(file);
   return SUCCESS;
 }
-
+/*using the previous funcs , writes a pair struct 
+ to a config file */
 int write_config_pair(
   char *config_file,
   pair *couple,
@@ -56,11 +67,42 @@ int write_config_pair(
     "uninitialized pair given ,funtion :write_config_pair"
     );
   }
+
+
   if (SUCCESS != make_config_line((char*)line,couple->key,couple->value,str_maxlen))
     return errno;
+
   if (SUCCESS != write_config_line(config_file,(char *)line,line_maxlen,path_maxlen))
     return errno;
+
+
   return SUCCESS;
   }
+/* this function writes an array of pair structs into a file
+ in the config format of this program*/
+
+int write_array_of_pairs(
+  char *user_config_file ,
+  pair **array_of_pairs,
+  int number_of_configs,
+  size_t str_maxlen,
+  size_t line_maxlen,
+  size_t path_maxlen)
+{
+  int i = 0;
+  while (i++ < number_of_configs) {
+    /*just looping to write each pair */
+
+    if (SUCCESS != write_config_pair(
+      user_config_file,
+      *(array_of_pairs+i),
+      str_maxlen,
+      line_maxlen,
+      path_maxlen
+    ))
+    return  errno;
+    }
+  return SUCCESS;
+}
 
 

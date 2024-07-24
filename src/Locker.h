@@ -166,5 +166,3 @@ int testlogin(void){
 
  return SUCCESS;
 }
-
-
