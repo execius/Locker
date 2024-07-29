@@ -9,8 +9,9 @@
 
 
 
-//requests the stuff in a array from the user and returns an array that includes the user answer
-int getinfo(char** listofwantedinfo , int numberofinfos , int maxlengh , char **listofanswers);
-char **initialize(void);
+int getinfo(char** listofwantedinfo ,
+            int numberofinfos , 
+            int maxlengh ,
+            pair **listofanswers);
 
 #endif

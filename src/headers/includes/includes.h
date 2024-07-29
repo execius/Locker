@@ -16,10 +16,10 @@
 #include <assert.h>
 
 #include "eror_handling.h"
-#include "initialize.h"
 #include "defined_values.h"
 #include "account_utils.h"
 #include "pair_utils.h"
+#include "initialize.h"
 #include "config_parser.h"
 #include "account_json.h"
 #include "encryptdecrypt.h"

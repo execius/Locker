@@ -13,7 +13,7 @@ int hash_sha256(
   // Initialize the context with the hash function
   if (1 != EVP_DigestInit_ex(
             mdctx,
-            EVP_sha256()
+            EVP_sha256(),
             NULL))
     return handleErrors();
 
