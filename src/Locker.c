@@ -1,6 +1,6 @@
 #include "Locker.h"
 int  main(void){
-  testconfwriter();
+  testenc();
   printf("%d\n",errno);
   return 0;
     } 

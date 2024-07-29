@@ -128,12 +128,13 @@ int testhash(void){
 
 int testenc(void){
   int err = 0;
-  const unsigned char* plain = (const unsigned char*)"hoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooola";
+  const unsigned char* plain = (const unsigned char*)"hoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooola";
   unsigned char key [32];
   unsigned char cipher[MAX_CIPHER_SIZE];
   unsigned char iv[16];
-  if (!RAND_bytes(key, sizeof(key))) return handleErrors();
-  if (!RAND_bytes(iv, sizeof(iv))) return handleErrors();
+  // if (!RAND_bytes(key, sizeof(key))) return handleErrors();
+    if (!RAND_bytes(iv, sizeof(iv))) return handleErrors();
+  derive_key("lulz",iv,sizeof(iv),3,key,sizeof(key));
   if (SUCCESS != (err = encrypt_aes256(plain,MAXLEN,key,iv,cipher)) )
     return err;
   printf("Ciphertext is:\n");
@@ -142,7 +143,12 @@ int testenc(void){
   }
   printf("\n");
   unsigned char plaintxt[MAXLEN];
-  decrypt_aes256(cipher, MAX_CIPHER_SIZE, key,iv, plaintxt);
+  char password[32];
+  unsigned char key2[32];
+  fgets(password,32,stdin);
+  password[strcspn(password, "\n")] =  '\0';
+  derive_key(password,iv,sizeof(iv),3,key2,sizeof(key)); 
+  decrypt_aes256(cipher, MAX_CIPHER_SIZE, key2,iv, plaintxt);
   printf("\n\n\n\nplaintext : %s\n",plaintxt);
   
   return SUCCESS;
