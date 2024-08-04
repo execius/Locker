@@ -218,7 +218,6 @@ int testinitialize(void){
           MAXLEN,
           pwd)))
     return err;
-  printf("%s \n %s \n\n",users_path,configs_path);
   if (SUCCESS != (err = initialize(
       configs_path,
       users_path,

@@ -48,6 +48,7 @@ if (!users_directory || !username || !password ){
                             username,
                             str_maxlen)){
     log_error("eror while making new user : user already exists");
+    abort();
     return ERROR_REGISTER_USER_EXISTS;
   }
 

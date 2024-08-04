@@ -4,6 +4,8 @@
 #define DEFINED_VALS
 
 #define pwd getenv("PWD")
+#define home getenv("HOME")
+
 enum constant_values{
   NUMBER_OF_CONFIGS =1,
   NUMBEROFINFO = 4, //number of infos in the accounts struct

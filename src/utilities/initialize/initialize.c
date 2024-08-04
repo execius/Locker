@@ -21,11 +21,6 @@ int getinfo(const char* listofwantedinfo[] ,
   }
   //putting the values in the pair couple
   for (int i = 0 ; i < numberofinfos ;i++){
-    listofanswers[i] = malloc(sizeof(pair));
-    if(!listofwantedinfo)
-        return ERROR_MEMORY_ALLOCATION;
-    if(SUCCESS != initialize_pair(listofanswers[i]))
-      return errno;
     printf("\n %s > ",listofwantedinfo[i]);
     fgets(listofanswers[i]->value,maxlengh,stdin);
 
@@ -44,7 +39,10 @@ int getinfo(const char* listofwantedinfo[] ,
   }
   return SUCCESS;
 }
-
+/* this funtion is supposed to initialize a new user 
+ * it asks for credentials and sets the user up
+ * then asks for the prefered configs and writes 
+   them to the user config file*/
 int initialize(char *config_folder,
                char *users_folder,
                const char *list_of_wanted_inf[MAXLEN],
@@ -58,21 +56,24 @@ int initialize(char *config_folder,
                size_t path_maxlen
                )
 {
-  int err = 0;
+  int err = 0;//for error checking
+  //checking for nulls
   if(!config_folder || !list_of_wanted_inf)
     return ERROR_NULL_VALUE_GIVEN;
+
   char *password = malloc(maxlengh*sizeof(char));
   char *username = malloc(maxlengh*sizeof(char));
   char *config_file = malloc(maxlengh*sizeof(char));
-  
+ //check if malloc failed 
   if (!password || !username )
     return ERROR_MEMORY_ALLOCATION;
-
+  //getting the creds
   printf("username> ");
   fgets(username,MAXLEN,stdin);
 
   printf("password> ");
   fgets(password,MAXLEN,stdin);
+  //making the user
 if (SUCCESS != (err =
   make_user(users_folder,
             password,
@@ -85,16 +86,24 @@ if (SUCCESS != (err =
     return err;   
 
 
+  /*this will be used to store the configs before writing them*/
   pair **config_couples =malloc(number_of_inf*sizeof(pair*));
   if(!config_couples)
     return ERROR_MEMORY_ALLOCATION;
-
+  /*initializing the structs in the array */
+ if(SUCCESS != 
+    (err = init_pair_array(config_couples,
+                               number_of_inf)))
+    return err;
+  /*getting the configs from user into the array*/
   if (SUCCESS != (err =getinfo(list_of_wanted_inf,
           number_of_inf,
           maxlengh,
           config_couples)))
     return err;
 
+  /*making the filepath to the user configs
+   * the_general_configs_path/username */
   if (SUCCESS != (err = make_file_path(
     config_file,
     config_folder,
@@ -103,6 +112,7 @@ if (SUCCESS != (err =
   )))
     return err;
 
+  /*writing the configs*/
   if (SUCCESS != (err = write_array_of_pairs(config_file,
                        config_couples,
                        number_of_inf,
@@ -110,9 +120,12 @@ if (SUCCESS != (err =
                        line_maxlen,
                        path_maxlen)))
     return err;
-  for (int i = 0 ; i < number_of_inf ;i++)
-    if(!config_couples[i] )
-      free_pair(config_couples[i]) ;
+  /*freeing the structs */
+ if(SUCCESS != 
+    (err = free_pair_array(config_couples,
+                               number_of_inf)))
+    return err;
+  
   free(username);
   free(password);
   free(config_file);

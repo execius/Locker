@@ -29,6 +29,11 @@ int pair_isinitialised(pair *couple);
 
 int free_pair(pair* couple);
 
-
+/*frees an array of pair*/
+int free_pair_array(pair **pairs,
+                    int number_of_pairs);
+/*initialize an array of pairs*/
+int init_pair_array(pair **pairs,
+                    int number_of_pairs);
 
 #endif//PAIR_UTILS_H
