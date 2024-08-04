@@ -28,7 +28,6 @@ if (!users_directory || !username || !password ){
     return ERROR_TOO_LONG_STRING;
 
 
-  size_t err = 0;
   unsigned char bin_salt[bin_salt_len];
   unsigned char bin_hash[bin_hash_len];
   unsigned char hex_salt[hex_salt_len];
@@ -40,9 +39,9 @@ if (!users_directory || !username || !password ){
   if (!RAND_bytes(bin_salt, bin_salt_len)) return handleErrors();
 
   /*making  the path to the file like .../userdirect/username*/
-  if ( SUCCESS != (err = make_file_path(
-    path_userfile,users_directory,username,str_maxlen)))
-    return err;
+  if ( SUCCESS != make_file_path(
+    path_userfile,users_directory,username,str_maxlen))
+    return errno;
 
   /*checking if there's already a user with that username*/
   if(SUCCESS == user_exists(users_directory,
@@ -58,18 +57,19 @@ if (!users_directory || !username || !password ){
   }
 
   /*hashing the password*/
-  if (SUCCESS != 
-    (err = hash_sha256(password,
-                       bin_salt,bin_hash))){
-    return err;}
+  if (SUCCESS != hash_sha256(password,
+                             bin_salt,bin_hash))
+  {
+    return errno;}
 
 /*converting hash and password to hex*/
   binary_to_hex(bin_salt,SHA256_SALT_SIZE,hex_salt);
   binary_to_hex(bin_hash,SHA256_HASH_SIZE_BYTES,hex_hash);
 
 /*putting them in the user file*/
-  if ((err = fprintf(file, "%s%s", hex_salt, hex_hash))<0
-  ) {
+  fprintf(file, "%s%s", hex_salt, hex_hash);
+  if (errno < 0) 
+  {
 
     log_error("user_make: error occurred writing to the file\n");
     fclose(file);

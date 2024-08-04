@@ -7,7 +7,7 @@ int make_config_line(
     char *key,
     char* value,
     size_t str_maxlen
-    );
+        );
 int write_config_line(char *config_file,
     char *line
     ,size_t line_maxlen

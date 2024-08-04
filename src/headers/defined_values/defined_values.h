@@ -1,9 +1,11 @@
-#ifndef DEFINED_VALUES
-#define DEFINED_VALUES
+#include "includes.h"
+#ifndef DEFINED_VALS
 
+#define DEFINED_VALS
 
+#define pwd getenv("PWD")
 enum constant_values{
-  NUMBER_OF_CONFIGS = 3,
+  NUMBER_OF_CONFIGS =1,
   NUMBEROFINFO = 4, //number of infos in the accounts struct
   USERINDEX = 0,
   EMAILINDEX = 1,
@@ -23,6 +25,11 @@ enum constant_values{
 
 };
 
+extern const char *list_of_wanted_inf[];
+int define_paths(char *users_folder,
+                 char *configs_folder,
+                 size_t maxlen,
+                 char *PWD);
+#endif // !DEFINED_VALS
 
 
-#endif 

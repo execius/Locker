@@ -36,19 +36,18 @@ int file_exists(const char *path , size_t path_maxlen)
 }
 
 /*checking if a user exists by checking if the user 
-  has a file in the directory of users*/
+  has a file in the dirctory of users*/
 int user_exists(const char *users_path,
                        const char *username,
                        size_t str_maxlen){
-  int err ;
   char pathtofile[2*str_maxlen];
   /*making  the path to the file like .../userdirect/username*/
-  if ( SUCCESS != (err = make_file_path(
-    pathtofile,users_path,username,str_maxlen)))
-    return err;
+  if ( SUCCESS != make_file_path(
+    pathtofile,users_path,username,str_maxlen))
+    return errno;
 
   if(SUCCESS != file_exists(pathtofile,2*str_maxlen)){
-return ERROR_USER_DOESNT_EXIST;
+    return errno;
   }
   return SUCCESS;
 }

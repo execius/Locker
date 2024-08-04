@@ -1,6 +1,7 @@
 #include "Locker.h"
 int  main(void){
-  testenc();
-  printf("%d\n",errno);
+  int err;
+  err = testinitialize();
+  printf("%d\n",err);
   return 0;
     } 

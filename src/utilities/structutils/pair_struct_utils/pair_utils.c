@@ -43,6 +43,8 @@ int free_pair(pair* couple){
   if(NULL != couple->value)
     free(couple->value);
 
+  if(NULL != couple)
+    free(couple);
   return SUCCESS;
 }
 

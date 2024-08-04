@@ -15,8 +15,8 @@
 #include <unistd.h>
 #include <assert.h>
 
-#include "eror_handling.h"
 #include "defined_values.h"
+#include "eror_handling.h"
 #include "account_utils.h"
 #include "pair_utils.h"
 #include "initialize.h"

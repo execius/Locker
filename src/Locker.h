@@ -8,7 +8,7 @@
 //   }
 //    return SUCCESS;
 // }
-#define PWD getenv("PWD")
+
 int testeditstruct(void){
   account accc;
   if(initialize_account(&accc) == SUCCESS ){
@@ -161,7 +161,7 @@ int testlogin(void){
   fgets(password,MAXLEN,stdin);
   char *username = malloc(MAXLEN*sizeof(char*));
   fgets(username,MAXLEN,stdin);
-  if (SUCCESS != (err = login(PWD,username,password,MAXLEN,SHA256_HASH_SIZE_BYTES,SHA256_SALT_SIZE,SHA256_HASH_SIZE_HEX,SHA256_SALT_SIZE_HEX)))
+  if (SUCCESS != (err = login(pwd,username,password,MAXLEN,SHA256_HASH_SIZE_BYTES,SHA256_SALT_SIZE,SHA256_HASH_SIZE_HEX,SHA256_SALT_SIZE_HEX)))
     return err;
   free(password);
   free(username);
@@ -207,4 +207,33 @@ int testconfwriter(void){
 
   return SUCCESS;
 
+}
+int testinitialize(void){
+  int err = 0;
+  char *configs_path = malloc((2*MAXLEN)*sizeof(char));
+  char *users_path = malloc((2*MAXLEN)*sizeof(char));
+  if (SUCCESS != (err = 
+        define_paths(users_path,
+          configs_path,
+          MAXLEN,
+          pwd)))
+    return err;
+  printf("%s \n %s \n\n",users_path,configs_path);
+  if (SUCCESS != (err = initialize(
+      configs_path,
+      users_path,
+      list_of_wanted_inf,
+      NUMBER_OF_CONFIGS,
+      MAXLEN,
+      SHA256_HASH_SIZE_BYTES,
+      SHA256_SALT_SIZE,
+      SHA256_HASH_SIZE_HEX,
+      SHA256_SALT_SIZE_HEX,
+      LINE_MAX_LENGHT,
+      LINE_MAX_LENGHT
+      )))
+    return err;
+  free(users_path);
+  free(configs_path);
+  return SUCCESS;
 }

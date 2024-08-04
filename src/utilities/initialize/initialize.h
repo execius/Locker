@@ -8,10 +8,22 @@
 #define INITIALIZE_H
 
 
-
-int getinfo(char** listofwantedinfo ,
+int getinfo(const char* listofwantedinfo[] ,
             int numberofinfos , 
             int maxlengh ,
             pair **listofanswers);
 
+
+int initialize(char *config_folder,
+               char *users_folder,
+               const char *list_of_wanted_inf[MAXLEN],
+               int number_of_inf,
+               int maxlengh,
+               size_t bin_hash_len,
+               size_t bin_salt_len,
+               size_t hex_hash_len,
+               size_t hex_salt_len,
+               size_t line_maxlen,
+               size_t path_maxlen
+               );
 #endif
