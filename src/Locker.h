@@ -210,17 +210,7 @@ int testconfwriter(void){
 }
 int testinitialize(void){
   int err = 0;
-  char *configs_path = malloc((2*MAXLEN)*sizeof(char));
-  char *users_path = malloc((2*MAXLEN)*sizeof(char));
-  if (SUCCESS != (err = 
-        define_paths(users_path,
-          configs_path,
-          MAXLEN,
-          pwd)))
-    return err;
-  if (SUCCESS != (err = initialize(
-      configs_path,
-      users_path,
+    if (SUCCESS != (err = initialize(
       list_of_wanted_inf,
       NUMBER_OF_CONFIGS,
       MAXLEN,
@@ -232,7 +222,5 @@ int testinitialize(void){
       LINE_MAX_LENGHT
       )))
     return err;
-  free(users_path);
-  free(configs_path);
   return SUCCESS;
 }

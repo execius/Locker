@@ -12,6 +12,7 @@ int getinfo(const char* listofwantedinfo[] ,
             int maxlengh ,
             pair **listofanswers)
 {
+
   //error hamdling
   if (!listofanswers || !listofwantedinfo) {
     log_error(
@@ -43,9 +44,7 @@ int getinfo(const char* listofwantedinfo[] ,
  * it asks for credentials and sets the user up
  * then asks for the prefered configs and writes 
    them to the user config file*/
-int initialize(char *config_folder,
-               char *users_folder,
-               const char *list_of_wanted_inf[MAXLEN],
+int initialize(const char *list_of_wanted_inf[MAXLEN],
                int number_of_inf,
                int maxlengh,
                size_t bin_hash_len,
@@ -57,16 +56,26 @@ int initialize(char *config_folder,
                )
 {
   int err = 0;//for error checking
-  //checking for nulls
-  if(!config_folder || !list_of_wanted_inf)
-    return ERROR_NULL_VALUE_GIVEN;
-
-  char *password = malloc(maxlengh*sizeof(char));
-  char *username = malloc(maxlengh*sizeof(char));
-  char *config_file = malloc(maxlengh*sizeof(char));
+  //
+  char *config_folder = malloc((2*MAXLEN)*sizeof(char));
+  char *users_folder  = malloc((2*MAXLEN)*sizeof(char));
+  char *password      = malloc(maxlengh*sizeof(char));
+  char *username      = malloc(maxlengh*sizeof(char));
+  char *config_file   = malloc(maxlengh*sizeof(char));
  //check if malloc failed 
-  if (!password || !username )
+  if (!password || !username || 
+    !config_folder || !users_folder)
     return ERROR_MEMORY_ALLOCATION;
+  
+
+  /*initiating the configs and users paths*/
+  if (SUCCESS != (err = 
+    define_paths(users_folder,
+                 config_folder,
+                 MAXLEN,
+                 pwd)))
+    return err;
+
   //getting the creds
   printf("username> ");
   fgets(username,MAXLEN,stdin);
@@ -130,6 +139,8 @@ if (SUCCESS != (err =
   free(password);
   free(config_file);
   free(config_couples);
+  free(config_folder);
+  free(users_folder);
 
   return SUCCESS;
   
