@@ -35,7 +35,7 @@ int getinfo(const char* listofwantedinfo[] ,
             listofwantedinfo[i],
             maxlengh);
     //sanitizing the content
-    listofanswers[i]->key[strcspn(listofanswers[i]->key, "\n")] =  '\0';
+    listofanswers[i]->key  [strcspn(listofanswers[i]->key  , "\n")] =  '\0';
     listofanswers[i]->value[strcspn(listofanswers[i]->value, "\n")] =  '\0';
   }
   return SUCCESS;
@@ -52,11 +52,13 @@ int initialize(const char *list_of_wanted_inf[MAXLEN],
                size_t hex_hash_len,
                size_t hex_salt_len,
                size_t line_maxlen,
-               size_t path_maxlen
+               size_t path_maxlen,
+               int numbr_of_dirs
                )
 {
   int err = 0;//for error checking
   //
+  char *Locker_folder = malloc(2*MAXLEN*sizeof(char));
   char *config_folder = malloc((2*MAXLEN)*sizeof(char));
   char *users_folder  = malloc((2*MAXLEN)*sizeof(char));
   char *password      = malloc(maxlengh*sizeof(char));
@@ -70,12 +72,20 @@ int initialize(const char *list_of_wanted_inf[MAXLEN],
 
   /*initiating the configs and users paths*/
   if (SUCCESS != (err = 
-    define_paths(users_folder,
+    define_paths(Locker_folder,
+                 users_folder,
                  config_folder,
                  MAXLEN,
                  pwd)))
     return err;
 
+  char *dirs[]=
+    {Locker_folder,config_folder,users_folder};
+  if(SUCCESS != 
+    (err = init_dirs(dirs,numbr_of_dirs,maxlengh)))
+  {
+    return err;
+  }
   //getting the creds
   printf("username> ");
   fgets(username,MAXLEN,stdin);
@@ -141,8 +151,49 @@ if (SUCCESS != (err =
   free(config_couples);
   free(config_folder);
   free(users_folder);
+  free(Locker_folder);
 
   return SUCCESS;
   
 }
 
+
+/*checks if the necessary directories exist
+ * if not it creates them*/
+
+int init_dirs(
+  char **dirs_paths,
+  int number_of_dirs,
+  size_t maxlengh)
+{
+  int err = 0;
+  if(!dirs_paths){
+    log_error("funtion init_dirs");
+    return ERROR_NULL_VALUE_GIVEN;
+  }
+  mode_t mode = S_IRWXU;
+  for (int i = 0;i < number_of_dirs;i++)
+  {
+    /*checking the str lenght is in limits*/
+    if('\0' != dirs_paths[i][strnlen(dirs_paths[i],maxlengh)]){
+      log_error("eror in funtion init_dirs");
+      return ERROR_TOO_LONG_STRING;
+    }
+    err = directory_exists(dirs_paths[i],maxlengh);
+    switch (err) {
+      case SUCCESS:
+        continue;
+        break;
+      case ERROR_DIRECTORY_DOESNT_EXIST:
+        printf("%s\n",dirs_paths[i]);
+        mkdir(dirs_paths[i],mode);
+        continue;
+        break;
+      default:
+        return err;
+        break;
+    }
+  }
+  return SUCCESS;
+
+}

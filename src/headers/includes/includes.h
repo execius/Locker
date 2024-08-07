@@ -14,6 +14,7 @@
 #include <b64/cencode.h>
 #include <unistd.h>
 #include <assert.h>
+#include <sys/stat.h>
 
 #include "defined_values.h"
 #include "eror_handling.h"
@@ -30,6 +31,7 @@
 #include "make_user.h"
 #include "change_pass.h"
 #include "config_writer.h"
+#include "arrays_counters.h"
 
 
 #endif // !INCLUDES_H

@@ -219,7 +219,8 @@ int testinitialize(void){
       SHA256_HASH_SIZE_HEX,
       SHA256_SALT_SIZE_HEX,
       LINE_MAX_LENGHT,
-      LINE_MAX_LENGHT
+      LINE_MAX_LENGHT,
+      NUMBER_OF_DIRS
       )))
     return err;
   return SUCCESS;
