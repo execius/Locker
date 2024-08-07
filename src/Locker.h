@@ -157,15 +157,28 @@ int testenc(void){
 
 int testlogin(void){
   int err = 0;
-  char *password = malloc(MAXLEN*sizeof(char*));
-  fgets(password,MAXLEN,stdin);
+  char *Locker_folder = malloc(2*MAXLEN*sizeof(char));
+  char *config_folder = malloc((2*MAXLEN)*sizeof(char));
+  char *users_folder  = malloc((2*MAXLEN)*sizeof(char));
   char *username = malloc(MAXLEN*sizeof(char*));
+  char *password = malloc(MAXLEN*sizeof(char*));
+  if (SUCCESS != (err = 
+    define_paths(Locker_folder,
+                 users_folder,
+                 config_folder,
+                 MAXLEN,
+                 pwd)))
+    return err;
   fgets(username,MAXLEN,stdin);
-  if (SUCCESS != (err = login(pwd,username,password,MAXLEN,SHA256_HASH_SIZE_BYTES,SHA256_SALT_SIZE,SHA256_HASH_SIZE_HEX,SHA256_SALT_SIZE_HEX)))
+  fgets(password,MAXLEN,stdin);
+  if (SUCCESS != (err = login(users_folder,username,password,MAXLEN,SHA256_HASH_SIZE_BYTES,SHA256_SALT_SIZE,SHA256_HASH_SIZE_HEX,SHA256_SALT_SIZE_HEX)))
     return err;
   free(password);
   free(username);
 
+  free(config_folder);
+  free(users_folder);
+  free(Locker_folder);
  return SUCCESS;
 }
 

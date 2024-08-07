@@ -166,11 +166,14 @@ int init_dirs(
   int number_of_dirs,
   size_t maxlengh)
 {
+
   int err = 0;
+  /*check for null*/
   if(!dirs_paths){
     log_error("funtion init_dirs");
     return ERROR_NULL_VALUE_GIVEN;
   }
+  /*the mode of creation of directories */
   mode_t mode = S_IRWXU;
   for (int i = 0;i < number_of_dirs;i++)
   {
@@ -179,17 +182,20 @@ int init_dirs(
       log_error("eror in funtion init_dirs");
       return ERROR_TOO_LONG_STRING;
     }
+    /*check if dir exists and store return value in err*/
     err = directory_exists(dirs_paths[i],maxlengh);
     switch (err) {
+      /*if it exists continue to the next*/
       case SUCCESS:
         continue;
         break;
       case ERROR_DIRECTORY_DOESNT_EXIST:
-        printf("%s\n",dirs_paths[i]);
+        /*if it doesnt create it*/
         mkdir(dirs_paths[i],mode);
         continue;
         break;
       default:
+        /*report other behaviors*/
         return err;
         break;
     }

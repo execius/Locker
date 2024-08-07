@@ -1,4 +1,4 @@
-
+/*read the .c file*/
 #ifndef ARRS_CNTS
 
 #define ARRS_CNTS
