@@ -155,31 +155,33 @@ int testenc(void){
 
 }
 
-int testlogin(void){
-  int err = 0;
+int simple_login(char *username,char *password){
+  if(!username || !password){
+    return errno = ERROR_NULL_VALUE_GIVEN;
+  }
   char *Locker_folder = malloc(2*MAXLEN*sizeof(char));
   char *config_folder = malloc((2*MAXLEN)*sizeof(char));
   char *users_folder  = malloc((2*MAXLEN)*sizeof(char));
-  char *username = malloc(MAXLEN*sizeof(char*));
-  char *password = malloc(MAXLEN*sizeof(char*));
-  if (SUCCESS != (err = 
+  if (SUCCESS !=
     define_paths(Locker_folder,
                  users_folder,
                  config_folder,
                  MAXLEN,
-                 pwd)))
-    return err;
-  fgets(username,MAXLEN,stdin);
-  fgets(password,MAXLEN,stdin);
-  if (SUCCESS != (err = login(users_folder,username,password,MAXLEN,SHA256_HASH_SIZE_BYTES,SHA256_SALT_SIZE,SHA256_HASH_SIZE_HEX,SHA256_SALT_SIZE_HEX)))
-    return err;
-  free(password);
-  free(username);
+                 pwd))
+    return errno;
+login(users_folder,
+    username,
+    password,
+    MAXLEN,
+    SHA256_HASH_SIZE_BYTES,
+    SHA256_SALT_SIZE,
+    SHA256_HASH_SIZE_HEX,
+    SHA256_SALT_SIZE_HEX);
 
-  free(config_folder);
-  free(users_folder);
-  free(Locker_folder);
- return SUCCESS;
+free(config_folder);
+free(users_folder);
+free(Locker_folder);
+return  errno ;
 }
 
 int testconfwriter(void){
@@ -221,9 +223,8 @@ int testconfwriter(void){
   return SUCCESS;
 
 }
-int testinitialize(void){
-  int err = 0;
-    if (SUCCESS != (err = initialize(
+int simple_initialize(void){
+    if (SUCCESS !=  initialize(
       list_of_wanted_inf,
       NUMBER_OF_CONFIGS,
       MAXLEN,
@@ -234,7 +235,7 @@ int testinitialize(void){
       LINE_MAX_LENGHT,
       LINE_MAX_LENGHT,
       NUMBER_OF_DIRS
-      )))
-    return err;
-  return SUCCESS;
+      ))
+    return errno;
+  return (errno = SUCCESS);
 }

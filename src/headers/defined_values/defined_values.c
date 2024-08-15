@@ -10,32 +10,30 @@ int define_paths(char *Locker_folder,
                  size_t maxlen,
                  char *PWD)
 {
-  int err = 0;
-
-  if(SUCCESS!= (err= 
+  if(SUCCESS!= 
     make_file_path(
       configs_folder,PWD,
       ".Locker/configs",
       maxlen
-    )))
-    return err;
-  if(SUCCESS!= (err= 
+    ))
+    return errno;
+  if(SUCCESS!=  
     make_file_path(
       Locker_folder,PWD,
       ".Locker",
       maxlen
-    )))
-    return err;
+    ))
+    return errno;
 
-  if(SUCCESS!= (err= 
+  if(SUCCESS!= 
     make_file_path(
       users_folder,PWD,
       ".Locker/users",
       maxlen
-    )))
-    return err;
+    ))
+    return errno;
 
   
-  return SUCCESS;
+  return errno = SUCCESS;
 
 }

@@ -24,38 +24,44 @@ int account_to_json(account *accc, cJSON *json_obj ){
         break;
       case EMAILINDEX:
         if (NULL == cJSON_AddStringToObject(json_obj, "email", *(accc->array+EMAILINDEX))){
-          log_error("in funtion account_to_json , null value while adding a string to json object");
+          log_error("in funtion account_to_json ,\
+null value while adding a string to json object");
           return ERROR_JSON_ADDING_ITEM_TO_OBJ;/*checking for errors*/
         }
         break;
       case PASSWORDINDEX:
         if (NULL == cJSON_AddStringToObject(json_obj, "password", *(accc->array+PASSWORDINDEX))){
-          log_error("in funtion account_to_json , null value while adding a string to json object");
+          log_error("in funtion account_to_json ,\
+null value while adding a string to json object");
           return ERROR_JSON_ADDING_ITEM_TO_OBJ;/*checking for errors*/
         }
         break;
       case PLATFORMINDEX:
         if (NULL == cJSON_AddStringToObject(json_obj, "platform", *(accc->array+PLATFORMINDEX))){
-          log_error("in funtion account_to_json , null value while adding a string to json object");
+          log_error("in funtion account_to_json ,\
+null value while adding a string to json object");
           return ERROR_JSON_ADDING_ITEM_TO_OBJ;/*checking for errors*/
         }
         break;
       default:
-        log_error("in funtion account_to_json , index out of bounds while adding account info to json object");
+        log_error("in funtion account_to_json ,\
+index out of bounds while adding account info to json object");
         return ERROR_JSON_ADDING_ITEM_TO_OBJ;
 
     }
   }
   /*make the account number into an item in the json object*/
   if (cJSON_AddNumberToObject(json_obj, "accountnumber", *accc->accountnumber) == NULL){
-    log_error("in funtion account_to_json , null value while adding a integer to json object");
+    log_error("in funtion account_to_json ,\
+null value while adding a integer to json object");
     return ERROR_JSON_ADDING_ITEM_TO_OBJ;
   }
   return SUCCESS;
 }
 
 
-int json_to_account(cJSON *json_obj ,account *accc ){
+int json_to_account(cJSON *json_obj ,
+                    account *accc ){
   int error_tracker;
   /* cheking if the account object is initialized*/
   if(SUCCESS != (error_tracker = isinitialized(accc))){ 

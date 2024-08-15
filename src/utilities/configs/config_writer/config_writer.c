@@ -14,10 +14,10 @@ int make_config_line(char *line,
   if (NULL == line ||
     NULL == key ||
     NULL == value )
-    return ERROR_NULL_VALUE_GIVEN; 
+    return errno = ERROR_NULL_VALUE_GIVEN; 
   if(0 > sprintf(line, "#%s=%s;", key,value))
-    return ERROR_STDLIB_FUNTION_FAILURE;;
-  return SUCCESS;
+    return errno =ERROR_STDLIB_FUNTION_FAILURE;;
+  return errno = SUCCESS;
 }
 /*takes a string config line and writes it 
  to a config file*/
@@ -32,21 +32,21 @@ int write_config_line(
     log_error(
       "null string given , in funtion : write_config_line"
     );
-    return ERROR_NULL_VALUE_GIVEN;
+    return errno = ERROR_NULL_VALUE_GIVEN;
   }/*just checking for null values*/
 
 /*writing to the file*/
   if(NULL == (file = fopen(config_file,"a")))
-    return ERROR_CANNOT_WRITE_TO_FILE;
+    return errno = ERROR_CANNOT_WRITE_TO_FILE;
 
   if (0 > fprintf(file, "%s\n",line))\
   {
     log_error("write_config_line: error occurred writing to the file\n");
     fclose(file);
-    return ERROR_STDLIB_FUNTION_FAILURE;
+    return errno = ERROR_STDLIB_FUNTION_FAILURE;
   }
   fclose(file);
-  return SUCCESS;
+  return errno = SUCCESS;
 }
 /*using the previous funcs , writes a pair struct 
  to a config file */
@@ -57,10 +57,9 @@ int write_config_pair(
   size_t line_maxlen,
   size_t path_maxlen
 ){
-  int err = 0;
   char *line[2*str_maxlen+4];
 
-  if(SUCCESS != (err = pair_isinitialised(couple))){
+  if(SUCCESS !=  pair_isinitialised(couple)){
     log_error(
     "uninitialized pair given ,funtion :write_config_pair"
     );
@@ -68,14 +67,14 @@ int write_config_pair(
   }
 
 
-  if (SUCCESS != (err = make_config_line((char*)line,couple->key,couple->value,str_maxlen)))
-    return err;
+  if (SUCCESS != make_config_line((char*)line,couple->key,couple->value,str_maxlen))
+    return errno;
 
-  if (SUCCESS != (err = write_config_line(config_file,(char *)line,line_maxlen,path_maxlen)))
-    return err;
+  if (SUCCESS != write_config_line(config_file,(char *)line,line_maxlen,path_maxlen))
+    return errno;
 
 
-  return SUCCESS;
+  return errno = SUCCESS;
   }
 /* this function writes an array of pair structs into a file
  in the config format of this program*/
@@ -89,21 +88,20 @@ int write_array_of_pairs(
   size_t path_maxlen)
 {
   int i = 0; 
-  int err = 0;
   while (i < number_of_configs) {
     /*just looping to write each pair */
 
-    if (SUCCESS != (err = write_config_pair(
+    if (SUCCESS != write_config_pair(
       user_config_file,
       *(array_of_pairs+i),
       str_maxlen,
       line_maxlen,
       path_maxlen
-    )))
-      return  err;
+    ))
+      return  errno;
     i++;
   }
-  return SUCCESS;
+  return errno = SUCCESS;
 }
 
 

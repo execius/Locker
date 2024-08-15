@@ -26,7 +26,7 @@ int compare_creds(const char *credential ,
                          size_t len){
 
   if (0 != CRYPTO_memcmp(credential,userinput,len))
-    return ERROR_INVALID_CREDENTIALS;
-  return SUCCESS;
+    return (errno = ERROR_INVALID_CREDENTIALS);
+  return  errno =SUCCESS;
  }
 

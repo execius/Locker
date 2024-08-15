@@ -15,20 +15,21 @@ int encrypt_aes256(const unsigned char *plaintext,
 
   if(!ciphertext || !key || !iv || !plaintext){
     log_error("NULL in derive_key function");
-    return ERROR_NULL_VALUE_GIVEN;}
+    return ( errno = ERROR_NULL_VALUE_GIVEN);
+  }
   EVP_CIPHER_CTX *ctx;
   int len;
 
   // Create and initialize the context
   if (!(ctx = EVP_CIPHER_CTX_new()))
-    return handleErrors();
+    return (errno = handleErrors());
 
   // Initialize the encryption operation
   if (LIBSSL_SUCCESS != EVP_EncryptInit_ex(
                           ctx, 
                           EVP_aes_256_cbc(),
                           NULL, key, iv))
-    return handleErrors();
+    return (errno = handleErrors());
 
   /* Provide the message to be encrypted,
     and obtain the encrypted output*/
@@ -38,14 +39,14 @@ int encrypt_aes256(const unsigned char *plaintext,
                           &len,
                           plaintext,
                           plaintext_len))
-    handleErrors();
+    return (errno = handleErrors());
 
   // Finalize the encryption
   if (LIBSSL_SUCCESS != EVP_EncryptFinal_ex(
                           ctx, 
                           ciphertext + len,
                           &len))
-    return handleErrors();
+    return (errno = handleErrors());
 
   // Clean up
   EVP_CIPHER_CTX_free(ctx);
@@ -70,7 +71,7 @@ int decrypt_aes256(unsigned char *ciphertext,
 
   /* Create and initialise the context */
   if(!(ctx = EVP_CIPHER_CTX_new()))
-    handleErrors();
+    return (errno = handleErrors());
 
   /*
      * Initialise the decryption operation.
@@ -86,7 +87,8 @@ int decrypt_aes256(unsigned char *ciphertext,
                         ctx,
                         EVP_aes_256_cbc(),
                         NULL, key, iv))
-    return handleErrors();
+
+    return (errno = handleErrors());
 
   /*
      * Provide the message to be decrypted, and obtain the plaintext output.
@@ -98,8 +100,7 @@ int decrypt_aes256(unsigned char *ciphertext,
                         &len,   
                         ciphertext,
                         ciphertext_len))
-    return handleErrors();
-
+    return (errno = handleErrors());
   /*
      * Finalise the decryption. Further plaintext bytes may be written at
      * this stage.
@@ -108,7 +109,7 @@ int decrypt_aes256(unsigned char *ciphertext,
                         ctx,
                         plaintext + len,
                         &len))
-    return handleErrors();
+    return (errno = handleErrors());
 
   /* Clean up */
   EVP_CIPHER_CTX_free(ctx);
@@ -125,8 +126,9 @@ int derive_key(const char *password,
                int key_len) {
   if(!password || !salt || !key){
     log_error("NULL in derive_key function");
-    return ERROR_NULL_VALUE_GIVEN;}
-  return PKCS5_PBKDF2_HMAC(
+    return (errno = ERROR_NULL_VALUE_GIVEN);
+  }
+  return (errno = PKCS5_PBKDF2_HMAC(
     password, 
               strlen(password),
               salt, 
@@ -134,6 +136,6 @@ int derive_key(const char *password,
               iterations,
               EVP_sha256(),
               key_len,
-              key);
+              key));
 }
 

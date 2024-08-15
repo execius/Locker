@@ -8,28 +8,28 @@ int hash_sha256(
 {
   EVP_MD_CTX *mdctx;
   if (!(mdctx = EVP_MD_CTX_new()))
-    return  handleErrors();
+    return  errno = handleErrors();
 
   // Initialize the context with the hash function
   if (1 != EVP_DigestInit_ex(
             mdctx,
             EVP_sha256(),
             NULL))
-    return handleErrors();
+    return errno = handleErrors();
 
   // Add the salt
   if (1 != EVP_DigestUpdate(
             mdctx,
             salt,
             SHA256_SALT_SIZE)) 
-    return handleErrors();
+    return errno = handleErrors();
 
   // Add the password
   if (1 != EVP_DigestUpdate(
             mdctx,
             password,
             strlen(password))) 
-    return handleErrors();
+    return errno = handleErrors();
 
   // Finalize the hash
   unsigned int len;
@@ -37,9 +37,9 @@ int hash_sha256(
             mdctx,
             hash,
             &len))
-    return handleErrors();
+    return errno = handleErrors();
 
   // Clean up
   EVP_MD_CTX_free(mdctx);
-  return SUCCESS;
+  return errno = SUCCESS;
 }

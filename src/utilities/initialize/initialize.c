@@ -28,7 +28,7 @@ int getinfo(const char* listofwantedinfo[] ,
     if(2 > strlen(listofanswers[i]->value))
     {
       log_error("input string too short");
-      return ERROR_STR_TOO_SHORT;
+      return errno = ERROR_STR_TOO_SHORT;
     }
 
     strncpy(listofanswers[i]->key,
@@ -38,7 +38,7 @@ int getinfo(const char* listofwantedinfo[] ,
     listofanswers[i]->key  [strcspn(listofanswers[i]->key  , "\n")] =  '\0';
     listofanswers[i]->value[strcspn(listofanswers[i]->value, "\n")] =  '\0';
   }
-  return SUCCESS;
+  return errno = SUCCESS;
 }
 /* this funtion is supposed to initialize a new user 
  * it asks for credentials and sets the user up
@@ -56,8 +56,6 @@ int initialize(const char *list_of_wanted_inf[MAXLEN],
                int numbr_of_dirs
                )
 {
-  int err = 0;//for error checking
-  //
   char *Locker_folder = malloc(2*MAXLEN*sizeof(char));
   char *config_folder = malloc((2*MAXLEN)*sizeof(char));
   char *users_folder  = malloc((2*MAXLEN)*sizeof(char));
@@ -71,20 +69,20 @@ int initialize(const char *list_of_wanted_inf[MAXLEN],
   
 
   /*initiating the configs and users paths*/
-  if (SUCCESS != (err = 
+  if (SUCCESS != 
     define_paths(Locker_folder,
                  users_folder,
                  config_folder,
                  MAXLEN,
-                 pwd)))
-    return err;
+                 pwd))
+    return errno;
 
   char *dirs[]=
     {Locker_folder,config_folder,users_folder};
-  if(SUCCESS != 
-    (err = init_dirs(dirs,numbr_of_dirs,maxlengh)))
+  init_dirs(dirs,numbr_of_dirs,maxlengh);
+  if(SUCCESS !=errno )
   {
-    return err;
+    return errno;
   }
   //getting the creds
   printf("username> ");
@@ -93,7 +91,7 @@ int initialize(const char *list_of_wanted_inf[MAXLEN],
   printf("password> ");
   fgets(password,MAXLEN,stdin);
   //making the user
-if (SUCCESS != (err =
+if (SUCCESS != 
   make_user(users_folder,
             password,
             username,
@@ -101,49 +99,48 @@ if (SUCCESS != (err =
             bin_hash_len,
             bin_salt_len,
             hex_hash_len,
-            hex_salt_len)))
-    return err;   
+            hex_salt_len))
+    return errno;   
 
 
   /*this will be used to store the configs before writing them*/
   pair **config_couples =malloc(number_of_inf*sizeof(pair*));
   if(!config_couples)
-    return ERROR_MEMORY_ALLOCATION;
+    return errno = ERROR_MEMORY_ALLOCATION;
   /*initializing the structs in the array */
  if(SUCCESS != 
-    (err = init_pair_array(config_couples,
-                               number_of_inf)))
-    return err;
+    init_pair_array(config_couples,
+                               number_of_inf))
+    return errno;
   /*getting the configs from user into the array*/
-  if (SUCCESS != (err =getinfo(list_of_wanted_inf,
+  if (SUCCESS != getinfo(list_of_wanted_inf,
           number_of_inf,
           maxlengh,
-          config_couples)))
-    return err;
+          config_couples))
+    return errno;
 
   /*making the filepath to the user configs
    * the_general_configs_path/username */
-  if (SUCCESS != (err = make_file_path(
+  if (SUCCESS != make_file_path(
     config_file,
     config_folder,
     username,
     maxlengh
-  )))
-    return err;
+  ))
+    return errno;
 
   /*writing the configs*/
-  if (SUCCESS != (err = write_array_of_pairs(config_file,
+  if (SUCCESS != write_array_of_pairs(config_file,
                        config_couples,
                        number_of_inf,
                        maxlengh,
                        line_maxlen,
-                       path_maxlen)))
-    return err;
+                       path_maxlen))
+    return errno;
   /*freeing the structs */
- if(SUCCESS != 
-    (err = free_pair_array(config_couples,
-                               number_of_inf)))
-    return err;
+ if(SUCCESS != free_pair_array(config_couples,
+                               number_of_inf))
+    return errno;
   
   free(username);
   free(password);
@@ -153,7 +150,7 @@ if (SUCCESS != (err =
   free(users_folder);
   free(Locker_folder);
 
-  return SUCCESS;
+  return  errno = SUCCESS;
   
 }
 
@@ -167,11 +164,10 @@ int init_dirs(
   size_t maxlengh)
 {
 
-  int err = 0;
   /*check for null*/
   if(!dirs_paths){
     log_error("funtion init_dirs");
-    return ERROR_NULL_VALUE_GIVEN;
+    return errno = ERROR_NULL_VALUE_GIVEN;
   }
   /*the mode of creation of directories */
   mode_t mode = S_IRWXU;
@@ -180,11 +176,11 @@ int init_dirs(
     /*checking the str lenght is in limits*/
     if('\0' != dirs_paths[i][strnlen(dirs_paths[i],maxlengh)]){
       log_error("eror in funtion init_dirs");
-      return ERROR_TOO_LONG_STRING;
+      return errno = ERROR_TOO_LONG_STRING;
     }
     /*check if dir exists and store return value in err*/
-    err = directory_exists(dirs_paths[i],maxlengh);
-    switch (err) {
+    directory_exists(dirs_paths[i],maxlengh);
+    switch (errno) {
       /*if it exists continue to the next*/
       case SUCCESS:
         continue;
@@ -196,10 +192,10 @@ int init_dirs(
         break;
       default:
         /*report other behaviors*/
-        return err;
+        return errno;
         break;
     }
   }
-  return SUCCESS;
+  return errno =SUCCESS;
 
 }
