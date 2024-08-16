@@ -1,21 +1,35 @@
 #include "Locker.h"
+
+
 int main(int argc, char *argv[])
 { 
+  /*
+   * this handles the commandline arguments*/
+
+
+  /*keeps track of the commandline options */
   int c;
+  /*those will hold the values later for login*/
   char *username,*password;
   username = malloc(MAXLEN*sizeof(char)+1);
   password = malloc(MAXLEN*sizeof(char)+1);
+
+  /*flags to check if an option is given*/
   int uflg = 0, Pflg = 0, rflg = 0;
   int mflg = 0, vflg = 0,  pflg = 0;
   int iflg = 0;
+
+  /*getting commandline options and inceasing flags*/
   while ((c = getopt(argc, argv, ":u:P:ar:m:vp:i")) != -1) {
     switch(c) {    
       case 'u':
         uflg++;
+        /*if -u get username*/
         strncpy(username,optarg,MAXLEN);
         break;
       case 'P':
         Pflg++;
+        /*if -P get password*/
         strncpy(password,optarg,MAXLEN);
         break;
       case 'p':
@@ -33,6 +47,7 @@ int main(int argc, char *argv[])
       case 'i':
         iflg++;
         break;
+        /*misuse handling*/
       case ':':       
         fprintf(stderr,
                 "Option -%c requires an operand\n", optopt);
@@ -45,6 +60,9 @@ int main(int argc, char *argv[])
         break;
     }
   }
+  /*handling flags */
+
+
   switch (vflg) {
     case 0:
       break;
