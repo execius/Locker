@@ -166,6 +166,7 @@ int accountdup(account *src ,account *dest){
   return SUCCESS;
 }
 
+
 int printaccount(account *accc){
 
   if(SUCCESS != isinitialized(accc)){//checking if the account given id uninitialized
@@ -182,4 +183,26 @@ int printaccount(account *accc){
   return SUCCESS;
 }
 
+int get_account(account *acc,
+                const char *list[],
+                int nmbr_of_info,
+                size_t maxlen)
+{
+if(!list){
+    log_error("function get_account");
+    return ERROR_NULL_VALUE_GIVEN;
+  }
 
+  if( SUCCESS != isinitialized(acc))
+  {
+    log_error("function get_account");
+    return UNINITIALIZED_ACCOUNT_GIVEN;
+  }
+
+  for(int i = 0 ; i< nmbr_of_info; i++)
+  {
+    printf("%s >",list[i]);
+    fgets(acc->array[i],maxlen,stdin);
+  }
+  return SUCCESS;
+}

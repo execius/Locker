@@ -29,15 +29,26 @@ null value while adding a string to json object");
           return ERROR_JSON_ADDING_ITEM_TO_OBJ;/*checking for errors*/
         }
         break;
+
+
       case PASSWORDINDEX:
-        if (NULL == cJSON_AddStringToObject(json_obj, "password", *(accc->array+PASSWORDINDEX))){
+        if (NULL == 
+          cJSON_AddStringToObject(json_obj,
+                                  "password",
+                                  *(accc->array+PASSWORDINDEX)))
+        {
           log_error("in funtion account_to_json ,\
 null value while adding a string to json object");
           return ERROR_JSON_ADDING_ITEM_TO_OBJ;/*checking for errors*/
         }
         break;
+
       case PLATFORMINDEX:
-        if (NULL == cJSON_AddStringToObject(json_obj, "platform", *(accc->array+PLATFORMINDEX))){
+        if (NULL == 
+          cJSON_AddStringToObject(json_obj,
+                                  "platform",
+                                  *(accc->array+PLATFORMINDEX)))
+        {
           log_error("in funtion account_to_json ,\
 null value while adding a string to json object");
           return ERROR_JSON_ADDING_ITEM_TO_OBJ;/*checking for errors*/
@@ -51,7 +62,11 @@ index out of bounds while adding account info to json object");
     }
   }
   /*make the account number into an item in the json object*/
-  if (cJSON_AddNumberToObject(json_obj, "accountnumber", *accc->accountnumber) == NULL){
+  if (
+    cJSON_AddNumberToObject(json_obj,
+                            "accountnumber",
+                            *accc->accountnumber) == NULL)
+   {
     log_error("in funtion account_to_json ,\
 null value while adding a integer to json object");
     return ERROR_JSON_ADDING_ITEM_TO_OBJ;

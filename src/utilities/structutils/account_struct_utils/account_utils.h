@@ -51,4 +51,10 @@ int printaccount(account *accc);
 int accountdup(account *src , account *dest);
 
 
+/*get values for the account from the user*/
+int get_account(account *acc,
+                const char *list[],
+                int nmbr_of_info,
+                size_t maxlen);
+
 #endif //ACCOUNT_UTILS_H
