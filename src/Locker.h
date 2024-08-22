@@ -1,14 +1,5 @@
 #include "includes.h"
 
-// int testinitialize() {
-//   char **arr = initialize();
-//    for (int i = 0 ; i < NUMBER_OF_INIT_VARS ;i++){
-//     printf("%s\n",arr[i]);
-//
-//   }
-//    return SUCCESS;
-// }
-
 int testeditstruct(void){
   account accc;
   if(initialize_account(&accc) == SUCCESS ){

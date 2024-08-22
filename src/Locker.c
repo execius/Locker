@@ -68,30 +68,35 @@ int main(int argc, char *argv[])
       break;
     default:
       printf("version %.2f\n",VERSION);
+      goto free_stuff;
       return SUCCESS;
       break;
 
   }
   if ((uflg!=1 || Pflg != 1) && iflg == 0){
     log_error("provide one username and one password");
+    goto free_stuff;
+    return SUCCESS;
   }
   if (iflg  != 0){
     simple_initialize();
-    free(username);
-    free(password);
+    goto free_stuff;
     return errno;
   }
 
-  
-simple_login(username,password);
+
+  simple_login(username,password);
   switch (errno) {
     case SUCCESS:
       printf("login success\n");
+      goto free_stuff;
       break;
     default:
+      goto free_stuff;
       return errno;
       break;
   }
+free_stuff :
   free(username);
   free(password);
 }
