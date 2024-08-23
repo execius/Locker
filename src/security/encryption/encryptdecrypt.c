@@ -15,7 +15,7 @@ int encrypt_aes256(const unsigned char *plaintext,
 
   if(!ciphertext || !key || !iv || !plaintext){
     log_error("NULL in derive_key function");
-    return ( errno = ERROR_NULL_VALUE_GIVEN);
+      return ( errno = ERROR_NULL_VALUE_GIVEN);
   }
   EVP_CIPHER_CTX *ctx;
   int len;
@@ -51,7 +51,7 @@ int encrypt_aes256(const unsigned char *plaintext,
   // Clean up
   EVP_CIPHER_CTX_free(ctx);
   
-  return SUCCESS;
+  return errno = SUCCESS;
 
 }
 
@@ -130,12 +130,12 @@ int derive_key(const char *password,
   }
   return (errno = PKCS5_PBKDF2_HMAC(
     password, 
-              strlen(password),
-              salt, 
-              salt_len,
-              iterations,
-              EVP_sha256(),
-              key_len,
-              key));
+    strlen(password),
+    salt, 
+    salt_len,
+    iterations,
+    EVP_ripemd160(),
+    key_len,
+    key));
 }
 

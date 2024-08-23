@@ -5,12 +5,12 @@ int account_to_json(account *accc, cJSON *json_obj ){
   /* cheking if the account object is initialized*/
   if(SUCCESS != (error_tracker = isinitialized(accc))){ 
     log_error("error: uninitialized account , function :account_to_json");
-    return error_tracker;
+    return errno = error_tracker;
   }
   /*check if the alocation of the cJSON object went good*/
   if (NULL == json_obj){
     log_error("JSON object creation failed , function : account_to_json");
-    return ERROR_JSON_OBJECT_CREATION;
+    return errno = ERROR_JSON_OBJECT_CREATION;
   }
 
   /*making a json object and copying each string in the account's array struct to a item within the json object*/
@@ -19,14 +19,14 @@ int account_to_json(account *accc, cJSON *json_obj ){
       case USERINDEX:
         if (NULL == cJSON_AddStringToObject(json_obj, "user", *(accc->array+USERINDEX))){
           log_error("in funtion account_to_json , null value while adding a string to json object");
-          return ERROR_JSON_ADDING_ITEM_TO_OBJ;/*checking for errors*/
+          return errno =  ERROR_JSON_ADDING_ITEM_TO_OBJ;/*checking for errors*/
         }
         break;
       case EMAILINDEX:
         if (NULL == cJSON_AddStringToObject(json_obj, "email", *(accc->array+EMAILINDEX))){
           log_error("in funtion account_to_json ,\
 null value while adding a string to json object");
-          return ERROR_JSON_ADDING_ITEM_TO_OBJ;/*checking for errors*/
+          return errno =  ERROR_JSON_ADDING_ITEM_TO_OBJ;/*checking for errors*/
         }
         break;
 
@@ -39,7 +39,7 @@ null value while adding a string to json object");
         {
           log_error("in funtion account_to_json ,\
 null value while adding a string to json object");
-          return ERROR_JSON_ADDING_ITEM_TO_OBJ;/*checking for errors*/
+          return errno = ERROR_JSON_ADDING_ITEM_TO_OBJ;/*checking for errors*/
         }
         break;
 
@@ -51,13 +51,13 @@ null value while adding a string to json object");
         {
           log_error("in funtion account_to_json ,\
 null value while adding a string to json object");
-          return ERROR_JSON_ADDING_ITEM_TO_OBJ;/*checking for errors*/
+          return errno = ERROR_JSON_ADDING_ITEM_TO_OBJ;/*checking for errors*/
         }
         break;
       default:
         log_error("in funtion account_to_json ,\
 index out of bounds while adding account info to json object");
-        return ERROR_JSON_ADDING_ITEM_TO_OBJ;
+        return errno = ERROR_JSON_ADDING_ITEM_TO_OBJ;
 
     }
   }
@@ -69,9 +69,9 @@ index out of bounds while adding account info to json object");
    {
     log_error("in funtion account_to_json ,\
 null value while adding a integer to json object");
-    return ERROR_JSON_ADDING_ITEM_TO_OBJ;
+    return errno = ERROR_JSON_ADDING_ITEM_TO_OBJ;
   }
-  return SUCCESS;
+    return errno =  SUCCESS;
 }
 
 

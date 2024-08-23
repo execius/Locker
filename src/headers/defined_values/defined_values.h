@@ -24,13 +24,18 @@ enum constant_values{
   AES_256_BLOCK_SIZE = 16,
   MAX_CIPHER_SIZE = MAXLEN+(16-(MAXLEN%16)),
   SHA256_SALT_SIZE_HEX = 2*SHA256_SALT_SIZE+1,
-  SHA256_HASH_SIZE_HEX = 2*SHA256_HASH_SIZE_BYTES+1
+  SHA256_HASH_SIZE_HEX = 2*SHA256_HASH_SIZE_BYTES+1,
+  RIPEMD160_KEY_SIZE_BYTES = 32,
+  RIPEMD160_SALT_SIZE_BYTES = 16,
+  ACCOUNT_MAX_SIZE = 8*MAXLEN+sizeof(int),
+  CIPHER_ACCOUNT_MAX_SIZE = 8*(MAXLEN+(16-(MAXLEN%16))+sizeof(int)),
 };
 
 int define_paths(
     char *Locker_folder,
     char *users_folder,
     char *configs_folder,
+    char *accounts_folder,
     size_t maxlen,
     char *PWD);
 #endif // !DEFINED_VALS

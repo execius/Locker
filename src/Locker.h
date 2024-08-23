@@ -19,15 +19,15 @@ int testeditstruct(void){
 }
 
 int testprdup(void){
-   account *acc = malloc(sizeof(account));
-   account *ac = malloc(sizeof(account));
-   int error ;
-   if (SUCCESS != ( error = initialize_account(acc))) return error ;
-   if (SUCCESS != ( error = initialize_account(ac))) return error ;
+  account *acc = malloc(sizeof(account));
+  account *ac = malloc(sizeof(account));
+  int error ;
+  if (SUCCESS != ( error = initialize_account(acc))) return error ;
+  if (SUCCESS != ( error = initialize_account(ac))) return error ;
 
   for(int i = 0 ; i<NUMBEROFINFO;i++){
-      printf("%d>",i);
-      fgets(acc->array[i],MAXLEN,stdin);
+    printf("%d>",i);
+    fgets(acc->array[i],MAXLEN,stdin);
   }
   *acc->accountnumber = 9;
   if (SUCCESS != (error = accountdup(acc,ac)) ) return error;
@@ -55,12 +55,12 @@ int testparse(void){
   }
 
   if (SUCCESS == (eror_tracker = parse_file(file_pointer ,array,LINE_MAX_LENGHT,MAXLEN,NUMBER_OF_CONFIG_INFORMATION)))
-     for(int i = 0 ; i<NUMBER_OF_CONFIG_INFORMATION;i++){
-    printf("key : %s \nvalue : %s \n",array[i]->key,array[i]->value);
-  }
+    for(int i = 0 ; i<NUMBER_OF_CONFIG_INFORMATION;i++){
+      printf("key : %s \nvalue : %s \n",array[i]->key,array[i]->value);
+    }
   for(int i = 0 ; i<NUMBER_OF_CONFIG_INFORMATION;i++){
-   free_pair(array[i]);
-   free(array[i]);
+    free_pair(array[i]);
+    free(array[i]);
   }
   free(array);
   return SUCCESS;
@@ -74,8 +74,8 @@ int testjson(void){
     return error_tracker;
   }
   for(int i = 0 ; i<NUMBEROFINFO;++i){
-      printf("%d>",i);
-      fgets(accc->array[i],MAXLEN,stdin);}
+    printf("%d>",i);
+    fgets(accc->array[i],MAXLEN,stdin);}
 
   if (SUCCESS != (error_tracker = account_to_json(accc,json))){
     log_error("account to json eror");
@@ -106,12 +106,12 @@ int testhash(void){
   unsigned char hash[SHA256_HASH_SIZE_BYTES];
   if (SUCCESS != (err = hash_sha256(pass,salt,hash)))
     return err;
-  
+
   printf("hash is:\n");
-    for (int i = 0; i < SHA256_HASH_SIZE_BYTES; i++) {
-        printf("%02x", hash[i]);
-    }
-    printf("\n");
+  for (int i = 0; i < SHA256_HASH_SIZE_BYTES; i++) {
+    printf("%02x", hash[i]);
+  }
+  printf("\n");
 
 
   return SUCCESS;
@@ -124,7 +124,7 @@ int testenc(void){
   unsigned char cipher[MAX_CIPHER_SIZE];
   unsigned char iv[16];
   // if (!RAND_bytes(key, sizeof(key))) return handleErrors();
-    if (!RAND_bytes(iv, sizeof(iv))) return handleErrors();
+  if (!RAND_bytes(iv, sizeof(iv))) return handleErrors();
   derive_key("lulz",iv,sizeof(iv),3,key,sizeof(key));
   if (SUCCESS != (err = encrypt_aes256(plain,MAXLEN,key,iv,cipher)) )
     return err;
@@ -141,7 +141,7 @@ int testenc(void){
   derive_key(password,iv,sizeof(iv),3,key2,sizeof(key)); 
   decrypt_aes256(cipher, MAX_CIPHER_SIZE, key2,iv, plaintxt);
   printf("\n\n\n\nplaintext : %s\n",plaintxt);
-  
+
   return SUCCESS;
 
 }
@@ -151,28 +151,27 @@ int simple_login(char *username,char *password){
     return errno = ERROR_NULL_VALUE_GIVEN;
   }
   char *Locker_folder = malloc(2*MAXLEN*sizeof(char));
-  char *config_folder = malloc((2*MAXLEN)*sizeof(char));
   char *users_folder  = malloc((2*MAXLEN)*sizeof(char));
   if (SUCCESS !=
-    define_paths(Locker_folder,
-                 users_folder,
-                 config_folder,
-                 MAXLEN,
-                 pwd))
+      define_paths(Locker_folder,
+        users_folder,
+        NULL,
+        NULL,
+        MAXLEN,
+        pwd))
     return errno;
-login(users_folder,
-    username,
-    password,
-    MAXLEN,
-    SHA256_HASH_SIZE_BYTES,
-    SHA256_SALT_SIZE,
-    SHA256_HASH_SIZE_HEX,
-    SHA256_SALT_SIZE_HEX);
+  login(users_folder,
+      username,
+      password,
+      MAXLEN,
+      SHA256_HASH_SIZE_BYTES,
+      SHA256_SALT_SIZE,
+      SHA256_HASH_SIZE_HEX,
+      SHA256_SALT_SIZE_HEX);
 
-free(config_folder);
-free(users_folder);
-free(Locker_folder);
-return  errno ;
+  free(users_folder);
+  free(Locker_folder);
+  return  errno ;
 }
 
 int testconfwriter(void){
@@ -204,9 +203,9 @@ int testconfwriter(void){
     return errno;
   }
   for(int i = 0 ; i<NUMBER_OF_CONFIGS;i++){
-      free_pair(array[i]);
-      free(array[i]);
-    }
+    free_pair(array[i]);
+    free(array[i]);
+  }
 
 
   return errno;
@@ -215,18 +214,71 @@ int testconfwriter(void){
 
 }
 int simple_initialize(void){
-    if (SUCCESS !=  initialize(
-      list_of_wanted_inf,
-      NUMBER_OF_CONFIGS,
-      MAXLEN,
-      SHA256_HASH_SIZE_BYTES,
-      SHA256_SALT_SIZE,
-      SHA256_HASH_SIZE_HEX,
-      SHA256_SALT_SIZE_HEX,
-      LINE_MAX_LENGHT,
-      LINE_MAX_LENGHT,
-      NUMBER_OF_DIRS
-      ))
+  if (SUCCESS !=  initialize_user(
+        list_of_wanted_inf,
+        NUMBER_OF_CONFIGS,
+        MAXLEN,
+        SHA256_HASH_SIZE_BYTES,
+        SHA256_SALT_SIZE,
+        SHA256_HASH_SIZE_HEX,
+        SHA256_SALT_SIZE_HEX,
+        LINE_MAX_LENGHT,
+        LINE_MAX_LENGHT,
+        NUMBER_OF_DIRS
+        ))
     return errno;
   return (errno = SUCCESS);
+}
+int new_account(unsigned char *username ,
+    unsigned char *key 
+    ) 
+{
+  char *accounts_folder = malloc(2*MAXLEN*sizeof(char));
+  if (SUCCESS !=
+      define_paths(
+        NULL,
+        NULL,
+        NULL,
+        accounts_folder,
+        MAXLEN,
+        pwd))
+    return errno;
+
+  unsigned char cipher_acc[CIPHER_ACCOUNT_MAX_SIZE];
+  account *accc = malloc(sizeof(account));
+  if(NULL == accc)
+    return errno = ERROR_MEMORY_ALLOCATION;
+
+  initialize_account(accc);
+
+  if (SUCCESS != errno)
+    return errno;
+
+  get_account(accc 
+      , account_creds_list
+      ,ACCOUNTS_INFO
+      ,MAXLEN);
+
+  if (SUCCESS != errno)
+    return errno;
+  cJSON *json = cJSON_CreateObject();
+  account_to_json(accc,json);
+  if (SUCCESS != errno)
+    return errno;
+  const unsigned char *string = 
+    (const unsigned char *)cJSON_Print(json);
+
+  printf("%s\n",string);
+
+  encrypt_aes256(    
+      string,
+      ACCOUNT_MAX_SIZE,
+      key,
+      username,
+      cipher_acc);
+  printf("%s\n",cipher_acc);
+
+  if (SUCCESS != errno)
+    return errno;
+  return errno = SUCCESS;
 }

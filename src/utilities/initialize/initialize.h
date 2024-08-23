@@ -14,7 +14,7 @@ int getinfo(const char* listofwantedinfo[] ,
             pair **listofanswers);
 
 
-int initialize(const char *list_of_wanted_inf[MAXLEN],
+int initialize_user(const char *list_of_wanted_inf[MAXLEN],
                int number_of_inf,
                int maxlengh,
                size_t bin_hash_len,

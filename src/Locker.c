@@ -14,13 +14,16 @@ int main(int argc, char *argv[])
   username = malloc(MAXLEN*sizeof(char)+1);
   password = malloc(MAXLEN*sizeof(char)+1);
 
+  /*this is a key derived from the password*/
+  unsigned char *key ;
+  key = malloc(KEY_SIZE_256*sizeof(char));
   /*flags to check if an option is given*/
   int uflg = 0, Pflg = 0, rflg = 0;
   int mflg = 0, vflg = 0,  pflg = 0;
-  int iflg = 0;
+  int iflg = 0, nflg = 0;
 
   /*getting commandline options and inceasing flags*/
-  while ((c = getopt(argc, argv, ":u:P:ar:m:vp:i")) != -1) {
+  while ((c = getopt(argc, argv, ":u:P:ar:m:vp:in")) != -1) {
     switch(c) {    
       case 'u':
         uflg++;
@@ -38,6 +41,9 @@ int main(int argc, char *argv[])
       case 'm':
         mflg++;
         break;
+      case 'n':
+        nflg++;
+        break;
       case 'r':
         rflg++;
         break;
@@ -47,7 +53,7 @@ int main(int argc, char *argv[])
       case 'i':
         iflg++;
         break;
-        /*misuse handling*/
+      /*misuse handling*/
       case ':':       
         fprintf(stderr,
                 "Option -%c requires an operand\n", optopt);
@@ -85,18 +91,38 @@ int main(int argc, char *argv[])
   }
 
 
+  /*creating the encryption key from the user password*/
+
   simple_login(username,password);
   switch (errno) {
     case SUCCESS:
       printf("login success\n");
-      goto free_stuff;
       break;
     default:
       goto free_stuff;
       return errno;
       break;
   }
+
+  derive_key((const char *)password,
+             (const unsigned char*)username,
+             SHA256_SALT_SIZE,
+             1,
+             key,
+             KEY_SIZE_256);
+printf("lol\n");
+  if (LIBSSL_SUCCESS != errno){
+    goto free_stuff;
+    return errno;
+  }
+printf("lol\n");
+  if (nflg  != 0){
+    new_account((unsigned char*)username,
+                key) ;
+    return errno;
+  }
 free_stuff :
   free(username);
+  free(key);
   free(password);
 }

@@ -2,10 +2,10 @@
 //initialze : alocate memory and set number to 0
 int initialize_account(account *acc){
   if (NULL == acc)
-    return ERROR_MEMORY_ALLOCATION;//the account variable could not be allocated
+    return errno = ERROR_MEMORY_ALLOCATION;//the account variable could not be allocated
   acc->array = malloc(NUMBEROFINFO*sizeof(char *)) ;
   if(NULL == acc->array) //failed allocation for the array
-      return ERROR_MEMORY_ALLOCATION;
+      return errno = ERROR_MEMORY_ALLOCATION;
   
 
   for(int i = 0;i<NUMBEROFINFO;i++){
@@ -17,14 +17,14 @@ int initialize_account(account *acc){
       log_error(
       "error: memory allocation failed, function: initialize_account"
       );
-      return ERROR_MEMORY_ALLOCATION;}//checking for allocation erors
+      return  errno =ERROR_MEMORY_ALLOCATION;}//checking for allocation erors
   }
   acc->accountnumber = malloc( 1 + (int)log10(MAXNUMBER));
   if(NULL == acc->accountnumber) //failed allocation for the accountnumber
-      return ERROR_MEMORY_ALLOCATION;
+      return errno = ERROR_MEMORY_ALLOCATION;
 
   *acc->accountnumber = 0; 
-  return SUCCESS;
+  return errno = SUCCESS;
 }
 
 // Free allocated memory in account struct
@@ -190,13 +190,13 @@ int get_account(account *acc,
 {
 if(!list){
     log_error("function get_account");
-    return ERROR_NULL_VALUE_GIVEN;
+    return errno = ERROR_NULL_VALUE_GIVEN;
   }
 
   if( SUCCESS != isinitialized(acc))
   {
     log_error("function get_account");
-    return UNINITIALIZED_ACCOUNT_GIVEN;
+    return errno = UNINITIALIZED_ACCOUNT_GIVEN;
   }
 
   for(int i = 0 ; i< nmbr_of_info; i++)
@@ -204,5 +204,5 @@ if(!list){
     printf("%s >",list[i]);
     fgets(acc->array[i],maxlen,stdin);
   }
-  return SUCCESS;
+  return errno = SUCCESS;
 }

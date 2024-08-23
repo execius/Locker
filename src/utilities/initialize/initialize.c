@@ -44,7 +44,7 @@ int getinfo(const char* listofwantedinfo[] ,
  * it asks for credentials and sets the user up
  * then asks for the prefered configs and writes 
    them to the user config file*/
-int initialize(const char *list_of_wanted_inf[MAXLEN],
+int initialize_user(const char *list_of_wanted_inf[MAXLEN],
                int number_of_inf,
                int maxlengh,
                size_t bin_hash_len,
@@ -58,6 +58,7 @@ int initialize(const char *list_of_wanted_inf[MAXLEN],
 {
   char *Locker_folder = malloc(2*MAXLEN*sizeof(char));
   char *config_folder = malloc((2*MAXLEN)*sizeof(char));
+  char *accounts_folder = malloc((2*MAXLEN)*sizeof(char));
   char *users_folder  = malloc((2*MAXLEN)*sizeof(char));
   char *password      = malloc(maxlengh*sizeof(char));
   char *username      = malloc(maxlengh*sizeof(char));
@@ -73,12 +74,13 @@ int initialize(const char *list_of_wanted_inf[MAXLEN],
     define_paths(Locker_folder,
                  users_folder,
                  config_folder,
+                 accounts_folder,
                  MAXLEN,
                  pwd))
     return errno;
 
   char *dirs[]=
-    {Locker_folder,config_folder,users_folder};
+    {Locker_folder,config_folder,users_folder,accounts_folder};
   init_dirs(dirs,numbr_of_dirs,maxlengh);
   if(SUCCESS !=errno )
   {
@@ -148,6 +150,7 @@ if (SUCCESS !=
   free(config_couples);
   free(config_folder);
   free(users_folder);
+  free(accounts_folder);
   free(Locker_folder);
 
   return  errno = SUCCESS;
