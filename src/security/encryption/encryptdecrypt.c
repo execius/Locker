@@ -118,24 +118,3 @@ int decrypt_aes256(unsigned char *ciphertext,
 }
 
 
-int derive_key(const char *password,
-               const unsigned char *salt,
-               int salt_len,
-               int iterations,
-               unsigned char *key,
-               int key_len) {
-  if(!password || !salt || !key){
-    log_error("NULL in derive_key function");
-    return (errno = ERROR_NULL_VALUE_GIVEN);
-  }
-  return (errno = PKCS5_PBKDF2_HMAC(
-    password, 
-    strlen(password),
-    salt, 
-    salt_len,
-    iterations,
-    EVP_ripemd160(),
-    key_len,
-    key));
-}
-

@@ -10,7 +10,8 @@ int make_user(
     size_t bin_hash_len,
     size_t bin_salt_len,
     size_t hex_hash_len,
-    size_t hex_salt_maxlen
+    size_t hex_salt_maxlen,
+    const EVP_MD *(*hash_function)(void)
     );
 
 #endif // !MAKE_USER

@@ -23,7 +23,8 @@ int initialize_user(const char *list_of_wanted_inf[MAXLEN],
                size_t hex_salt_len,
                size_t line_maxlen,
                size_t path_maxlen,
-               int numbr_of_dirs
+               int numbr_of_dirs,
+               const EVP_MD *(*hash_function)(void)
                );
 int init_dirs(
   char **dirs_paths,

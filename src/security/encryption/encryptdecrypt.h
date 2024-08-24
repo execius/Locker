@@ -18,12 +18,6 @@ int decrypt_aes256(unsigned char *ciphertext,
                    unsigned char *iv,
                    unsigned char *plaintext);
 
-int derive_key(const char *password,
-               const unsigned char *salt,
-               int salt_len,
-               int iterations,
-               unsigned char *key,
-               int key_len);
 int handleErrors(void);
 
 #endif // !ENCRYPT&DECRYPT

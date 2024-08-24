@@ -125,7 +125,7 @@ int testenc(void){
   unsigned char iv[16];
   // if (!RAND_bytes(key, sizeof(key))) return handleErrors();
   if (!RAND_bytes(iv, sizeof(iv))) return handleErrors();
-  derive_key("lulz",iv,sizeof(iv),3,key,sizeof(key));
+  hashing_global("lulz",iv,sizeof(iv),3,key,sizeof(key),EVP_sha256);
   if (SUCCESS != (err = encrypt_aes256(plain,MAXLEN,key,iv,cipher)) )
     return err;
   printf("Ciphertext is:\n");
@@ -138,7 +138,7 @@ int testenc(void){
   unsigned char key2[32];
   fgets(password,32,stdin);
   password[strcspn(password, "\n")] =  '\0';
-  derive_key(password,iv,sizeof(iv),3,key2,sizeof(key)); 
+  hashing_global(password,iv,sizeof(iv),3,key2,sizeof(key),EVP_sha256); 
   decrypt_aes256(cipher, MAX_CIPHER_SIZE, key2,iv, plaintxt);
   printf("\n\n\n\nplaintext : %s\n",plaintxt);
 
@@ -224,7 +224,8 @@ int simple_initialize(void){
         SHA256_SALT_SIZE_HEX,
         LINE_MAX_LENGHT,
         LINE_MAX_LENGHT,
-        NUMBER_OF_DIRS
+        NUMBER_OF_DIRS,
+        EVP_sha256
         ))
     return errno;
   return (errno = SUCCESS);

@@ -8,7 +8,9 @@ int make_user(
     size_t bin_hash_len,
     size_t bin_salt_len,
     size_t hex_hash_len,
-    size_t hex_salt_len){
+    size_t hex_salt_len,
+    const EVP_MD *(*hash_function)(void)
+){
   /*removing newline character*/
   username[strcspn(username, "\n")] =  '\0';
   password[strcspn(password, "\n")] =  '\0';
@@ -58,8 +60,13 @@ if (!users_directory || !username || !password ){
   }
 
   /*hashing the password*/
-  if (SUCCESS != hash_sha256(password,
-                             bin_salt,bin_hash))
+  if (SUCCESS != hashing_global(password,
+                                bin_salt,
+                                bin_salt_len,
+                                1,
+                                bin_hash,
+                                bin_hash_len,
+                                hash_function))
   {
     return errno;}
 

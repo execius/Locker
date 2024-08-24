@@ -104,18 +104,17 @@ int main(int argc, char *argv[])
       break;
   }
 
-  derive_key((const char *)password,
+  hashing_global((const char *)password,
              (const unsigned char*)username,
              SHA256_SALT_SIZE,
              1,
              key,
-             KEY_SIZE_256);
-printf("lol\n");
+             KEY_SIZE_256,
+             EVP_ripemd160);
   if (LIBSSL_SUCCESS != errno){
     goto free_stuff;
     return errno;
   }
-printf("lol\n");
   if (nflg  != 0){
     new_account((unsigned char*)username,
                 key) ;
@@ -125,4 +124,6 @@ free_stuff :
   free(username);
   free(key);
   free(password);
+  printf("%d\n",errno);
+  return errno;
 }

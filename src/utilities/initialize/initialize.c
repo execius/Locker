@@ -53,7 +53,8 @@ int initialize_user(const char *list_of_wanted_inf[MAXLEN],
                size_t hex_salt_len,
                size_t line_maxlen,
                size_t path_maxlen,
-               int numbr_of_dirs
+               int numbr_of_dirs,
+               const EVP_MD *(*hash_function)(void)
                )
 {
   char *Locker_folder = malloc(2*MAXLEN*sizeof(char));
@@ -101,7 +102,8 @@ if (SUCCESS !=
             bin_hash_len,
             bin_salt_len,
             hex_hash_len,
-            hex_salt_len))
+            hex_salt_len,
+            hash_function))
     return errno;   
 
 
