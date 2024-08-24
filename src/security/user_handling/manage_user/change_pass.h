@@ -11,7 +11,9 @@ int change_pass(
     size_t bin_hash_len,
     size_t bin_salt_len,
     size_t hex_hash_len,
-    size_t hex_salt_len);
+    size_t hex_salt_len,
+    const EVP_MD *(*hash_function)(void)
+    );
 
 
 #endif // !CHNG_PASS

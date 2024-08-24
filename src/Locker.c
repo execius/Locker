@@ -111,7 +111,7 @@ int main(int argc, char *argv[])
              key,
              KEY_SIZE_256,
              EVP_ripemd160);
-  if (LIBSSL_SUCCESS != errno){
+  if (SUCCESS != errno){
     goto free_stuff;
     return errno;
   }

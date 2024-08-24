@@ -99,24 +99,24 @@ int testjson(void){
   cJSON_Delete(json);
   return SUCCESS;
 }
-int testhash(void){
-  int err = 0;
-  const char *pass = "holamia";
-  unsigned char salt[SHA256_SALT_SIZE];
-  unsigned char hash[SHA256_HASH_SIZE_BYTES];
-  if (SUCCESS != (err = hash_sha256(pass,salt,hash)))
-    return err;
-
-  printf("hash is:\n");
-  for (int i = 0; i < SHA256_HASH_SIZE_BYTES; i++) {
-    printf("%02x", hash[i]);
-  }
-  printf("\n");
-
-
-  return SUCCESS;
-}
-
+// int testhash(void){
+//   int err = 0;
+//   const char *pass = "holamia";
+//   unsigned char salt[SHA256_SALT_SIZE];
+//   unsigned char hash[SHA256_HASH_SIZE_BYTES];
+//   if (SUCCESS != (err = hash_sha256(pass,salt,hash)))
+//     return err;
+//
+//   printf("hash is:\n");
+//   for (int i = 0; i < SHA256_HASH_SIZE_BYTES; i++) {
+//     printf("%02x", hash[i]);
+//   }
+//   printf("\n");
+//
+//
+//   return SUCCESS;
+// }
+//
 int testenc(void){
   int err = 0;
   const unsigned char* plain = (const unsigned char*)"hoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooola";
@@ -167,7 +167,8 @@ int simple_login(char *username,char *password){
       SHA256_HASH_SIZE_BYTES,
       SHA256_SALT_SIZE,
       SHA256_HASH_SIZE_HEX,
-      SHA256_SALT_SIZE_HEX);
+      SHA256_SALT_SIZE_HEX,
+      EVP_sha256);
 
   free(users_folder);
   free(Locker_folder);

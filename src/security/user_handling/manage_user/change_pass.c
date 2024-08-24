@@ -9,7 +9,9 @@ int change_pass(
     size_t bin_hash_len,
     size_t bin_salt_len,
     size_t hex_hash_len,
-    size_t hex_salt_len){
+    size_t hex_salt_len,
+    const EVP_MD *(*hash_function)(void)
+){
 
   /*removing newline character*/
   username[strcspn(username, "\n")] =  '\0';
@@ -59,11 +61,15 @@ if (!users_directory || !username || !password ){
   }
 
   /*hashing the password*/
-  if (SUCCESS != 
-    (err = hash_sha256(password,
-                       bin_salt,bin_hash))){
-    return err;}
-
+  if (SUCCESS != hashing_global(password,
+                                bin_salt,
+                                bin_salt_len,
+                                1,
+                                bin_hash,
+                                bin_hash_len,
+                                hash_function))
+  {
+    return errno;}
 /*converting hash and password to hex*/
   binary_to_hex(bin_salt,SHA256_SALT_SIZE,hex_salt);
   binary_to_hex(bin_hash,SHA256_HASH_SIZE_BYTES,hex_hash);

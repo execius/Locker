@@ -56,7 +56,9 @@ int login(char *users_path,
           size_t hash_maxlen,
           size_t salt_maxlen,
           size_t hex_hash_maxlen,
-          size_t hex_salt_maxlen){
+          size_t hex_salt_maxlen,
+          const EVP_MD *(*hash_function)(void)
+          ){
   /*removing newline character*/
   input_username[strcspn(input_username, "\n")] =  '\0';
   input_password[strcspn(input_password, "\n")] =  '\0';
@@ -114,10 +116,14 @@ hashed user password");
                 hash_maxlen);
 
   /*hashing the inserted password to compare it to the user password hash*/
-  if (SUCCESS != hash_sha256(
-      input_password,salt,
-      input_password_hash)){
-
+  if (SUCCESS != hashing_global(input_password,
+                                salt,
+                                salt_maxlen,
+                                1,
+                                input_password_hash,
+                                hash_maxlen,
+                                hash_function))
+  {
     return errno;}
   /*comparison*/
   if(SUCCESS != compare_creds(
