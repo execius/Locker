@@ -5,6 +5,7 @@ int binary_to_hex(const unsigned char *bin,
                   size_t len,
                   unsigned char *hex); 
 
+int print_hex(unsigned char* hex,size_t hexlen);
 int hex_to_binary(const char *hex,
                   unsigned char *bin, 
                   size_t bin_len);

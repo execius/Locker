@@ -79,19 +79,20 @@ int main(int argc, char *argv[])
       break;
 
   }
+  /*checking that a username and a password were created before preceeding */
   if ((uflg!=1 || Pflg != 1) && iflg == 0){
     log_error("provide one username and one password");
     goto free_stuff;
     return SUCCESS;
   }
+  /*initializing the program at first use to create necessary folders and such*/
   if (iflg  != 0){
     simple_initialize();
     goto free_stuff;
     return errno;
   }
 
-
-  /*creating the encryption key from the user password*/
+/*authentication of the user */
 
   simple_login(username,password);
   switch (errno) {
@@ -103,6 +104,7 @@ int main(int argc, char *argv[])
       return errno;
       break;
   }
+  /*creating the encryption key from the user password*/
 
   hashing_global((const char *)password,
              (const unsigned char*)username,
@@ -115,6 +117,7 @@ int main(int argc, char *argv[])
     goto free_stuff;
     return errno;
   }
+  /*handling the creation of a new user*/
   if (nflg  != 0){
     new_account((unsigned char*)username,
                 key) ;

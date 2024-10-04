@@ -7,7 +7,10 @@
 #define home getenv("HOME")
 
 #define VERSION 1.0
-enum constant_values{
+#define HEX_SIZE(BIN_SIZE ) 2*BIN_SIZE+1
+#define CIPHER_SIZE(len,block_size) len+(block_size-(len%block_size))
+
+typedef enum constant_values{
   NUMBEROFINFO = 4, //number of infos in the accounts struct
   USERINDEX = 0,
   EMAILINDEX = 1,
@@ -29,7 +32,7 @@ enum constant_values{
   RIPEMD160_SALT_SIZE_BYTES = 16,
   ACCOUNT_MAX_SIZE = 8*MAXLEN+sizeof(int),
   CIPHER_ACCOUNT_MAX_SIZE = 8*(MAXLEN+(16-(MAXLEN%16))+sizeof(int)),
-};
+} values;
 
 int define_paths(
     char *Locker_folder,

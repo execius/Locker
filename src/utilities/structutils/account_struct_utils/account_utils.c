@@ -22,8 +22,7 @@ int initialize_account(account *acc){
   acc->accountnumber = malloc( 1 + (int)log10(MAXNUMBER));
   if(NULL == acc->accountnumber) //failed allocation for the accountnumber
       return errno = ERROR_MEMORY_ALLOCATION;
-
-  *acc->accountnumber = 0; 
+*acc->accountnumber = 0; 
   return errno = SUCCESS;
 }
 
@@ -50,14 +49,14 @@ int free_account(account *acc){
 int isinitialized(account *acc){
   if (NULL == acc) {//checking for NULL value
     log_error(
-      "error: NULL value given , function: isinitialized"
+      " function: isinitialized"
     );
         return ERROR_NULL_VALUE_GIVEN ;
   }
   for (int i = NUMBEROFINFO-1 ;i >=0;i--){
     if(NULL == acc->array[i]){//checking if the account array uninitialized
     log_error(
-        "error: uninitialized account , function : isinitialized"
+        " function : isinitialized"
       );
     return UNINITIALIZED_ACCOUNT_GIVEN  ;
   }
@@ -65,7 +64,7 @@ int isinitialized(account *acc){
 
   if(NULL == acc->accountnumber){//checking if the accountnumber id uninitialized
     log_error(
-      "error: uninitialized account , function : isinitialized"
+      "function : isinitialized"
     );
     return UNINITIALIZED_ACCOUNT_GIVEN  ;
   }
@@ -77,19 +76,19 @@ int change_char_member(char **account_array_pointer ,
                        int index , const char *newval){
   if (NULL == newval){//check if newval isnt NULL
     log_error(
-    "error: NULL value given , function: change_char_member"
+    "function: change_char_member"
     );
         return ERROR_NULL_VALUE_GIVEN ;
   }
   if(index < 0 || index >= NUMBEROFINFO ){//checking if the index in in boundaries
     log_error(
-    "error: index out of bounds , function: change_char_member"
+    "function: change_char_member"
     );
         return ERROR_INDEX_OUT_OF_BOUNDS ;
   }
   if(strlen(newval) > MAXLEN ){  //checking lenght is in boundaries 
     log_error(
-      "error: string too long  , function: change_char_member"
+      "function: change_char_member"
     );
         return ERROR_TOO_LONG_STRING ;
   }
@@ -203,6 +202,8 @@ if(!list){
   {
     printf("%s >",list[i]);
     fgets(acc->array[i],maxlen,stdin);
+    *acc->accountnumber = 0;
   }
   return errno = SUCCESS;
 }
+

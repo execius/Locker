@@ -10,6 +10,7 @@ int binary_to_hex(const unsigned char *bin,
   return SUCCESS;
 }
 
+
 int hex_to_binary(const char *hex,
                   unsigned char *bin, 
                   size_t bin_len) {
