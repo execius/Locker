@@ -10,3 +10,21 @@ const char *list_of_wanted_inf[] =
 
 const char *account_creds_list[] = 
   {"user","email", "password" , "other"};
+int read_lines(unsigned char * dst ,FILE *file, int num_lines, int maxlen) {
+    if (NULL == file || NULL == dst) {
+        return errno = ERROR_NULL_VALUE_GIVEN;  // Invalid file pointer or line count
+  }
+  if (num_lines <= 0)
+    return num_lines;
+
+  char line[maxlen];
+  int line_count = 0;
+
+  while (line_count < num_lines && fgets(line, sizeof(line), file) != NULL) {
+    strncat((char *)dst,line,maxlen) ; // Print or process each line here
+    line_count++;
+    }
+
+    // Check if we read exactly the requested number of lines
+    return line_count == num_lines ? SUCCESS : (errno = ERROR_BAD_ARGUMENT);
+}

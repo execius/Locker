@@ -95,3 +95,4 @@ int scan_to_char(char *dest,char *src ,char character ,int maxlengh){
   return SUCCESS;
   }
 
+

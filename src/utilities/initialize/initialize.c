@@ -79,7 +79,6 @@ int initialize_user(const char *list_of_wanted_inf[MAXLEN],
                  MAXLEN,
                  pwd))
     return errno;
-
   char *dirs[]=
     {Locker_folder,config_folder,users_folder,accounts_folder};
   init_dirs(dirs,numbr_of_dirs,maxlengh);

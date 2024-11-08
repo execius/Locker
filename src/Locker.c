@@ -1,6 +1,5 @@
 #include "Locker.h"
 
-
 int main(int argc, char *argv[])
 { 
   /*
@@ -20,10 +19,10 @@ int main(int argc, char *argv[])
   /*flags to check if an option is given*/
   int uflg = 0, Pflg = 0, rflg = 0;
   int mflg = 0, vflg = 0,  pflg = 0;
-  int iflg = 0, nflg = 0;
+  int iflg = 0, nflg = 0,dflg = 0;
 
   /*getting commandline options and inceasing flags*/
-  while ((c = getopt(argc, argv, ":u:P:ar:m:vp:in")) != -1) {
+  while ((c = getopt(argc, argv, ":u:P:ar:m:vp:ind")) != -1) {
     switch(c) {    
       case 'u':
         uflg++;
@@ -52,6 +51,9 @@ int main(int argc, char *argv[])
         break;
       case 'i':
         iflg++;
+        break;
+      case 'd':
+        dflg++;
         break;
       /*misuse handling*/
       case ':':       
@@ -119,9 +121,12 @@ int main(int argc, char *argv[])
   }
   /*handling the creation of a new user*/
   if (nflg  != 0){
-    new_account((unsigned char*)username,
+    new_account((unsigned char *)username,
                 key) ;
-    return errno;
+  }
+  if (dflg  != 0){
+    display_accounts((unsigned char *)username,
+                key) ;
   }
 free_stuff :
   free(username);

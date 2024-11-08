@@ -40,6 +40,8 @@ enum ErrorCode {
   UNINITIALIZED_STRUCT_GIVEN = -30,
   ERROR_DIRECTORY_DOESNT_EXIST = -31,
   ERROR_NO_CREDENTIALS = -32,
+  ERROR_BAD_ARGUMENT = -33,
+  ERROR_CJSON_LIB_FAILURE = -34
 };
 
 void log_error( const char *message);

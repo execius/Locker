@@ -18,6 +18,7 @@ int encrypt_aes256(const unsigned char *plaintext,
       return ( errno = ERROR_NULL_VALUE_GIVEN);
   }
   EVP_CIPHER_CTX *ctx;
+  int ciphertext_len;
   int len;
 
   // Create and initialize the context
@@ -40,18 +41,18 @@ int encrypt_aes256(const unsigned char *plaintext,
                           plaintext,
                           plaintext_len))
     return (errno = handleErrors());
-
+ciphertext_len = len;
   // Finalize the encryption
   if (LIBSSL_SUCCESS != EVP_EncryptFinal_ex(
                           ctx, 
                           ciphertext + len,
                           &len))
     return (errno = handleErrors());
-
+ciphertext_len += len;
   // Clean up
   EVP_CIPHER_CTX_free(ctx);
   
-  return errno = SUCCESS;
+  return errno = ciphertext_len;
 
 }
 
