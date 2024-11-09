@@ -409,19 +409,21 @@ int display_accounts(unsigned char *username ,
    * after we convert it to hex*/
 
   /*the string that will hold the json format of the account*/
-  unsigned char *string,*json_stored_acc_str;
-  json_stored_acc_str = malloc(MAXLEN*STORED_JSON_LINES);
-  string = malloc(ACCOUNT_MAX_SIZE+100); /*+100 for json syntax*/
+  unsigned char*string = NULL;
+    string= calloc(ACCOUNT_MAX_SIZE+99,sizeof(char)); /*+100 for json syntax*/
+
+  unsigned char *json_stored_acc_str = NULL;
+    json_stored_acc_str= calloc(MAXLEN*STORED_JSON_LINES,sizeof(char));
   /*the path to the file of the accont of that specific users*/
-  char *user_accounts = malloc(3*MAXLEN*sizeof(char));
+  char *user_accounts = calloc(3*MAXLEN,sizeof(char));
   FILE *accounts_file;
   /*the cipher obvio*/
   unsigned char cipher_acc[CIPHER_ACCOUNT_MAX_SIZE];
-  cJSON *json = cJSON_CreateObject();
-  if(NULL ==json )
-  {
-    return errno;
-  }
+  // cJSON *json = cJSON_CreateObject();
+  // if(NULL ==json )
+  // {
+  //   return errno;
+  // }
 cJSON* json_stored_acc ;
 cJSON *json_item_hexacc = NULL ;
 cJSON *json_item_cipherlen = NULL;
@@ -453,13 +455,17 @@ accounts_file = fopen(user_accounts,"r");
   {
     return ERROR_FILE_OPENING_FAILED;
   }
- 
-  read_lines(json_stored_acc_str,
+  /*this is the main sequence , in which unpacking and decryption happens */
+  int check;
+while( SUCCESS == //reads one string containing one json object
+  ( check = read_lines(json_stored_acc_str,
       accounts_file,
-      STORED_JSON_LINES,
-      MAXLEN);
-  if (errno != SUCCESS)
-    return errno;
+      STORED_JSON_LINES,//how many lines a json object is 
+      MAXLEN)) )
+{
+
+
+  /*parsing the string*/
   json_stored_acc = 
     cJSON_Parse((const char *)json_stored_acc_str);
   if (json_stored_acc == NULL)
@@ -472,6 +478,7 @@ accounts_file = fopen(user_accounts,"r");
         return errno = ERROR_CJSON_LIB_FAILURE;
     }
 
+  /*extracting the cipher hex and the lengh of it from the json*/
  json_item_hexacc = 
    cJSON_GetObjectItemCaseSensitive(
        json_stored_acc,
@@ -483,10 +490,12 @@ accounts_file = fopen(user_accounts,"r");
        "cipher lengh"
        );
 
+ /*converting the hex to the original cipher*/
  hex_to_binary(json_item_hexacc->valuestring,
      cipher_acc,
      json_item_cipherlen->valuedouble);
 
+ /*decrypting the cipher*/
 decrypt_aes256(
     cipher_acc,
     json_item_cipherlen->valuedouble,
@@ -495,7 +504,21 @@ decrypt_aes256(
     string);
  if (errno != SUCCESS)
     return errno;
+ /*now we got the json containing the account info*/
 printf("%s\n",string);
+/*renewing the vars used in this loop*/
+cJSON_Delete(json_stored_acc);
+free(json_stored_acc_str);
+json_stored_acc_str = calloc(MAXLEN*STORED_JSON_LINES,sizeof(char));
+}
+fclose(accounts_file);
+free_shit:
+  free(accounts_folder);
+  free(user_accounts);
+  if (string) free((void *)string);
+  if (json_stored_acc_str) free((void *)json_stored_acc_str);
+
 return errno = SUCCESS;
+
 }
     
