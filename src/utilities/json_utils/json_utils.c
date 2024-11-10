@@ -35,6 +35,7 @@ int get_account(cJSON *json_obj,
     }
   free_pair_array(array_credentials,
                   number_of_inf);
+  free(array_credentials);
   if(SUCCESS != errno )
     return errno;
   return SUCCESS;
