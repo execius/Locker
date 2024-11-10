@@ -25,6 +25,7 @@ int read_lines(unsigned char * dst ,FILE *file, int num_lines, int maxlen) {
     line_count++;
     }
 
+
     // Check if we read exactly the requested number of lines
     return line_count == num_lines ? SUCCESS : (errno = ERROR_BAD_ARGUMENT);
 }

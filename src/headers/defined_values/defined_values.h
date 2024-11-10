@@ -11,12 +11,8 @@
 #define CIPHER_SIZE(len,block_size) len+(block_size-(len%block_size))
 
 typedef enum constant_values{
+  JSON_OVERHEAD_SIZE = 100,
   STORED_JSON_LINES = 4,/*used for parsing the json thar contain the cipher of the account */
-  NUMBEROFINFO = 4, //number of infos in the accounts struct
-  USERINDEX = 0,
-  EMAILINDEX = 1,
-  PASSWORDINDEX = 2,       //indexes of different information in the array inside account struct
-  PLATFORMINDEX = 3,
   NUMBER_OF_CONFIG_INFORMATION = 4, 
   MAXLEN = 4096,      //maximum string lengh
   PATH_SIZE = 2*MAXLEN,

@@ -276,7 +276,6 @@ int new_account(unsigned char *username ,
   FILE *accounts_file;
   /*the cipher obvio*/
   unsigned char cipher_acc[CIPHER_ACCOUNT_MAX_SIZE];
-  account *accc = malloc(sizeof(account));
   size_t ciphersize;
   
   cJSON *json = cJSON_CreateObject();
@@ -289,7 +288,7 @@ if (NULL == json_stored_acc )
   return errno;
 cJSON *json_item_hexacc = NULL ;
 cJSON *json_item_cipherlen = NULL;
-  if(NULL == accc || 
+  if(
       NULL == user_accounts ||
       NULL == accounts_folder ||
       NULL == hex)
@@ -312,17 +311,14 @@ cJSON *json_item_cipherlen = NULL;
      (const char * )username,
      MAXLEN);
 
-  if(NULL == accc)
-    return errno = ERROR_MEMORY_ALLOCATION;
 
 
-  initialize_account(accc);
 
   if (SUCCESS != errno)
     return errno;
   /*get account from the user*/
 
-  get_account(accc 
+  get_account(json 
       , account_creds_list
       ,ACCOUNTS_INFO
       ,MAXLEN);
@@ -330,7 +326,7 @@ cJSON *json_item_cipherlen = NULL;
   /*make it a jsom object*/
   if (SUCCESS != errno)
     return errno;
-  account_to_json(accc,json);
+  // account_to_json(accc,json);
   if (SUCCESS != errno)
     return errno;
   string = (const unsigned char *)cJSON_Print(json);
@@ -383,8 +379,6 @@ json_item_cipherlen = cJSON_DetachItemFromObjectCaseSensitive(json_stored_acc,"c
   fclose(accounts_file);
 
 free_shit:
-  free_account(accc);
-  free(accc);
   free(accounts_folder);
   free(hex);
   free(user_accounts);
@@ -509,7 +503,10 @@ printf("%s\n",string);
 /*renewing the vars used in this loop*/
 cJSON_Delete(json_stored_acc);
 free(json_stored_acc_str);
+free(string);
 json_stored_acc_str = calloc(MAXLEN*STORED_JSON_LINES,sizeof(char));
+string= calloc(ACCOUNT_MAX_SIZE+JSON_OVERHEAD_SIZE,sizeof(char)); /*+100 for json syntax*/
+
 }
 fclose(accounts_file);
 free_shit:

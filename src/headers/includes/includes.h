@@ -18,11 +18,10 @@
 
 #include "defined_values.h"
 #include "eror_handling.h"
-#include "account_utils.h"
 #include "pair_utils.h"
 #include "initialize.h"
+#include "json_utils.h"
 #include "config_parser.h"
-#include "account_json.h"
 #include "encryptdecrypt.h"
 #include "hashing.h"
 #include "hex_bin_utils.h"
@@ -32,6 +31,7 @@
 #include "change_pass.h"
 #include "config_writer.h"
 #include "arrays_counters.h"
+
 
 
 #endif // !INCLUDES_H
