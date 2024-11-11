@@ -5,12 +5,16 @@
 
 
 /*requests the stuff in aarray from the user
- and returns an array of couples (key/value)that
- includes the wanted info label and the user answer*/
+ and returns an array chars that is indexed in 
+ the same order*/
+ 
+/* it is the responsibility of the caller to free
+ * each string in the the listofanswers array
+ * using the numberofinfo he gave as an argument*/
 int getinfo(const char* listofwantedinfo[] ,
             int numberofinfos , 
             int maxlengh ,
-            pair **listofanswers)
+            char **listofanswers)
 {
 
   //error hamdling
@@ -20,23 +24,21 @@ int getinfo(const char* listofwantedinfo[] ,
     return ERROR_NULL_VALUE_GIVEN;
 
   }
-  //putting the values in the pair couple
+  //putting the answers in there
   for (int i = 0 ; i < numberofinfos ;i++){
+    listofanswers[i] = calloc(maxlengh, sizeof(char));
     printf("\n %s > ",listofwantedinfo[i]);
-    fgets(listofanswers[i]->value,maxlengh,stdin);
+    fgets(listofanswers[i],maxlengh,stdin);
 
-    if(2 > strlen(listofanswers[i]->value))
+    if(2 > strlen(listofanswers[i]))
     {
       log_error("input string too short");
       return errno = ERROR_STR_TOO_SHORT;
     }
 
-    strncpy(listofanswers[i]->key,
-            listofwantedinfo[i],
-            maxlengh);
     //sanitizing the content
-    listofanswers[i]->key  [strcspn(listofanswers[i]->key  , "\n")] =  '\0';
-    listofanswers[i]->value[strcspn(listofanswers[i]->value, "\n")] =  '\0';
+    listofanswers[i][strcspn(listofanswers[i]  , "\n")] =  '\0';
+    listofanswers[i][strcspn(listofanswers[i]  , "\n")] =  '\0';
   }
   return errno = SUCCESS;
 }
@@ -57,13 +59,15 @@ int initialize_user(const char *list_of_wanted_inf[MAXLEN],
                const EVP_MD *(*hash_function)(void)
                )
 {
-  char *Locker_folder = malloc(2*MAXLEN*sizeof(char));
-  char *config_folder = malloc((2*MAXLEN)*sizeof(char));
-  char *accounts_folder = malloc((2*MAXLEN)*sizeof(char));
-  char *users_folder  = malloc((2*MAXLEN)*sizeof(char));
-  char *password      = malloc(maxlengh*sizeof(char));
-  char *username      = malloc(maxlengh*sizeof(char));
-  char *config_file   = malloc(maxlengh*sizeof(char));
+  char *Locker_folder = calloc(2*maxlengh,sizeof(char));
+  char *config_folder = calloc((2*maxlengh),sizeof(char));
+  char *accounts_folder = calloc((2*maxlengh),sizeof(char));
+  char *users_folder  = calloc((2*maxlengh),sizeof(char));
+  char *password      = calloc(maxlengh,sizeof(char));
+  char *username      = calloc(maxlengh,sizeof(char));
+  char *config_file_path   = calloc(3*maxlengh,sizeof(char));
+
+  char* configs_json_string = NULL ;
  //check if malloc failed 
   if (!password || !username || 
     !config_folder || !users_folder)
@@ -106,53 +110,52 @@ if (SUCCESS !=
     return errno;   
 
 
-  /*this will be used to store the configs before writing them*/
-  pair **config_couples =malloc(number_of_inf*sizeof(pair*));
-  if(!config_couples)
-    return errno = ERROR_MEMORY_ALLOCATION;
-  /*initializing the structs in the array */
- if(SUCCESS != 
-    init_pair_array(config_couples,
-                               number_of_inf))
-    return errno;
-  /*getting the configs from user into the array*/
-  if (SUCCESS != getinfo(list_of_wanted_inf,
-          number_of_inf,
-          maxlengh,
-          config_couples))
+  /*making a json that has the configs*/
+cJSON* json_configs = cJSON_CreateObject();
+
+  if (NULL == json_configs )
     return errno;
 
+  get_data_into_json(json_configs 
+                     , list_of_config_parameters
+                     ,NUMBER_OF_CONFIGS
+                     ,MAXLEN);
+  if(SUCCESS != errno)
+    return errno;
   /*making the filepath to the user configs
    * the_general_configs_path/username */
   if (SUCCESS != make_file_path(
-    config_file,
+    config_file_path,
     config_folder,
     username,
     maxlengh
   ))
     return errno;
 
+  configs_json_string = cJSON_Print(json_configs);
   /*writing the configs*/
-  if (SUCCESS != write_array_of_pairs(config_file,
-                       config_couples,
-                       number_of_inf,
-                       maxlengh,
-                       line_maxlen,
-                       path_maxlen))
-    return errno;
-  /*freeing the structs */
- if(SUCCESS != free_pair_array(config_couples,
-                               number_of_inf))
-    return errno;
-  
+
+   FILE *config_file = fopen(config_file_path,"a");
+  if(NULL == config_file )
+  {
+    return ERROR_FILE_OPENING_FAILED;
+  }
+  if (0 > fputs(configs_json_string,config_file ))
+  {
+    fclose(config_file);
+    return errno ;
+  }
+
+  fclose(config_file);
   free(username);
   free(password);
-  free(config_file);
-  free(config_couples);
+  free(config_file_path);
   free(config_folder);
   free(users_folder);
   free(accounts_folder);
   free(Locker_folder);
+  free(configs_json_string);
+  cJSON_Delete(json_configs);
 
   return  errno = SUCCESS;
   

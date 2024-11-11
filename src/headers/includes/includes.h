@@ -17,8 +17,8 @@
 #include <sys/stat.h>
 
 #include "defined_values.h"
+#include "strutils.h"
 #include "eror_handling.h"
-#include "pair_utils.h"
 #include "initialize.h"
 #include "json_utils.h"
 #include "config_parser.h"

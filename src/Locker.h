@@ -233,7 +233,7 @@ int simple_login(char *username,char *password){
 /*look at the initialize_user funtion docs*/
 int simple_initialize(void){
   if (SUCCESS !=  initialize_user(
-        list_of_wanted_inf,
+        list_of_config_parameters,
         NUMBER_OF_CONFIGS,
         MAXLEN,
         SHA256_HASH_SIZE_BYTES,
@@ -318,7 +318,7 @@ cJSON *json_item_cipherlen = NULL;
     return errno;
   /*get account from the user*/
 
-  get_account(json 
+  get_data_into_json(json 
       , account_creds_list
       ,ACCOUNTS_INFO
       ,MAXLEN);

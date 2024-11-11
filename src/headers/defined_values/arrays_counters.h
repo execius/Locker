@@ -3,7 +3,7 @@
 #ifndef ARRS_CNTS
 
 #define ARRS_CNTS
-extern const char *list_of_wanted_inf[];
+extern const char *list_of_config_parameters[];
 extern const char *account_creds_list[] ; 
 
 enum counters

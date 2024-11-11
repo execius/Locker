@@ -11,7 +11,7 @@
 int getinfo(const char* listofwantedinfo[] ,
             int numberofinfos , 
             int maxlengh ,
-            pair **listofanswers);
+            char **listofanswers);
 
 
 int initialize_user(const char *list_of_wanted_inf[MAXLEN],
@@ -25,7 +25,8 @@ int initialize_user(const char *list_of_wanted_inf[MAXLEN],
                size_t path_maxlen,
                int numbr_of_dirs,
                const EVP_MD *(*hash_function)(void)
-               );
+               )
+;
 int init_dirs(
   char **dirs_paths,
   int number_of_dirs,
