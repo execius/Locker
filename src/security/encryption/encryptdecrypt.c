@@ -14,7 +14,7 @@ int encrypt_aes256(const unsigned char *plaintext,
 {
 
   if(!ciphertext || !key || !iv || !plaintext){
-    log_error("NULL in derive_key function");
+    log_error("NULL in encrypt_aes256 function");
       return ( errno = ERROR_NULL_VALUE_GIVEN);
   }
   EVP_CIPHER_CTX *ctx;
@@ -63,8 +63,8 @@ int decrypt_aes256(unsigned char *ciphertext,
                    unsigned char *iv,
                    unsigned char *plaintext){
     if(!ciphertext || !key || !iv || !plaintext){
-    log_error("NULL in derive_key function");
-    return ERROR_NULL_VALUE_GIVEN;}
+    log_error("NULL in decrypt_aes256 function");
+    return errno = ERROR_NULL_VALUE_GIVEN;}
 
   EVP_CIPHER_CTX *ctx;
 
