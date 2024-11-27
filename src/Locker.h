@@ -23,7 +23,7 @@ int simple_login(char *username,char *password){
         NULL,
         MAXLEN,
         pwd))
-    return errno;
+    goto free_resources;
   login(users_folder,
       username,
       password,
@@ -34,6 +34,9 @@ int simple_login(char *username,char *password){
       SHA256_SALT_SIZE_HEX,
       EVP_sha256);
 
+  if (SUCCESS != errno
+    goto free_resources_2;
+free_resources:
   free(users_folder);
   free(Locker_folder);
   return  errno ;
@@ -60,12 +63,12 @@ int simple_initialize(void){
 /*this creates a new account for a user
  * but it needs some explanation */
 int new_account(unsigned char *username ,
-    unsigned char *key 
+    unsigned char *key ,
+    cJSON **cjson_accounts_array,
+    int number_of_accounts
     ) 
 {
 
-  /*the folder that has the users accounts*/
-  char *accounts_folder = malloc(2*MAXLEN*sizeof(char));
 
   /*this will hold the cipher of the account 
    * after we convert it to hex*/
@@ -79,9 +82,6 @@ int new_account(unsigned char *username ,
 
   /*the string that will hold the json format of the account*/
   const unsigned char *string,*json_stored_acc_str;
-  /*the path to the file of the accont of that specific users*/
-  char *user_accounts = malloc(3*MAXLEN*sizeof(char));
-  FILE *accounts_file;
   /*the cipher obvio*/
   unsigned char cipher_acc[CIPHER_ACCOUNT_MAX_SIZE];
   size_t ciphersize;
@@ -89,11 +89,20 @@ int new_account(unsigned char *username ,
   cJSON *json = cJSON_CreateObject();
   if(NULL ==json )
   {
+    free(hex);
+    free(user_accounts);
+    free(users_folder);
     return errno;
   }
   cJSON* json_stored_acc = cJSON_CreateObject();
   if (NULL == json_stored_acc )
+  {
+    cJSON_Delete(json);
+    free(hex);
+    free(user_accounts);
+    free(users_folder);
     return errno;
+  }
   cJSON *json_item_hexacc = NULL ;
   cJSON *json_item_cipherlen = NULL;
   if(
@@ -102,41 +111,29 @@ int new_account(unsigned char *username ,
       NULL == hex)
     return errno = ERROR_MEMORY_ALLOCATION;
 
-  /*defining the path of the folder of users accs 
-   * previously declared*/
-  if (SUCCESS !=
-      define_paths(
-        NULL,
-        NULL,
-        NULL,
-        accounts_folder,
-        MAXLEN,
-        pwd))
-    return errno;
-  /*defining the path to the exact file that has that user's accs */
-  make_file_path(user_accounts,
-      accounts_folder,
-      (const char * )username,
-      MAXLEN);
 
 
 
 
-  if (SUCCESS != errno)
-    return errno;
   /*get account from the user*/
 
   get_data_into_json(json 
       , account_creds_list
+      ,list_of_accounts_clarifications
       ,ACCOUNTS_INFO
       ,MAXLEN);
 
   /*make it a jsom object*/
   if (SUCCESS != errno)
-    return errno;
-  // account_to_json(accc,json);
+    goto free_resources_2;
+    /*puting it in the array*/
+  json_stored_acc[number_of_accounts+1]=json;
+  
+  errno = SUCCESS
+
+
   if (SUCCESS != errno)
-    return errno;
+    goto free_resources_2;
   string = (const unsigned char *)cJSON_Print(json);
 
   /*encrypting it */
@@ -163,30 +160,18 @@ int new_account(unsigned char *username ,
 
   json_item_cipherlen = cJSON_DetachItemFromObjectCaseSensitive(json_stored_acc,"cipher lengh");
 
-  /*storing it*/
 
-  accounts_file = fopen(user_accounts,"a");
-  if(NULL == accounts_file )
-  {
-    return ERROR_FILE_OPENING_FAILED;
-  }
-  if (0 > fputs((const char *)json_stored_acc_str,accounts_file ))
-  {
-    fclose(accounts_file);
-    goto free_shit;
-    return errno ;
-  }
-  /*to mark the end of that specific hex*/
-  if (0 > fputs("\n",accounts_file ))
-  {
-    fclose(accounts_file);
-    goto free_shit;
-    return errno ;
-  }
-
-  fclose(accounts_file);
-
-free_shit:
+free_resources:
+  free(hex);
+  if (json) cJSON_Delete(json);
+  if (json_stored_acc) cJSON_Delete(json_stored_acc);
+  if (json_item_hexacc) cJSON_Delete(json_item_hexacc);  // Free detached item
+  if (json_item_cipherlen) cJSON_Delete(json_item_cipherlen);  // Free detached item
+  if (string) free((void *)string);
+  if (json_stored_acc_str) free((void *)json_stored_acc_str);
+  return errnofree_resources_2:
+  /*it doesnt free the variable string 
+made for the statements before creating it*/
   free(accounts_folder);
   free(hex);
   free(user_accounts);
@@ -194,13 +179,13 @@ free_shit:
   if (json_stored_acc) cJSON_Delete(json_stored_acc);
   if (json_item_hexacc) cJSON_Delete(json_item_hexacc);  // Free detached item
   if (json_item_cipherlen) cJSON_Delete(json_item_cipherlen);  // Free detached item
-  if (string) free((void *)string);
   if (json_stored_acc_str) free((void *)json_stored_acc_str);
-  return errno = SUCCESS;
+  return errno;
 }
 
 
-int get_account(cJSON *json_acc,
+
+int get_next_json_from_file(cJSON *json_acc,
     unsigned char *username,
     unsigned char *key,
     FILE *accounts_file)
@@ -257,59 +242,15 @@ end:
 
 /*self explanatory*/
 int display_accounts(unsigned char *username ,
-    unsigned char *key )
+    unsigned char *key ,
+    FILE* accounts_file,
+    cJSON** json_accounts_array,
+    int numberofaccounts)
 {
-  /*the folder that has the users accounts*/
-  char *accounts_folder = malloc(2*MAXLEN*sizeof(char));
-
-
-  /*the path to the file of the accont of that specific users*/
-  char *user_accounts = calloc(3*MAXLEN,sizeof(char));
-  FILE *accounts_file;
-  cJSON* json_stored_acc = NULL;
-
-  if( 
-      NULL == user_accounts ||
-      NULL == accounts_folder 
-    )
-    return errno = ERROR_MEMORY_ALLOCATION;
-
-  /*defining the path of the folder of users accs 
-   * previously declared*/
-  if (SUCCESS !=
-      define_paths(
-        NULL,
-        NULL,
-        NULL,
-        accounts_folder,
-        MAXLEN,
-        pwd))
-    return errno;
-  /*defining the path to the exact file that has that user's accs */
-  make_file_path(user_accounts,
-      accounts_folder,
-      (const char * )username,
-      MAXLEN);
-
-  accounts_file = fopen(user_accounts,"r");
-  if(NULL == accounts_file )
-  {
-    return ERROR_FILE_OPENING_FAILED;
-  }
-  while( SUCCESS == get_account(json_stored_acc,
-        username,
-        key,
-        accounts_file)
-        )//reads one string containing one json object
-  {
-  cJSON_Delete(json_stored_acc);
-  }
-  cJSON_Delete(json_stored_acc);
-  fclose(accounts_file);
-  free(accounts_folder);
-  free(user_accounts);
-
-  return errno = SUCCESS;
+for(int i = 0;i<=numberofaccounts;i++)
+{
+  ;
+}
 
 }
 

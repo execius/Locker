@@ -2,6 +2,7 @@
 
 int get_data_into_json(cJSON *json_obj,
                 const char *list[],
+                const char *list_clarifications[] ,
                 int number_of_inf,
                 size_t maxlen)
 {
@@ -16,6 +17,7 @@ int get_data_into_json(cJSON *json_obj,
   }
   getinfo(list,
           number_of_inf,
+          list_clarifications,
           maxlen,
           array_credentials);
   if(SUCCESS != errno )

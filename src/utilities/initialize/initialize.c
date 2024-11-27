@@ -12,6 +12,15 @@
  * each string in the the listofanswers array
  * using the numberofinfo he gave as an argument*/
 int getinfo(const char* listofwantedinfo[] ,
+/*the next list is for if you wanna print some stuff
+ * before the prompt like options or allerts etc..
+ * PLEASE MAKE IT THE SAME SIZE AS THE OTHERS AND PUT 
+ * NULL IN THAT INDEX IF NO CLARIFICATION IS NEEDED
+ * PUT THINGS IN RESPECTIVE ORDER SO EACH PROMPT AND 
+ * IT'S CLARIFICATION HAVE THE SAME INDEX IN THEIR 
+ * ARRAYS , IGNORING THIS CAN AND WILL CAUSE MEMORY 
+ * CORRUPTION AND ORDERING PROBLEMS*/
+            const char* listofclarifications[],
             int numberofinfos , 
             int maxlengh ,
             char **listofanswers)
@@ -27,6 +36,9 @@ int getinfo(const char* listofwantedinfo[] ,
   //putting the answers in there
   for (int i = 0 ; i < numberofinfos ;i++){
     listofanswers[i] = calloc(maxlengh, sizeof(char));
+    
+    if(!listofclarifications[i])
+      printf("\n %s \n\n > ",listofclarifications[i]);
     printf("\n %s > ",listofwantedinfo[i]);
     fgets(listofanswers[i],maxlengh,stdin);
 
@@ -117,8 +129,10 @@ cJSON* json_configs = cJSON_CreateObject();
     return errno;
 
   get_data_into_json(json_configs 
-                     , list_of_config_parameters
+                     , list_of_configs_parameters
+                     ,list_of_config_clarifications
                      ,NUMBER_OF_CONFIGS
+                     ,acc
                      ,MAXLEN);
   if(SUCCESS != errno)
     return errno;

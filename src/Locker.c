@@ -119,19 +119,142 @@ int main(int argc, char *argv[])
     goto free_stuff;
     return errno;
   }
+
+/*now opening the accounts file and doing the decryption */
+/*the accs are stored in a json array the json data structure 
+ * is provided by the Cjson library*/
+  cJSON **json_accounts_array = NULL;
+  cJSON *configs_json= NULL;
+
+  FILE *accounts_file;
+  FILE *configs_file;
+  /*the folder that has the users accounts*/
+  char *accounts_folder = malloc(2*MAXLEN*sizeof(char));
+  /*the path to the file of the accont of that specific users*/
+  char *user_accounts = malloc(3*MAXLEN*sizeof(char));
+  /*the folder that has the configs of each user 
+   * ie :encryption type*/
+  char *configs_folder = malloc(2*MAXLEN*sizeof(char));
+  /*the actual file of that specific user's config file*/
+  char *user_configs = malloc(3*MAXLEN*sizeof(char));
+  /*the encryption scheme that this user have chosen
+   * during the creating of the user*/
+
+  int (*encryption_sheme)();
+  /*defining the path of the folder of users accs 
+   * previously declared*/
+  if (SUCCESS !=
+      define_paths(
+        NULL,
+        NULL,
+        configs_folder,
+        accounts_folder,
+        MAXLEN,
+        pwd))
+    goto free_stuff;
+  /*defining the path to the exact file that has that user's accs */
+  make_file_path(user_accounts,
+      accounts_folder,
+      (const char * )username,
+      MAXLEN);
+
+  if (SUCCESS != errno
+    goto free_stuff;
+  make_file_path(user_configs,
+      configs_folder  ,
+      (const char * )username,
+      MAXLEN);
+
+
+  if (SUCCESS != errno){
+    goto free_stuff;
+  }
+  accounts_file = fopen(user_accounts,"r+");
+  if(NULL == accounts_file )
+  {
+    goto free_stuff;
+  }
+  
+  configs_file = fopen(user_configs,"r");
+  if(NULL == configs_file )
+  {
+    goto free_stuff;
+  }
+  /*getting the json that has the configs*/
+  get_next_json_from_file(configs_json,username,key,configs_file);
+
+  Cjson *encryption_item=
+    cjson_getobjectitemcasesensitive(configs_json, "encryption");
+  Cjson *hashing_item   = 
+    cjson_getobjectitemcasesensitive(configs_json, "hashing");
+  switch (encryption_item->valuestring) {
+    case "1":
+      break;
+    case "2":
+      break;
+    case "3":
+      break;
+    case "4":
+      break;
+  }
+  switch (encryption_item->valuestring) {
+    case "1":
+      break;
+    case "2":
+      break;
+    case "3":
+      break;
+    case "4":
+      break;
+  }
+  if (SUCCESS != errno){
+    goto free_stuff;
+  }
+
+  int number_of_accounts = 0;
+  calloc(json_accounts_array, sizeof(cJSON*));
+  if(!json_accounts_array )
+    return errno = ERROR_MEMORY_ALLOCATION;
+  while( SUCCESS == 
+    get_next_json_from_file(json_stored_acc[number_of_accounts],
+        username,
+        key,
+        accounts_file))
+  {
+    /* number_of_accounts+1 since we need some memory at first
+     * when the number_of_accounts is 0 , then there's always 
+     * one allocation ahead*/
+
+    number_of_accounts += 1;
+    realloc(json_accounts_array,(number_of_accounts+1)*sizeof(cJSON*));
+  }
+  number_of_accounts -= 1;
+  
+  
+
   /*handling the creation of a new user*/
   if (nflg  != 0){
     new_account((unsigned char *)username,
-                key) ;
+                key,
+                json_accounts_array
+                number_of_accounts) ;
+    number_of_accounts += 1;
   }
+  /*displaying the accounts*/
   if (dflg  != 0){
     display_accounts((unsigned char *)username,
                 key) ;
   }
+  fclose(accounts_file);
 free_stuff :
   free(username);
   free(key);
   free(password);
+  free(accounts_folder);
+  free(user_accounts);
   printf("%d\n",errno);
+  if (configs_json) cJSON_Delete(configs_json);
+  if (encryption_item) cJSON_Delete(encryption_item);  // Free detached item
+  if (hashing_item) cJSON_Delete(hashing_item);  // Free detached item
   return errno;
 }
