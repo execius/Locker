@@ -5,12 +5,12 @@ int handleErrors(void) {
   return ERROR_LIBSSL_FAILURE;
 }
 
-
-int encrypt_aes256(const unsigned char *plaintext,
+int encrypt(const unsigned char *plaintext,
                    int plaintext_len,
                    unsigned char *key,
                    unsigned char *iv,
-                   unsigned char *ciphertext)
+                   unsigned char *ciphertext,
+                   const EVP_CIPHER * (*EVP_CBC_FUNC)(void)
 {
 
   if(!ciphertext || !key || !iv || !plaintext){
@@ -28,7 +28,7 @@ int encrypt_aes256(const unsigned char *plaintext,
   // Initialize the encryption operation
   if (LIBSSL_SUCCESS != EVP_EncryptInit_ex(
                           ctx, 
-                          EVP_aes_256_cbc(),
+                          EVP_CBC_FUNC(),
                           NULL, key, iv))
     return (errno = handleErrors());
 
@@ -57,11 +57,13 @@ ciphertext_len += len;
 }
 
 
-int decrypt_aes256(unsigned char *ciphertext,
+int decrypt(unsigned char *ciphertext,
                    int ciphertext_len,
                    unsigned char *key,
                    unsigned char *iv,
-                   unsigned char *plaintext){
+                   unsigned char *plaintext,
+                   const EVP_CIPHER * (*EVP_CBC_FUNC)(void)
+){
     if(!ciphertext || !key || !iv || !plaintext){
     log_error("NULL in decrypt_aes256 function");
     return errno = ERROR_NULL_VALUE_GIVEN;}
@@ -86,7 +88,7 @@ int decrypt_aes256(unsigned char *ciphertext,
      */
   if(LIBSSL_SUCCESS != EVP_DecryptInit_ex(
                         ctx,
-                        EVP_aes_256_cbc(),
+                        EVP_CBC_FUNC(),
                         NULL, key, iv))
 
     return (errno = handleErrors());
