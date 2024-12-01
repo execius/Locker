@@ -28,14 +28,11 @@ int simple_login(char *username,char *password){
       SHA256_SALT_SIZE_HEX,
       EVP_sha256);
 
-  if (SUCCESS != errno
-    goto free_resources_2;
 free_resources:
   free(users_folder);
   free(Locker_folder);
   return  errno ;
 }
-  if (errno != SUCCESS) goto end;
 /*look at the initialize_user funtion docs*/
 int simple_initialize(void){
   if (SUCCESS !=  initialize_user(
@@ -88,20 +85,18 @@ int new_account(
     return errno;
   }
     /*puting it in the array*/
-  json_stored_acc[number_of_accounts+1]=json;
+  cjson_accounts_array[number_of_accounts+1]=json;
   
-  errno = SUCCESS
-
-
+  return errno = SUCCESS;
 }
 
 
 
 int get_next_json_from_file(cJSON *json_acc,
     unsigned char *username,
-    unsigned char *key
-    const EVP_CIPHER * (*EVP_CBC_FUNC)(void);
-
+    unsigned char *key,
+    const EVP_CIPHER * (*EVP_CBC_FUNC)(void) ,
+    FILE *accounts_file
     )
 {
   cJSON *json_encrypted = NULL;
@@ -118,7 +113,7 @@ int get_next_json_from_file(cJSON *json_acc,
 
   // Parse the JSON
   json_encrypted = cJSON_Parse((const char *)encrypted_json_str);
-  if (!json_cipher_acc) {
+  if (!json_encrypted) {
     fprintf(stderr, "Error before: %s\n", cJSON_GetErrorPtr());
     errno = ERROR_CJSON_LIB_FAILURE;
     goto end;
@@ -133,13 +128,13 @@ int get_next_json_from_file(cJSON *json_acc,
 
   if (errno != SUCCESS) goto end;
 end:
-  if (json_cipher_acc) cJSON_Delete(json_cipher_acc);
+  if (json_encrypted) cJSON_Delete(json_encrypted);
   free(encrypted_json_str);
   return errno;
 }
 
 /*self explanatory*/
-int display_account(
+int display_accounts(
     cJSON** json_accounts_array,
     int numberofaccounts)
 {
@@ -147,7 +142,7 @@ char*  json_str = NULL;
 for(int i = 0;i<=numberofaccounts;i++)
 {
   
-  json_str = (const unsigned char *)cJSON_Print(json);
+  json_str = (char *)cJSON_Print(json_accounts_array[i]);
   printf("%s\n",json_str);
   if(!json_str)
     free(json_str);

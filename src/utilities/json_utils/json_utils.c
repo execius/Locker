@@ -16,8 +16,8 @@ int get_data_into_json(cJSON *json_obj,
     return errno = ERROR_JSON_OBJECT_CREATION;
   }
   getinfo(list,
-          number_of_inf,
           list_clarifications,
+          number_of_inf,
           maxlen,
           array_credentials);
   if(SUCCESS != errno )
@@ -42,17 +42,18 @@ int get_data_into_json(cJSON *json_obj,
  * the second is the lenght of the cipher
  
  it puts the decrypted json in json variable*/
-cJSON *encrypt_json(
+int encrypt_json(
                     cJSON *json,
                     cJSON *encrypted_json,
                     unsigned char *username,
-                    unsigned char *key
-                    const EVP_CIPHER * (*EVP_CBC_FUNC)(void);
+                    unsigned char *key,
+                    const EVP_CIPHER * (*EVP_CBC_FUNC)(void)
                     )
 
 {
-
-
+const unsigned char *string = NULL;
+  string = (const unsigned char *)cJSON_Print(json);
+  unsigned char cipher_acc[CIPHER_ACCOUNT_MAX_SIZE];
   /*this will hold the cipher of the account 
    * after we convert it to hex*/
   unsigned char *hex = 
@@ -61,23 +62,23 @@ cJSON *encrypt_json(
         CIPHER_SIZE(
           ACCOUNT_MAX_SIZE,
           AES_256_BLOCK_SIZE))*sizeof(char));
-  if(!hex)
-    return errno=ERROR_MEMORY_ALLOCATION;
-char *string = NULL;
+  if(!hex){
+
+    errno=ERROR_MEMORY_ALLOCATION;
+    goto free_resources;
+  }
 
   /*the string that will hold the json format of the account*/
-  const unsigned char *string;
   cJSON *json_item_hexacc = NULL ;
   cJSON *json_item_cipherlen = NULL;
   int ciphersize;
-  string = (const unsigned char *)cJSON_Print(json);
   ciphersize = encrypt(    
     string,
     strlen((const char *)string),
     key,
     username,
     cipher_acc,
-    EVP_CBC_FUNC());
+    EVP_CBC_FUNC);
   if(SUCCESS != errno)
     return errno;
   /*converting to hex for ease of storage*/
@@ -98,7 +99,8 @@ char *string = NULL;
                         json_item_cipherlen);
 free_resources:
   free(hex);
-  free(string);
+  free((void *)string);
+  return errno;
 }
 
 /*does the opposite of the encrypt_json function*/
@@ -106,14 +108,15 @@ int decrypt_json(
                     cJSON *encrypted_acc_json,
                     cJSON *json,
                     unsigned char *username,
-                    unsigned char *key
-                    const EVP_CIPHER * (*EVP_CBC_FUNC)(void);
+                    unsigned char *key,
+                    const EVP_CIPHER * (*EVP_CBC_FUNC)(void)
 )
 {
 
   unsigned char cipher_acc[CIPHER_ACCOUNT_MAX_SIZE];
   cJSON *json_item_hexacc = NULL;
   cJSON *json_item_cipherlen = NULL;
+  unsigned char* string = NULL ;
 
   // Allocate memory
   string = calloc(ACCOUNT_MAX_SIZE + 99, sizeof(char));
@@ -134,13 +137,13 @@ int decrypt_json(
       key,
       username,
       string,
-      EVP_CBC_FUNC());
+      EVP_CBC_FUNC);
   if (errno != SUCCESS) goto end;
 
   // Output the decrypted JSON string
   json = cJSON_Parse((const char* ) string);
 
 end:
-  free(string);
+  free((void *)string);
   return errno;
 }

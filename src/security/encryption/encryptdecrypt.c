@@ -10,7 +10,7 @@ int encrypt(const unsigned char *plaintext,
                    unsigned char *key,
                    unsigned char *iv,
                    unsigned char *ciphertext,
-                   const EVP_CIPHER * (*EVP_CBC_FUNC)(void)
+                   const EVP_CIPHER * (*EVP_CBC_FUNC)(void) )
 {
 
   if(!ciphertext || !key || !iv || !plaintext){

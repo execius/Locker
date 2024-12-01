@@ -9,6 +9,7 @@
 
 
 int getinfo(const char* listofwantedinfo[] ,
+            const char* listofclarifications[],
             int numberofinfos , 
             int maxlengh ,
             char **listofanswers);

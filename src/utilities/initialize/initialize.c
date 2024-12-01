@@ -129,10 +129,9 @@ cJSON* json_configs = cJSON_CreateObject();
     return errno;
 
   get_data_into_json(json_configs 
-                     , list_of_configs_parameters
-                     ,list_of_config_clarifications
+                     , list_of_config_parameters
+                     ,list_of_configs_clarifications
                      ,NUMBER_OF_CONFIGS
-                     ,acc
                      ,MAXLEN);
   if(SUCCESS != errno)
     return errno;
