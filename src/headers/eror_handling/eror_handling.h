@@ -41,7 +41,8 @@ enum ErrorCode {
   ERROR_DIRECTORY_DOESNT_EXIST = -31,
   ERROR_NO_CREDENTIALS = -32,
   ERROR_BAD_ARGUMENT = -33,
-  ERROR_CJSON_LIB_FAILURE = -34
+  ERROR_CJSON_LIB_FAILURE = -34,
+  ERROR_JSON_PRINTING = -35
 };
 
 void log_error( const char *message);

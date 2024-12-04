@@ -16,7 +16,7 @@ const char *list_of_configs_clarifications[] =
   {"lulz","blah blah"};
 
 const char *list_of_accounts_clarifications[] = 
-  {NULL,NULL,NULL};
+  {"lulz","blah","blah"};
 int read_lines(unsigned char * dst ,FILE *file, int num_lines, int maxlen) {
     if (NULL == file || NULL == dst) {
         return errno = ERROR_NULL_VALUE_GIVEN;  // Invalid file pointer or line count

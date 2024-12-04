@@ -9,14 +9,14 @@ int get_data_into_json(cJSON *json_obj,
                 size_t maxlen);
 int encrypt_json(
                     cJSON *json,
-                    cJSON *encrypted_json,
+                    cJSON **encrypted_json,
                     unsigned char *username,
                     unsigned char *key,
                     const EVP_CIPHER * (*EVP_CBC_FUNC)(void)
                     );
 int decrypt_json(                    
                     cJSON *encrypted_acc_json,
-                    cJSON *json,
+                    cJSON **json,
                     unsigned char *username,
                     unsigned char *key,
                     const EVP_CIPHER * (*EVP_CBC_FUNC)(void)

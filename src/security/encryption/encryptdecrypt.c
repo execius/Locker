@@ -51,7 +51,6 @@ ciphertext_len = len;
 ciphertext_len += len;
   // Clean up
   EVP_CIPHER_CTX_free(ctx);
-  
   return errno = ciphertext_len;
 
 }

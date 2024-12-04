@@ -37,8 +37,8 @@ int getinfo(const char* listofwantedinfo[] ,
   for (int i = 0 ; i < numberofinfos ;i++){
     listofanswers[i] = calloc(maxlengh, sizeof(char));
     
-    if(!listofclarifications[i])
-      printf("\n %s \n\n > ",listofclarifications[i]);
+    if(NULL != listofclarifications[i])
+      printf("\n%s\n",listofclarifications[i]);
     printf("\n %s > ",listofwantedinfo[i]);
     fgets(listofanswers[i],maxlengh,stdin);
 
@@ -78,6 +78,7 @@ int initialize_user(const char *list_of_wanted_inf[MAXLEN],
   char *password      = calloc(maxlengh,sizeof(char));
   char *username      = calloc(maxlengh,sizeof(char));
   char *config_file_path   = calloc(3*maxlengh,sizeof(char));
+  char *user_accounts   = calloc(3*maxlengh,sizeof(char));
 
   char* configs_json_string = NULL ;
  //check if malloc failed 
@@ -122,6 +123,13 @@ if (SUCCESS !=
     return errno;   
 
 
+  /*making a file for the storing the accouts later*/
+  make_file_path(user_accounts,
+      accounts_folder,
+      (const char * )username,
+      maxlengh);
+  FILE *accounts_file = fopen(user_accounts,"w");
+  fclose(accounts_file);
   /*making a json that has the configs*/
 cJSON* json_configs = cJSON_CreateObject();
 
