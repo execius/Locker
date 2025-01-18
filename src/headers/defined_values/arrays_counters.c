@@ -24,13 +24,18 @@ int read_lines(unsigned char * dst ,FILE *file, int num_lines, int maxlen) {
   if (num_lines <= 0)
     return num_lines;
 
-  char line[maxlen];
+  char line[MAXLEN] = "";
   int line_count = 0;
 
-  while (line_count < num_lines && fgets(line, sizeof(line), file) != NULL) {
-    strncat((char *)dst,line,maxlen) ; // Print or process each line here
-    line_count++;
+  while (line_count < num_lines) {
+    if (  fgets(line, sizeof(line), file) != NULL )
+    {
+      strncat((char *)dst,line,maxlen) ; // Print or process each line here
+      line_count++;
+      continue;
     }
+    break;
+  }
 
 
     // Check if we read exactly the requested number of lines

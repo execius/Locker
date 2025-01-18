@@ -209,13 +209,12 @@ int decrypt_json(
   if (errno != SUCCESS) goto end;
 
   // Output the decrypted JSON string
-  cJSON *jsontemp  = cJSON_Parse((const char* ) string);
-  if ( NULL == jsontemp )
+*json  = cJSON_Parse((const char* ) string);
+  if ( NULL == json )
   {
     errno = ERROR_CJSON_LIB_FAILURE;
     goto end;
   }
-  *json = jsontemp;
   
   if ( NULL == json )
   {

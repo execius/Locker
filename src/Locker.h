@@ -59,6 +59,8 @@ int new_account(
     int *number_of_accounts
     ) 
 {
+  if(!cjson_accounts_array || !number_of_accounts)
+    return errno =   ERROR_NULL_VALUE_GIVEN;
   /*allocate memory for json*/
   cjson_accounts_array[*number_of_accounts]=
     cJSON_CreateObject();
@@ -79,7 +81,6 @@ int new_account(
     cJSON_Delete(cjson_accounts_array[*number_of_accounts]);
     return errno;
   }
-    *number_of_accounts += 1;
   return errno = SUCCESS;
 }
 
@@ -147,9 +148,10 @@ int display_accounts(
 char*  json_str = NULL;
 for(int i = 0;i<numberofaccounts;i++)
 {
+  printf("%d\n",i);
   json_str = (char *)cJSON_Print(json_accounts_array[i]);
   printf("%s\n",json_str);
-  if(!json_str)
+  if(NULL == json_str)
     free(json_str);
 }
 return errno=SUCCESS;

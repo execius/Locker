@@ -4,7 +4,7 @@ int main(int argc, char *argv[])
 { 
 /*the accs are stored in a json array the json data structure 
  * is provided by the Cjson library*/
-  cJSON **json_accounts_array = malloc(sizeof(cJSON*));
+  cJSON **json_accounts_array = NULL;
   cJSON **json_accounts_array_temp =malloc(sizeof(cJSON*));
   /*this will have the configs , encryption etc*/
   cJSON *configs_json= NULL;
@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
   /*same*/
   char *accounts_folder = malloc(2*MAXLEN*sizeof(char));
   char* json_str = NULL;
-  char *configs_json_str=malloc(MAXLEN*NUMBER_OF_CONFIGS*2*sizeof(char)+2); /*i know ,deal with it man*/
+  char configs_json_str[MAXLEN*NUMBER_OF_CONFIGS*2*sizeof(char)+2] = ""; /*i know ,deal with it man*/
 
   /*the folder that has the configs of each user 
    * ie :encryption type*/
@@ -242,23 +242,19 @@ int main(int argc, char *argv[])
   //     break;
   // }
 
-  
-  int number_of_accounts = 0 ;
-  get_next_json_from_file(
-      json_accounts_array + number_of_accounts,
-      (unsigned char*)username,
-      key,
-      encryption_sheme,
-      accounts_file);
-  if (SUCCESS == errno) {
-    ++number_of_accounts;
-  }
-  while(
-      (SUCCESS == errno )
-  )
+  int number_of_accounts;
+  for( number_of_accounts = 0 ;
+  SUCCESS == errno ;
+  ++number_of_accounts)
   {
+    if( NULL == 
+    (json_accounts_array = realloc(json_accounts_array,(number_of_accounts+1)*sizeof(cJSON*)))
+    )
+    {
+      return ERROR_MEMORY_ALLOCATION;
+    }
   get_next_json_from_file(
-      json_accounts_array + number_of_accounts,
+      &json_accounts_array[number_of_accounts],
       (unsigned char*)username,
       key,
       encryption_sheme,
@@ -268,26 +264,25 @@ int main(int argc, char *argv[])
      * when the number_of_accounts is 0 , then there's always 
      * one allocation ahead*/
     
-    ++number_of_accounts;
-    if(NULL == 
-    realloc(json_accounts_array,(number_of_accounts+1)*sizeof(cJSON*))
-    )
-    {
-      return ERROR_MEMORY_ALLOCATION;
-    }
   }
+  errno = SUCCESS;
+  number_of_accounts -= 1;
   /*cause it fails once but the number.. still increases
    * by one until the next check the error isnt flaged*/
-  if(0 != number_of_accounts)
-    number_of_accounts -= 1;
 
 
-  
   printf("accounts fetched there are now %d accs\n",number_of_accounts);
   fclose(accounts_file);
 
   /*handling the creation of a new user*/
   if (nflg  != 0){
+    if(NULL == json_accounts_array && NULL == 
+      (json_accounts_array = realloc(json_accounts_array,(number_of_accounts+1)*sizeof(cJSON*)))
+    )
+    {
+      return ERROR_MEMORY_ALLOCATION;
+    }
+
     new_account(
                 json_accounts_array,
                 &number_of_accounts) ;
@@ -296,6 +291,7 @@ int main(int argc, char *argv[])
     {
       goto free_stuff;
     }
+    number_of_accounts += 1;
     printf("new acc have been created m there are now %d accs\n",number_of_accounts);
     json_str = (char *)cJSON_Print(json_accounts_array [number_of_accounts-1]);
     if ( NULL == json_str )
@@ -304,7 +300,6 @@ int main(int argc, char *argv[])
       goto free_stuff;
     }
 
-    printf("%s\n",json_str);
   }
   /*displaying the accounts*/
   if (dflg  != 0){
@@ -315,9 +310,8 @@ int main(int argc, char *argv[])
   accounts_file = fopen(user_accounts,"w");
   for (int i = 0 ; i < number_of_accounts;i++ )
   {
-    printf("%d\n",i);
     if (NULL == 
-      realloc(json_accounts_array_temp,(i+1)*sizeof(cJSON*)))
+     (json_accounts_array_temp = realloc(json_accounts_array_temp,(i+1)*sizeof(cJSON*))))
       return ERROR_MEMORY_ALLOCATION;
     
     encrypt_json(json_accounts_array[i],
@@ -339,7 +333,6 @@ int main(int argc, char *argv[])
       errno =   ERROR_JSON_PRINTING;
       goto free_stuff;
     }
-    printf("%s\n",json_str);
     fputs(json_str, accounts_file);
     fputs("\n", accounts_file);
     free(json_str);
