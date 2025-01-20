@@ -11,6 +11,7 @@ int simple_login(char *username,char *password){
   char *Locker_folder = malloc(2*MAXLEN*sizeof(char));
   char *users_folder  = malloc((2*MAXLEN)*sizeof(char));
   if (SUCCESS !=
+      /*makes the strings to the paths of the folders */
       define_paths(Locker_folder,
         users_folder,
         NULL,
@@ -61,13 +62,20 @@ int new_account(
 {
   if(!cjson_accounts_array || !number_of_accounts)
     return errno =   ERROR_NULL_VALUE_GIVEN;
+
+  const char *error_ptr = NULL;
   /*allocate memory for json*/
   cjson_accounts_array[*number_of_accounts]=
     cJSON_CreateObject();
 
   if( NULL == cjson_accounts_array[*number_of_accounts] )
   {
-    return errno=ERROR_CJSON_LIB_FAILURE;
+    error_ptr = cJSON_GetErrorPtr();
+    if (error_ptr != NULL)
+    {
+      fprintf(stderr, "Error before: %s\n", error_ptr);
+    }
+    return errno = ERROR_CJSON_LIB_FAILURE;
   }
   /*get account informations  from the user into the json*/
   get_data_into_json(cjson_accounts_array[*number_of_accounts] 
@@ -93,14 +101,30 @@ int get_next_json_from_file(cJSON **json_acc,
     FILE *accounts_file
     )
 {
+  const char *error_ptr = NULL;
+  /*the string containing the json before we parse it */
+  unsigned char *encrypted_json_str = 
+    calloc(MAXLEN * STORED_JSON_LINES, sizeof(char));
+
   /*allocate memory fot the json read from the file 
    * it's stored encrypted tho*/
   cJSON *json_encrypted = cJSON_CreateObject();
-  /*the string containing the json before we parse it */
-  unsigned char *encrypted_json_str = 
-  calloc(MAXLEN * STORED_JSON_LINES, sizeof(char));
-;
-  if (!encrypted_json_str) { errno = ERROR_MEMORY_ALLOCATION; goto end; }
+
+  /*errors check*/
+  if (!encrypted_json_str) 
+  { errno = ERROR_MEMORY_ALLOCATION; goto end; }
+
+
+  if ( NULL == json_encrypted)
+  {
+    error_ptr = cJSON_GetErrorPtr();
+    if (error_ptr != NULL)
+    {
+      fprintf(stderr, "Error before: %s\n", error_ptr);
+    }
+    errno = ERROR_CJSON_LIB_FAILURE;
+    goto end;
+  }
 
   // Read lines into json_stored_acc_str
   // STORED_JSON_LINES is the standard number of lines
@@ -108,17 +132,20 @@ int get_next_json_from_file(cJSON **json_acc,
   read_lines(encrypted_json_str, accounts_file, STORED_JSON_LINES, MAXLEN);
   if (errno != SUCCESS) goto end;
 
-  
-
   // Parse the JSON
   json_encrypted = cJSON_Parse((const char *)encrypted_json_str);
-  
+
   if ( NULL == json_encrypted )
   {
+    error_ptr = cJSON_GetErrorPtr();
+    if (error_ptr != NULL)
+    {
+      fprintf(stderr, "Error before: %s\n", error_ptr);
+    }
     errno = ERROR_CJSON_LIB_FAILURE;
     goto end;
   }
- 
+
   decrypt_json(
       json_encrypted,
       json_acc,
@@ -137,23 +164,22 @@ int display_accounts(
     cJSON** json_accounts_array,
     int numberofaccounts)
 {
-  
- switch (numberofaccounts) {
+
+  switch (numberofaccounts) {
     case 0:
       printf("this user have no accounts yet\n");
       break;
     default:
       break;
- }
-char*  json_str = NULL;
-for(int i = 0;i<numberofaccounts;i++)
-{
-  printf("%d\n",i);
-  json_str = (char *)cJSON_Print(json_accounts_array[i]);
-  printf("%s\n",json_str);
-  if(NULL == json_str)
-    free(json_str);
-}
-return errno=SUCCESS;
+  }
+  char*  json_str = NULL;
+  for(int i = 0;i<numberofaccounts;i++)
+  {
+    json_str = (char *)cJSON_Print(json_accounts_array[i]);
+    if(NULL == json_str)
+      free(json_str);
+    printf("%d\t:%s\n",i,json_str);
+  }
+  return errno=SUCCESS;
 }
 
