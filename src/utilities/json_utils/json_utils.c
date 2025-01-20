@@ -37,8 +37,6 @@ int get_data_into_json(cJSON *json_obj, const char *list[],
       goto free_resources;
   }
     }
-  if(SUCCESS != errno )
-    return errno;
 free_resources:
   free_array((void **)array_credentials, number_of_inf);
   return errno;
@@ -224,5 +222,19 @@ int decrypt_json(
 
 end:
   free((void *)string);
+  // cJSON_Delete(json_item_hexacc);
+  // cJSON_Delete(json_item_cipherlen);
   return errno;
+}
+int free_cjson_array(cJSON **arr, int size) 
+{
+    if (!arr) 
+    return ERROR_NULL_VALUE_GIVEN;
+    
+    for (int i = 0; i < size; i++) {
+    if(NULL != arr[i])
+      cJSON_Delete(arr[i]);
+    }
+    free(arr);
+  return errno =SUCCESS;
 }

@@ -2,10 +2,10 @@
 
 int free_array(void **arr, int size) {
     if (!arr) 
-    return ERROR_MEMORY_ALLOCATION;
+    return ERROR_NULL_VALUE_GIVEN;
     
     for (int i = 0; i < size; i++) {
-    if(!arr[i])
+    if(NULL != arr[i])
         free(arr[i]);
     }
     free(arr);

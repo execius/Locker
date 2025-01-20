@@ -108,7 +108,7 @@ int get_next_json_from_file(cJSON **json_acc,
 
   /*allocate memory fot the json read from the file 
    * it's stored encrypted tho*/
-  cJSON *json_encrypted = cJSON_CreateObject();
+  cJSON *json_encrypted = NULL;
 
   /*errors check*/
   if (!encrypted_json_str) 
@@ -153,8 +153,9 @@ int get_next_json_from_file(cJSON **json_acc,
       key,
       EVP_CBC_FUNC);
 
+
+  cJSON_Delete(json_encrypted);
 end:
-  if (json_encrypted) cJSON_Delete(json_encrypted);
   free(encrypted_json_str);
   return errno;
 }
@@ -172,14 +173,25 @@ int display_accounts(
     default:
       break;
   }
+  const char *error_ptr = NULL;
   char*  json_str = NULL;
   for(int i = 0;i<numberofaccounts;i++)
   {
     json_str = (char *)cJSON_Print(json_accounts_array[i]);
     if(NULL == json_str)
-      free(json_str);
-    printf("%d\t:%s\n",i,json_str);
+  {
+    error_ptr = cJSON_GetErrorPtr();
+    if (error_ptr != NULL)
+    {
+      fprintf(stderr, "Error before: %s\n", error_ptr);
+    }
+    errno = ERROR_CJSON_LIB_FAILURE;
+    goto end;
   }
+    printf("%d\t:%s\n",i,json_str);
+    free(json_str);
+  }
+end:
   return errno=SUCCESS;
 }
 

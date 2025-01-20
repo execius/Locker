@@ -21,4 +21,5 @@ int decrypt_json(
                     unsigned char *key,
                     const EVP_CIPHER * (*EVP_CBC_FUNC)(void)
 );
+int free_cjson_array(cJSON **arr, int size) ;
 #endif // DEBUG

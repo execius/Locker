@@ -224,6 +224,7 @@ int main(int argc, char *argv[])
   if (errno != SUCCESS) goto free_stuff;
 
 
+  fclose(configs_file);
   // Parse the JSON
   configs_json = cJSON_Parse((const char *)configs_json_str);
 
@@ -238,23 +239,23 @@ int main(int argc, char *argv[])
     goto free_stuff;
   }
 
-  encryption_item = 
-    cJSON_GetObjectItemCaseSensitive(configs_json,
-                                     "encryption");
-  hashing_item = 
-    cJSON_GetObjectItemCaseSensitive(configs_json,
-                                     "hashing");
-
-  if ( NULL == encryption_item || NULL == hashing_item  )
-  {
-    error_ptr = cJSON_GetErrorPtr();
-    if (error_ptr != NULL)
-    {
-      fprintf(stderr, "Error before: %s\n", error_ptr);
-    }
-    errno = ERROR_CJSON_LIB_FAILURE;
-    goto free_stuff;
-  }
+  // encryption_item = 
+  //   cJSON_GetObjectItemCaseSensitive(configs_json,
+  //                                    "encryption");
+  // hashing_item = 
+  //   cJSON_GetObjectItemCaseSensitive(configs_json,
+  //                                    "hashing");
+  //
+  // if ( NULL == encryption_item || NULL == hashing_item  )
+  // {
+  //   error_ptr = cJSON_GetErrorPtr();
+  //   if (error_ptr != NULL)
+  //   {
+  //     fprintf(stderr, "Error before: %s\n", error_ptr);
+  //   }
+  //   errno = ERROR_CJSON_LIB_FAILURE;
+  //   goto free_stuff;
+  // }
   /*setting the encryption_scheme after we parsed the configs*/
 
   // switch (encryption_item->valuestring) {
@@ -339,6 +340,7 @@ int main(int argc, char *argv[])
       errno =   ERROR_JSON_PRINTING;
       goto free_stuff;
     }
+    free(json_str);
 
   }
 
@@ -394,12 +396,18 @@ int main(int argc, char *argv[])
       fputs("\n", accounts_file);
       free(json_str);
     }
+    free_cjson_array(json_accounts_array,number_of_accounts);
+    free_cjson_array(json_accounts_array_temp,number_of_accounts);
   }
+  fclose(accounts_file);
 free_stuff :
   free(username);
   free(key);
   free(password);
   free(accounts_folder);
+  free(user_configs);
+  free(user_accounts);
+  free(configs_folder);
   printf("%d\n",errno);
   // if (encryption_item) cJSON_Delete(encryption_item);  // Free detached item
   // if (hashing_item) cJSON_Delete(hashing_item);  // Free detached item
