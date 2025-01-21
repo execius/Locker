@@ -136,6 +136,7 @@ cJSON* json_configs = cJSON_CreateObject();
   if (NULL == json_configs )
     return errno;
 
+get_configs:
   get_data_into_json(json_configs 
                      , list_of_config_parameters
                      ,list_of_configs_clarifications
@@ -143,6 +144,26 @@ cJSON* json_configs = cJSON_CreateObject();
                      ,MAXLEN);
   if(SUCCESS != errno)
     return errno;
+
+  cJSON* encryption_item = 
+    cJSON_GetObjectItemCaseSensitive(json_configs,
+                                     "encryption");
+  char *endptr;
+  long num = strtol(encryption_item->valuestring,
+                    &endptr, 10); // Base 10
+
+  if (*endptr != '\0' || num > NUMBER_OF_ENCRYPTION_OPTIONS) {
+    clear_terminal();
+    printf("Invalid input: %s\n", encryption_item->valuestring); 
+    cJSON_Delete(json_configs);
+    json_configs = cJSON_CreateObject();
+    if ( NULL == json_configs )
+    {
+      handle_cjson_error();
+      goto free_resources;
+    }
+    goto get_configs;
+    }
   /*making the filepath to the user configs
    * the_general_configs_path/username */
   if (SUCCESS != make_file_path(
@@ -168,6 +189,8 @@ cJSON* json_configs = cJSON_CreateObject();
   }
 
   fclose(config_file);
+  cJSON_Delete(json_configs);
+free_resources:
   free(username);
   free(password);
   free(config_file_path);
@@ -176,9 +199,7 @@ cJSON* json_configs = cJSON_CreateObject();
   free(accounts_folder);
   free(Locker_folder);
   free(configs_json_string);
-  cJSON_Delete(json_configs);
-
-  return  errno = SUCCESS;
+  return  errno ;
   
 }
 

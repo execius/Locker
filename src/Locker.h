@@ -63,19 +63,14 @@ int new_account(
   if(!cjson_accounts_array || !number_of_accounts)
     return errno =   ERROR_NULL_VALUE_GIVEN;
 
-  const char *error_ptr = NULL;
   /*allocate memory for json*/
   cjson_accounts_array[*number_of_accounts]=
     cJSON_CreateObject();
 
   if( NULL == cjson_accounts_array[*number_of_accounts] )
   {
-    error_ptr = cJSON_GetErrorPtr();
-    if (error_ptr != NULL)
-    {
-      fprintf(stderr, "Error before: %s\n", error_ptr);
-    }
-    return errno = ERROR_CJSON_LIB_FAILURE;
+    handle_cjson_error();
+    return errno;
   }
   /*get account informations  from the user into the json*/
   get_data_into_json(cjson_accounts_array[*number_of_accounts] 
@@ -101,7 +96,6 @@ int get_next_json_from_file(cJSON **json_acc,
     FILE *accounts_file
     )
 {
-  const char *error_ptr = NULL;
   /*the string containing the json before we parse it */
   unsigned char *encrypted_json_str = 
     calloc(MAXLEN * STORED_JSON_LINES, sizeof(char));
@@ -115,34 +109,18 @@ int get_next_json_from_file(cJSON **json_acc,
   { errno = ERROR_MEMORY_ALLOCATION; goto end; }
 
 
-  if ( NULL == json_encrypted)
-  {
-    error_ptr = cJSON_GetErrorPtr();
-    if (error_ptr != NULL)
-    {
-      fprintf(stderr, "Error before: %s\n", error_ptr);
-    }
-    errno = ERROR_CJSON_LIB_FAILURE;
-    goto end;
-  }
 
   // Read lines into json_stored_acc_str
   // STORED_JSON_LINES is the standard number of lines
   // that a stored json consists of , it's 4 rn 
   read_lines(encrypted_json_str, accounts_file, STORED_JSON_LINES, MAXLEN);
   if (errno != SUCCESS) goto end;
-
   // Parse the JSON
   json_encrypted = cJSON_Parse((const char *)encrypted_json_str);
 
   if ( NULL == json_encrypted )
   {
-    error_ptr = cJSON_GetErrorPtr();
-    if (error_ptr != NULL)
-    {
-      fprintf(stderr, "Error before: %s\n", error_ptr);
-    }
-    errno = ERROR_CJSON_LIB_FAILURE;
+    handle_cjson_error();
     goto end;
   }
 
@@ -173,19 +151,13 @@ int display_accounts(
     default:
       break;
   }
-  const char *error_ptr = NULL;
   char*  json_str = NULL;
   for(int i = 0;i<numberofaccounts;i++)
   {
     json_str = (char *)cJSON_Print(json_accounts_array[i]);
     if(NULL == json_str)
   {
-    error_ptr = cJSON_GetErrorPtr();
-    if (error_ptr != NULL)
-    {
-      fprintf(stderr, "Error before: %s\n", error_ptr);
-    }
-    errno = ERROR_CJSON_LIB_FAILURE;
+    handle_cjson_error();
     goto end;
   }
     printf("%d\t:%s\n",i,json_str);

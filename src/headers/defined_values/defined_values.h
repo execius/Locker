@@ -11,6 +11,7 @@
 #define CIPHER_SIZE(len,block_size) len+(block_size-(len%block_size))
 
 typedef enum constant_values{
+  NUMBER_OF_ENCRYPTION_OPTIONS = 6,
   JSON_OVERHEAD_SIZE = 100,
   STORED_JSON_LINES = 4,/*used for parsing the json thar contain the cipher of the account */
   NUMBER_OF_CONFIG_INFORMATION = 4, 

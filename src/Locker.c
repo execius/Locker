@@ -45,13 +45,12 @@ int main(int argc, char *argv[])
   /*the encryption scheme that this user have chosen
    * during the creating of the user*/
 
-  const EVP_CIPHER *(*encryption_sheme)(void) = EVP_aes_256_cbc;
+  const EVP_CIPHER *(*encryption_scheme)(void) =  NULL;
   /*see the usage of those two */
   cJSON *encryption_item= NULL;
   cJSON *hashing_item   = NULL;
   /* this is the ptr that holds the error
    * in case libcjson fails*/
-  const char *error_ptr = NULL;
 
 
 
@@ -228,56 +227,47 @@ int main(int argc, char *argv[])
   // Parse the JSON
   configs_json = cJSON_Parse((const char *)configs_json_str);
 
-  if (!configs_json )
+  if (NULL == configs_json )
   {
-    error_ptr = cJSON_GetErrorPtr();
-    if (error_ptr != NULL)
-    {
-      fprintf(stderr, "Error before: %s\n", error_ptr);
-    }
-    errno = ERROR_CJSON_LIB_FAILURE;
+    handle_cjson_error();
     goto free_stuff;
   }
 
-  // encryption_item = 
-  //   cJSON_GetObjectItemCaseSensitive(configs_json,
-  //                                    "encryption");
-  // hashing_item = 
-  //   cJSON_GetObjectItemCaseSensitive(configs_json,
-  //                                    "hashing");
-  //
-  // if ( NULL == encryption_item || NULL == hashing_item  )
-  // {
-  //   error_ptr = cJSON_GetErrorPtr();
-  //   if (error_ptr != NULL)
-  //   {
-  //     fprintf(stderr, "Error before: %s\n", error_ptr);
-  //   }
-  //   errno = ERROR_CJSON_LIB_FAILURE;
-  //   goto free_stuff;
-  // }
+  encryption_item = 
+    cJSON_GetObjectItemCaseSensitive(configs_json,
+                                     "encryption");
+  hashing_item = 
+    cJSON_GetObjectItemCaseSensitive(configs_json,
+                                     "hashing");
+
+  if ( NULL == encryption_item || NULL == hashing_item  )
+  {
+    handle_cjson_error();
+    goto free_stuff;
+  }
+  if (errno != SUCCESS) goto free_stuff;
   /*setting the encryption_scheme after we parsed the configs*/
 
-  // switch (encryption_item->valuestring) {
-  //   case "1":
-  //     break;
-  //   case "2":
-  //     break;
-  //   case "3":
-  //     break;
-  //   case "4":
-  //     break;
-  // }
-  // switch (hashing_item_item->valuestring) {
-  //   case "1":
-  //     break;
-  //   case "2":
-  //     break;
-  //   case "3":
-  //     break;
-  //   case "4":
-  //     break;
-  // }
+  switch (atoi(encryption_item->valuestring)) {
+    case 1:
+      encryption_scheme = EVP_aes_256_cbc;
+      break;
+    case 2:
+      encryption_scheme = EVP_aes_192_cbc;
+      break;
+    case 3:
+      encryption_scheme = EVP_aes_128_cbc;
+      break;
+    case 4:
+      encryption_scheme = EVP_camellia_128_cbc;
+      break;
+    case 5:
+      encryption_scheme = EVP_camellia_192_cbc;
+      break;
+    case 6:
+      encryption_scheme = EVP_camellia_256_cbc;
+      break;
+  }
 
   for( number_of_accounts = 0 ;
   SUCCESS == errno ;
@@ -295,7 +285,7 @@ int main(int argc, char *argv[])
       &json_accounts_array[number_of_accounts],
       (unsigned char*)username,
       key,
-      encryption_sheme,
+      encryption_scheme,
       accounts_file);
 
     /* number_of_accounts+1 since we need some memory at first
@@ -371,7 +361,7 @@ int main(int argc, char *argv[])
                    json_accounts_array_temp+i,
                    (unsigned char *)username,
                    key,
-                   encryption_sheme);
+                   encryption_scheme);
 
       if(SUCCESS != errno)
       {
@@ -384,12 +374,7 @@ int main(int argc, char *argv[])
       json_str = (char *)cJSON_Print(json_accounts_array_temp [i]);
       if ( NULL == json_str )
       {
-        error_ptr = cJSON_GetErrorPtr();
-        if (error_ptr != NULL)
-        {
-          fprintf(stderr, "Error before: %s\n", error_ptr);
-        }
-        errno = ERROR_CJSON_LIB_FAILURE;
+        handle_cjson_error();
         goto free_stuff;
       }
       fputs(json_str, accounts_file);

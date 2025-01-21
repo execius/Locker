@@ -10,7 +10,7 @@ extern const char *list_of_accounts_clarifications[] ;
 
 enum counters
 { 
-  NUMBER_OF_CONFIGS =2,
+  NUMBER_OF_CONFIGS =1,
   NUMBER_OF_DIRS =4,
   ACCOUNTS_INFO = 3
 };
