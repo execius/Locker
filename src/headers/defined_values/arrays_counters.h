@@ -4,11 +4,11 @@
 
 #define ARRS_CNTS
 extern const char *list_of_config_parameters[];
-extern const char *account_creds_list[] ; 
-extern const char *list_of_configs_clarifications[] ;
-extern const char *list_of_accounts_clarifications[] ; 
+extern const char *account_creds_list[];
+extern const char *list_of_configs_clarifications[];
+extern const char *list_of_accounts_clarifications[];
 extern const size_t NUMBER_OF_CONFIGS;
-extern const size_t NUMBER_OF_DIRS; 
+extern const size_t NUMBER_OF_DIRS;
 extern const size_t ACCOUNTS_INFO;
 
 #endif // DEBUG
