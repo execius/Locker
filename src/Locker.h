@@ -61,8 +61,10 @@ int new_account(
     ) 
 {
   if(!cjson_accounts_array || !number_of_accounts)
-    return errno =   ERROR_NULL_VALUE_GIVEN;
-
+  {
+    errno =   ERROR_NULL_VALUE_GIVEN;
+    goto end;
+  }
   /*allocate memory for json*/
   cjson_accounts_array[*number_of_accounts]=
     cJSON_CreateObject();
@@ -70,7 +72,7 @@ int new_account(
   if( NULL == cjson_accounts_array[*number_of_accounts] )
   {
     handle_cjson_error();
-    return errno;
+     goto end;
   }
   /*get account informations  from the user into the json*/
   get_data_into_json(cjson_accounts_array[*number_of_accounts] 
@@ -82,9 +84,10 @@ int new_account(
   if (SUCCESS != errno)
   {
     cJSON_Delete(cjson_accounts_array[*number_of_accounts]);
-    return errno;
+    goto end;
   }
-  return errno = SUCCESS;
+end:
+  return errno ;
 }
 
 

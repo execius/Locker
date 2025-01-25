@@ -20,7 +20,9 @@ CAMELIA 128\n\t5) CAMELIA 192\n\t6) CAMELIA 256\n\t\
 ","blah blah"};
 
 const char *list_of_accounts_clarifications[] = 
-  {"lulz","blah","blah"};
+  {"enter the username",
+    "enter the email or a equivalent",
+    "enter the password"};
 
 const size_t NUMBER_OF_CONFIGS =
   sizeof(list_of_config_parameters)/sizeof(char *) ;
@@ -28,27 +30,3 @@ const size_t   NUMBER_OF_DIRS =4;
 const size_t   ACCOUNTS_INFO = 
   sizeof(account_creds_list)/sizeof(char *) ;
 
-int read_lines(unsigned char * dst ,FILE *file, int num_lines, int maxlen) {
-    if (NULL == file || NULL == dst) {
-        return errno = ERROR_NULL_VALUE_GIVEN;  // Invalid file pointer or line count
-  }
-  if (num_lines <= 0)
-    return num_lines;
-
-  char line[MAXLEN] = "";
-  int line_count = 0;
-
-  while (line_count < num_lines) {
-    if (  fgets(line, sizeof(line), file) != NULL )
-    {
-      strncat((char *)dst,line,maxlen) ; // Print or process each line here
-      line_count++;
-      continue;
-    }
-    break;
-  }
-
-
-    // Check if we read exactly the requested number of lines
-    return line_count == num_lines ? errno=SUCCESS : (errno = ERROR_BAD_ARGUMENT);
-}

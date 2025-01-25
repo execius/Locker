@@ -30,13 +30,14 @@ int getinfo(const char* listofwantedinfo[] ,
   if (!listofanswers || !listofwantedinfo) {
     log_error(
       "error : NULL given, function : getinfo");
-    return ERROR_NULL_VALUE_GIVEN;
+    errno = ERROR_NULL_VALUE_GIVEN;
+    goto end;
 
   }
   //putting the answers in there
   for (int i = 0 ; i < numberofinfos ;i++){
     listofanswers[i] = calloc(maxlengh, sizeof(char));
-    
+  get_input:
     if(NULL != listofclarifications[i])
       printf("\n%s\n",listofclarifications[i]);
     printf("\n %s > ",listofwantedinfo[i]);
@@ -45,14 +46,15 @@ int getinfo(const char* listofwantedinfo[] ,
     if(2 > strlen(listofanswers[i]))
     {
       log_error("input string too short");
-      return errno = ERROR_STR_TOO_SHORT;
+      goto get_input;
     }
 
     //sanitizing the content
     listofanswers[i][strcspn(listofanswers[i]  , "\n")] =  '\0';
     listofanswers[i][strcspn(listofanswers[i]  , "\n")] =  '\0';
   }
-  return errno = SUCCESS;
+end:
+  return errno ;
 }
 /* this funtion is supposed to initialize a new user 
  * it asks for credentials and sets the user up
@@ -104,11 +106,23 @@ int initialize_user(const char *list_of_wanted_inf[MAXLEN],
     return errno;
   }
   //getting the creds
+get_user:
   printf("username> ");
   fgets(username,MAXLEN,stdin);
 
+  if(2 > strlen(username))
+  {
+    printf("invalid input\n");
+    goto get_user;
+  }
+get_password:
   printf("password> ");
   fgets(password,MAXLEN,stdin);
+  if(2 > strlen(password))
+  {
+    printf("invalid input\n");
+    goto get_password;
+  }
   //making the user
 if (SUCCESS != 
   make_user(users_folder,

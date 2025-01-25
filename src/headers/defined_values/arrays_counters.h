@@ -11,5 +11,4 @@ extern const size_t NUMBER_OF_CONFIGS;
 extern const size_t NUMBER_OF_DIRS; 
 extern const size_t ACCOUNTS_INFO;
 
-int read_lines(unsigned char * dst ,FILE *file, int num_lines, int maxlen) ;//this is an imposter here 
 #endif // DEBUG
