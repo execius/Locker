@@ -238,3 +238,61 @@ int free_cjson_array(cJSON **arr, int size)
     free(arr);
   return errno =SUCCESS;
 }
+
+/*modifies the value of a json item*/
+int modify_item(cJSON *object_to_modify ,
+                char* newvalue,
+                size_t maxlen)
+{
+
+  if ( NULL == object_to_modify )
+  {
+    errno = ERROR_NULL_VALUE_GIVEN;
+    goto free_resources;
+  }
+  /*thi is done to ensure we have enough memory in the item str*/
+  free(object_to_modify->valuestring);
+  object_to_modify->valuestring= malloc(maxlen*sizeof(char));
+  if ( NULL == object_to_modify )
+  {
+    errno = ERROR_MEMORY_ALLOCATION;
+    goto free_resources;
+  }
+  strncpy(object_to_modify->valuestring ,newvalue,maxlen);
+  errno = SUCCESS;
+free_resources:
+  return errno;
+}
+
+
+/*modifies an item inside the json given\
+ * given the key of the item*/
+int modify_json(cJSON*jsontomod,
+                const char*item_name,
+                char *newvalue,
+                size_t maxlen)
+{
+  if ( NULL == jsontomod 
+    || NULL == item_name 
+    || NULL == newvalue)
+  {
+    errno = ERROR_NULL_VALUE_GIVEN;
+    goto free_resources;
+  }
+  cJSON *itemtomod = 
+    cJSON_GetObjectItemCaseSensitive(jsontomod,item_name);
+
+  if ( NULL == itemtomod )
+  {
+    handle_cjson_error();
+    goto free_resources;
+  }
+  modify_item(itemtomod,newvalue,maxlen);
+      
+  if (SUCCESS != errno) goto free_resources;
+
+  errno = SUCCESS;
+free_resources:
+  return errno;
+}
+

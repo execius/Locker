@@ -22,4 +22,14 @@ int decrypt_json(
                     const EVP_CIPHER * (*EVP_CBC_FUNC)(void)
 );
 int free_cjson_array(cJSON **arr, int size) ;
+
+int modify_item(cJSON *object_to_modify ,
+                char* newvalue,
+                size_t maxlen);
+
+
+int modify_json(cJSON*jsontomod,
+                const char*item_name,
+                char *newvalue,
+                size_t maxlen);
 #endif // DEBUG

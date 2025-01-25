@@ -33,8 +33,9 @@ int main(int argc, char *argv[])
   /*this is for storing the parsed strings from the jsons*/
   char* json_str = NULL;
   /*same but with the configs jsons instead of the accounts*/
-  char configs_json_str[MAXLEN*NUMBER_OF_CONFIGS*2*sizeof(char)+2] = ""; /*i know ,deal with it man*/
-
+  char *configs_json_str= malloc(MAXLEN*NUMBER_OF_CONFIGS*2*sizeof(char)+2); /*i know ,deal with it man*/
+  /*to silence valgrind*/
+  memset(configs_json_str, 0, MAXLEN*NUMBER_OF_CONFIGS*2 * sizeof(char));
   /*the folder that has the configs of each user 
    * ie :encryption type*/
   char *configs_folder = NULL;
@@ -48,9 +49,12 @@ int main(int argc, char *argv[])
   const EVP_CIPHER *(*encryption_scheme)(void) =  NULL;
   /*see the usage of those two */
   cJSON *encryption_item= NULL;
-  cJSON *hashing_item   = NULL;
-  /* this is the ptr that holds the error
-   * in case libcjson fails*/
+  /* this is used to store a choice in the modify acc function*/
+  char* modify_choice = NULL;
+  char*account_choice = NULL;
+  long account_num ,num;
+  char *endptr;
+
 
 
 
@@ -70,11 +74,11 @@ int main(int argc, char *argv[])
   key = malloc(KEY_SIZE_256*sizeof(char));
   /*flags to check if an option is given*/
   int uflg = 0, Pflg = 0, rflg = 0;
-  int mflg = 0, vflg = 0,  pflg = 0;
-  int iflg = 0, nflg = 0,dflg = 0;
+  int mflg = 0, vflg = 0, pflg = 0;
+  int iflg = 0, nflg = 0, dflg = 0;
 
   /*getting commandline options and inceasing flags*/
-  while ((c = getopt(argc, argv, ":u:P:ar:m:vp:ind")) != -1) {
+  while ((c = getopt(argc, argv, ":u:P:ar:mvp:ind")) != -1) {
     switch(c) {    
       case 'u':
         uflg++;
@@ -236,16 +240,13 @@ int main(int argc, char *argv[])
   encryption_item = 
     cJSON_GetObjectItemCaseSensitive(configs_json,
                                      "encryption");
-  hashing_item = 
-    cJSON_GetObjectItemCaseSensitive(configs_json,
-                                     "hashing");
 
-  if ( NULL == encryption_item || NULL == hashing_item  )
+  if ( NULL == encryption_item )
   {
     handle_cjson_error();
     goto free_stuff;
   }
-  if (errno != SUCCESS) goto free_stuff;
+  if (SUCCESS != errno) goto free_stuff;
   /*setting the encryption_scheme after we parsed the configs*/
 
   switch (atoi(encryption_item->valuestring)) {
@@ -343,6 +344,80 @@ int main(int argc, char *argv[])
       number_of_accounts) ;
   }
 
+  if (mflg  != 0){
+    account_choice = malloc(10*sizeof(char*));
+    modify_choice = malloc(10*sizeof(char*));
+    char* newline;
+  get_mod_number:
+    printf("What do you want to modify :\n");
+    for(int i = 0;i<ACCOUNTS_INFO;i++)
+    {
+      printf("\t%d)%s\n",i,account_creds_list[i]);
+    }
+    printf(">");
+    fgets(modify_choice,10,stdin);
+
+    num = strtol(modify_choice,
+                      &endptr, 10); // Base 10
+    newline = strchr(modify_choice, '\n');
+    if (newline) {
+      *newline = '\0';
+    }
+    if (*endptr != '\0' || num >= ACCOUNTS_INFO || num <0) {
+      clear_terminal();
+      printf("Invalid input: %s\n", modify_choice); 
+
+      if ( NULL == modify_choice )
+      {
+        errno = ERROR_MEMORY_ALLOCATION;
+        goto free_stuff;
+      }
+      goto get_mod_number;
+    }
+  get_account_number:
+    printf("What account you wanna modify\
+    (provide its number) : ");
+    fgets(account_choice,10,stdin);
+
+    char *endptr;
+     account_num = strtol(account_choice,
+                      &endptr, 10); // Base 10
+
+    newline = strchr(account_choice, '\n');
+    if (newline) {
+      *newline = '\0';
+    }
+    if (*endptr != '\0' 
+      || account_num > number_of_accounts 
+      || num <0) 
+    {
+      clear_terminal();
+      printf("Invalid input: %s\n", account_choice); 
+
+      if ( NULL == account_choice )
+      {
+        errno = ERROR_MEMORY_ALLOCATION;
+        goto free_stuff;
+      }
+      goto get_account_number;
+    }
+
+
+    char*newvalue = malloc(MAXLEN*sizeof(char));
+    printf("enter the new value >");
+    fgets(newvalue,MAXLEN,stdin);
+    
+
+    modify_json(json_accounts_array[account_num],
+                account_creds_list[num],
+                newvalue,
+                MAXLEN);
+    if (newvalue) free(newvalue);
+    if (account_choice)free(account_choice);
+    if(modify_choice) free(modify_choice);
+
+  }
+
 
   /* encrypting the accounts,
    * opening the accounts file  
@@ -386,16 +461,15 @@ int main(int argc, char *argv[])
   }
   fclose(accounts_file);
 free_stuff :
-  free(username);
-  free(key);
-  free(password);
-  free(accounts_folder);
-  free(user_configs);
-  free(user_accounts);
-  free(configs_folder);
+  if(username)  free(username);
+  if(key)  free(key);
+  if(password)  free(password);
+  if(accounts_folder)  free(accounts_folder);
+  if(user_configs)  free(user_configs);
+  if(user_accounts)  free(user_accounts);
+  if(configs_folder)  free(configs_folder);
+  if(configs_json_str)  free(configs_json_str);
   printf("%d\n",errno);
-  // if (encryption_item) cJSON_Delete(encryption_item);  // Free detached item
-  // if (hashing_item) cJSON_Delete(hashing_item);  // Free detached item
   if (configs_json) cJSON_Delete(configs_json);
   return errno;
 }
