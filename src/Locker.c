@@ -32,9 +32,8 @@ int main(int argc, char *argv[]) {
   char *json_str = NULL;
   /*same but with the configs jsons instead of the
    * accounts*/
-  char *configs_json_str =
-      malloc(MAXLEN * NUMBER_OF_CONFIGS * 2 * sizeof(char) +
-             2); /*i know ,deal with it man*/
+  char *configs_json_str = malloc(
+      MAXLEN * NUMBER_OF_CONFIGS * 2 * sizeof(char) + 2);
   /*to silence valgrind*/
   memset(configs_json_str, 0,
          MAXLEN * NUMBER_OF_CONFIGS * 2 * sizeof(char));
@@ -311,7 +310,8 @@ int main(int argc, char *argv[]) {
   /*displaying the accounts*/
   if (dflg != 0) {
     display_accounts(json_accounts_array,
-                     number_of_accounts);
+                     number_of_accounts, account_creds_list,
+                     ACCOUNTS_INFO);
   }
 
   if (mflg != 0) {

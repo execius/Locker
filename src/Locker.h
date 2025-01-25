@@ -117,9 +117,43 @@ end:
   return errno;
 }
 
+int display_account(cJSON *account_json,
+                    const char **credentials_names,
+                    int number_of_creds) {
+  cJSON **items = malloc(number_of_creds * sizeof(cJSON *));
+  size_t max_name_length = 0;
+
+  if (NULL == items) {
+    errno = ERROR_MEMORY_ALLOCATION;
+    goto free_resources;
+  }
+  for (int i = 0; i < number_of_creds; i++) {
+    size_t name_length = strlen(credentials_names[i]);
+    if (name_length > max_name_length) {
+      max_name_length = name_length;
+    }
+  }
+  for (int i = 0; i < number_of_creds; i++) {
+    items[i] = cJSON_GetObjectItemCaseSensitive(
+        account_json, credentials_names[i]);
+    if (NULL == items[i]) {
+      handle_cjson_error();
+      goto free_resources;
+    }
+    printf("\t%-*s : %s\n", (int)max_name_length,
+           credentials_names[i], items[i]->valuestring);
+  }
+
+free_resources:
+  if (items)
+    free(items);
+  return errno;
+}
 /*self explanatory*/
 int display_accounts(cJSON **json_accounts_array,
-                     int numberofaccounts) {
+                     int numberofaccounts,
+                     const char **credentials_names,
+                     int number_of_creds) {
 
   switch (numberofaccounts) {
   case 0:
@@ -129,16 +163,13 @@ int display_accounts(cJSON **json_accounts_array,
   default:
     break;
   }
-  char *json_str = NULL;
   for (int i = 0; i < numberofaccounts; i++) {
-    json_str = (char *)cJSON_Print(json_accounts_array[i]);
-    if (NULL == json_str) {
-      handle_cjson_error();
+    printf("%d>\n", i);
+    display_account(json_accounts_array[i],
+                    credentials_names, number_of_creds);
+    if (SUCCESS != errno)
       goto end;
-    }
-    printf("%d\t:%s\n", i, json_str);
-    free(json_str);
   }
 end:
-  return errno = SUCCESS;
+  return errno;
 }
