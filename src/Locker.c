@@ -21,8 +21,10 @@ int main(int argc, char *argv[]) {
 
   /*the folder that has the users accounts*/
   char *user_accounts = malloc(3 * MAXLEN * sizeof(char));
+  memset(user_accounts, 0, 3 * MAXLEN * sizeof(char));
   /*same with configs folder*/
   char *accounts_folder = malloc(2 * MAXLEN * sizeof(char));
+  memset(accounts_folder, 0, 2 * MAXLEN * sizeof(char));
   /*the path to the file of the accont of that specific
    * users*/
   FILE *accounts_file = NULL;
@@ -41,9 +43,11 @@ int main(int argc, char *argv[]) {
    * ie :encryption type*/
   char *configs_folder = NULL;
   configs_folder = malloc(2 * MAXLEN * sizeof(char));
+  memset(configs_folder, 0, 2 * MAXLEN * sizeof(char));
   /*the actual file of that specific user's config file*/
   char *user_configs = NULL;
   user_configs = malloc(3 * MAXLEN * sizeof(char));
+  memset(user_configs, 0, 3 * MAXLEN * sizeof(char));
   /*the encryption scheme that this user have chosen
    * during the creating of the user*/
 
@@ -64,11 +68,14 @@ int main(int argc, char *argv[]) {
   /*those will hold the values later for login*/
   char *username, *password;
   username = malloc(MAXLEN * sizeof(char) + 1);
+  memset(username, 0, MAXLEN * sizeof(char));
   password = malloc(MAXLEN * sizeof(char) + 1);
+  memset(password, 0, MAXLEN * sizeof(char));
 
   /*this is a key derived from the password*/
   unsigned char *key;
   key = malloc(KEY_SIZE_256 * sizeof(char));
+  memset(password, 0, KEY_SIZE_256 * sizeof(char));
   /*flags to check if an option is given*/
   int uflg = 0, Pflg = 0, rflg = 0;
   int mflg = 0, vflg = 0, pflg = 0;
