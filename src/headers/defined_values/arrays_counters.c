@@ -5,7 +5,7 @@
 const char *list_of_config_parameters[] = {"encryption"};
 
 const char *account_creds_list[] = {"user", "email",
-                                    "password"};
+                                    "password", "platform"};
 
 /*make sure to increase the number of initialization info
  if the .h file whenever you add a new element to this
@@ -21,7 +21,7 @@ CAMELIA 128\n\t5) CAMELIA 192\n\t6) CAMELIA 256\n\t\
 
 const char *list_of_accounts_clarifications[] = {
     "enter the username", "enter the email or a equivalent",
-    "enter the password"};
+    "enter the password", "enter the platform"};
 
 const size_t NUMBER_OF_CONFIGS =
     sizeof(list_of_config_parameters) / sizeof(char *);
