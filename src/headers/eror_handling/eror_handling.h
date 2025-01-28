@@ -39,7 +39,7 @@ enum ErrorCode {
   ERROR_NO_CREDENTIALS = -32,
   ERROR_BAD_ARGUMENT = -33,
   ERROR_CJSON_LIB_FAILURE = -34,
-  ERROR_JSON_PRINTING = -35
+  ERROR_JSON_PRINTING = -35,
 };
 
 void log_error(const char *message);

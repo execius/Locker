@@ -58,7 +58,7 @@ int main(int argc, char *argv[]) {
    * function*/
   char *modify_choice = NULL;
   char *account_choice = NULL;
-  long account_num, num;
+  long account_num, num = 0;
   char *endptr;
 
   /* this handles the commandline arguments*/
@@ -66,11 +66,14 @@ int main(int argc, char *argv[]) {
   /*keeps track of the commandline options */
   int c;
   /*those will hold the values later for login*/
-  char *username, *password;
+  char *username, *password, *password_length_str,
+      *random_password;
   username = malloc(MAXLEN * sizeof(char) + 1);
   memset(username, 0, MAXLEN * sizeof(char));
   password = malloc(MAXLEN * sizeof(char) + 1);
   memset(password, 0, MAXLEN * sizeof(char));
+  password_length_str = malloc(10 * sizeof(char));
+  int password_length = 0;
 
   /*this is a key derived from the password*/
   unsigned char *key;
@@ -105,6 +108,19 @@ int main(int argc, char *argv[]) {
       nflg++;
       break;
     case 'r':
+      /*getting the lengh of a random password to
+       * generate it*/
+      strncpy(password_length_str, optarg, 10);
+      password_length_str[strcspn(password_length_str,
+                                  "\n")] = '\0';
+      password_length =
+          strtol(password_length_str, &endptr, 10);
+      if (*endptr != '\0' || num < 0) {
+        printf("Invalid argument: %s\n",
+               password_length_str);
+        goto free_stuff;
+      }
+      printf("%d\n", password_length);
       rflg++;
       break;
     case 'v':
@@ -140,6 +156,24 @@ int main(int argc, char *argv[]) {
     return SUCCESS;
     break;
   }
+  if (rflg != 0) {
+    random_password =
+        /* +1 for the null character*/
+        malloc((password_length + 1) * sizeof(char));
+    if (NULL == random_password) {
+      errno = ERROR_MEMORY_ALLOCATION;
+      goto free_stuff;
+    }
+    randpass(password_length, random_password);
+    if (SUCCESS != errno) {
+      goto free_stuff;
+      return errno;
+    }
+    printf("\n randomized password :\t%s\n",
+           random_password);
+    free(random_password);
+    goto free_stuff;
+  }
   /*checking that a username and a password were created
    * before preceeding */
   if ((uflg != 1 || Pflg != 1) && iflg == 0) {
@@ -152,7 +186,6 @@ int main(int argc, char *argv[]) {
   if (iflg != 0) {
     simple_initialize();
     goto free_stuff;
-    return errno;
   }
 
   /*authentication of the user */
@@ -183,8 +216,8 @@ int main(int argc, char *argv[]) {
   if (SUCCESS != define_paths(NULL, NULL, configs_folder,
                               accounts_folder, MAXLEN, pwd))
     goto free_stuff;
-  /*defining the path to the exact file that has that user's
-   * accs */
+  /*defining the path to the exact file that has that
+   * user's accs */
   make_file_path(user_accounts, accounts_folder,
                  (const char *)username, MAXLEN);
 
@@ -274,8 +307,8 @@ int main(int argc, char *argv[]) {
         accounts_file);
 
     /* number_of_accounts+1 since we need some memory at
-     * first when the number_of_accounts is 0 , then there's
-     * always one allocation ahead*/
+     * first when the number_of_accounts is 0 , then
+     * there's always one allocation ahead*/
   }
   errno = SUCCESS;
   number_of_accounts -= 1;

@@ -173,3 +173,31 @@ int display_accounts(cJSON **json_accounts_array,
 end:
   return errno;
 }
+int randpass(int length, char *password) {
+  unsigned char c;
+  const char charset[] =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefgh\
+ijklmnopqrstuvwxyz0123456789!@#$%^&*";
+  size_t charset_size = sizeof(charset) - 1;
+  // Exclude NULL terminator
+  if (length < 1) {
+    errno = ERROR_BAD_ARGUMENT;
+    goto end;
+  }
+  if (NULL == password) {
+    errno = ERROR_NULL_VALUE_GIVEN;
+    goto end;
+  }
+  memset(password, 0, length * sizeof(char));
+  for (int i = 0; i < length; i++) {
+    do {
+      if (RAND_priv_bytes(&c, 1) != LIBSSL_SUCCESS) {
+        return errno =
+                   ERROR_LIBSSL_FAILURE; // OpenSSL error
+      }
+    } while (c >= (256 - (256 % charset_size)));
+    password[i] = charset[c % charset_size];
+  }
+end:
+  return SUCCESS;
+}
