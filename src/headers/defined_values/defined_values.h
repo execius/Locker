@@ -3,8 +3,7 @@
 
 #define DEFINED_VALS
 
-#define pwd getenv("PWD")
-#define home getenv("HOME")
+#define pwd getenv("HOME")
 
 #define VERSION 1.0
 #define HEX_SIZE(BIN_SIZE) 2 * BIN_SIZE + 1
