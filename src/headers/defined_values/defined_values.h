@@ -11,15 +11,26 @@
 #define CIPHER_SIZE(len, block_size)                       \
   len + (block_size - (len % block_size))
 
+#ifdef _WIN32
+#include <windows.h>
+#define DEFAULT_MAX_PATH 32767
+#else
+#include <unistd.h>
+#define DEFAULT_MAX_PATH 4096
+#endif
+
+/*gets the maximum file lenght depending on the
+ * os */
+size_t get_system_max_path(void);
+
 typedef enum constant_values {
   NUMBER_OF_ENCRYPTION_OPTIONS = 6,
-  JSON_OVERHEAD_SIZE = 100,
-  STORED_JSON_LINES =
-      4, /*used for parsing the json thar contain the cipher
+  JSON_OVERHEAD_SIZE =
+      4, // for two brackets ans newlinw chars
+  /*used for parsing the json thar contain the cipher
             of the account */
-  NUMBER_OF_CONFIG_INFORMATION = 4,
-  MAXLEN = 4096, // maximum string lengh
-  PATH_SIZE = 2 * MAXLEN,
+  STORED_JSON_LINES = 4,
+  MAXLEN = 4096,    // maximum string lengh
   MAXNUMBER = 9999, // maximum int value
   NUMBER_OF_INIT_VARS =
       4, // number of thing that we will ask the user for in

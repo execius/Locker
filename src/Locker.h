@@ -7,8 +7,11 @@ int simple_login(char *username, char *password) {
   if (!username || !password) {
     return errno = ERROR_NULL_VALUE_GIVEN;
   }
-  char *Locker_folder = malloc(2 * MAXLEN * sizeof(char));
-  char *users_folder = malloc((2 * MAXLEN) * sizeof(char));
+  long MAX_PATH_LENGHT = get_system_max_path();
+  char *Locker_folder =
+      malloc(MAX_PATH_LENGHT * sizeof(char));
+  char *users_folder =
+      malloc(MAX_PATH_LENGHT * sizeof(char));
   if (SUCCESS !=
       /*makes the strings to the paths
          of the folders */
@@ -77,8 +80,9 @@ int get_next_json_from_file(
     FILE *accounts_file) {
   /*the string containing the json
    * before we parse it */
-  unsigned char *encrypted_json_str =
-      calloc(MAXLEN * STORED_JSON_LINES, sizeof(char));
+  unsigned char *encrypted_json_str = calloc(
+      MAXLEN * STORED_JSON_LINES + JSON_OVERHEAD_SIZE,
+      sizeof(char));
 
   /*allocate memory fot the json read
    * from the file it's stored encrypted

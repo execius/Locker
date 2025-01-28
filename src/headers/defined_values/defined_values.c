@@ -28,3 +28,12 @@ int define_paths(char *Locker_folder, char *users_folder,
 
   return errno = SUCCESS;
 }
+size_t get_system_max_path(void) {
+#ifdef _WIN32
+  return DEFAULT_MAX_PATH;
+#else
+  long max_path = pathconf("/", _PC_PATH_MAX);
+  return (max_path > 0) ? (size_t)max_path
+                        : DEFAULT_MAX_PATH;
+#endif
+}

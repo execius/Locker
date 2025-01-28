@@ -9,6 +9,7 @@ int main(int argc, char *argv[]) {
   /*the accs are stored in a json array the json data
    * structure is provided by the Cjson library*/
 
+  long MAX_PATH_LENGHT = get_system_max_path();
   int number_of_accounts;
   /* those two are the arrays , the latter is used in the
    * encrypting and writing process while the first is what
@@ -20,11 +21,14 @@ int main(int argc, char *argv[]) {
   cJSON *configs_json = NULL;
 
   /*the folder that has the users accounts*/
-  char *user_accounts = malloc(3 * MAXLEN * sizeof(char));
-  memset(user_accounts, 0, 3 * MAXLEN * sizeof(char));
+  char *user_accounts =
+      malloc(MAX_PATH_LENGHT * sizeof(char));
+  memset(user_accounts, 0, MAX_PATH_LENGHT * sizeof(char));
   /*same with configs folder*/
-  char *accounts_folder = malloc(2 * MAXLEN * sizeof(char));
-  memset(accounts_folder, 0, 2 * MAXLEN * sizeof(char));
+  char *accounts_folder =
+      malloc(MAX_PATH_LENGHT * sizeof(char));
+  memset(accounts_folder, 0,
+         MAX_PATH_LENGHT * sizeof(char));
   /*the path to the file of the accont of that specific
    * users*/
   FILE *accounts_file = NULL;
@@ -42,12 +46,12 @@ int main(int argc, char *argv[]) {
   /*the folder that has the configs of each user
    * ie :encryption type*/
   char *configs_folder = NULL;
-  configs_folder = malloc(2 * MAXLEN * sizeof(char));
-  memset(configs_folder, 0, 2 * MAXLEN * sizeof(char));
+  configs_folder = malloc(MAX_PATH_LENGHT * sizeof(char));
+  memset(configs_folder, 0, MAX_PATH_LENGHT * sizeof(char));
   /*the actual file of that specific user's config file*/
   char *user_configs = NULL;
-  user_configs = malloc(3 * MAXLEN * sizeof(char));
-  memset(user_configs, 0, 3 * MAXLEN * sizeof(char));
+  user_configs = malloc(MAX_PATH_LENGHT * sizeof(char));
+  memset(user_configs, 0, MAX_PATH_LENGHT * sizeof(char));
   /*the encryption scheme that this user have chosen
    * during the creating of the user*/
 
@@ -81,12 +85,11 @@ int main(int argc, char *argv[]) {
   memset(password, 0, KEY_SIZE_256 * sizeof(char));
   /*flags to check if an option is given*/
   int uflg = 0, Pflg = 0, rflg = 0;
-  int mflg = 0, vflg = 0, pflg = 0;
+  int mflg = 0, vflg = 0, bflg = 0;
   int iflg = 0, nflg = 0, dflg = 0;
 
   /*getting commandline options and inceasing flags*/
-  while ((c = getopt(argc, argv, ":u:P:ar:mvp:ind")) !=
-         -1) {
+  while ((c = getopt(argc, argv, ":u:P:ar:mvbind")) != -1) {
     switch (c) {
     case 'u':
       uflg++;
@@ -98,8 +101,8 @@ int main(int argc, char *argv[]) {
       /*if -P get password*/
       strncpy(password, optarg, MAXLEN);
       break;
-    case 'p':
-      pflg++;
+    case 'b':
+      bflg++;
       break;
     case 'm':
       mflg++;
@@ -115,12 +118,11 @@ int main(int argc, char *argv[]) {
                                   "\n")] = '\0';
       password_length =
           strtol(password_length_str, &endptr, 10);
-      if (*endptr != '\0' || num < 0) {
+      if (*endptr != '\0' || num <= 0) {
         printf("Invalid argument: %s\n",
                password_length_str);
         goto free_stuff;
       }
-      printf("%d\n", password_length);
       rflg++;
       break;
     case 'v':
@@ -155,6 +157,10 @@ int main(int argc, char *argv[]) {
     goto free_stuff;
     return SUCCESS;
     break;
+  }
+  if (bflg != 0) {
+    printf("the backup option is still in work\n");
+    goto free_stuff;
   }
   if (rflg != 0) {
     random_password =
@@ -476,8 +482,10 @@ free_stuff:
     free(configs_folder);
   if (configs_json_str)
     free(configs_json_str);
-  printf("%d\n", errno);
+  if (password_length_str)
+    free(password_length_str);
   if (configs_json)
     cJSON_Delete(configs_json);
+  printf("%d\n", errno);
   return errno;
 }
