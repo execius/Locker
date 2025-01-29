@@ -29,7 +29,7 @@ typedef enum constant_values {
   /*used for parsing the json thar contain the cipher
             of the account */
   STORED_JSON_LINES = 4,
-  MAXLEN = 4096,    // maximum string lengh
+  MAXLEN = 2048,    // maximum string lengh
   MAXNUMBER = 9999, // maximum int value
   NUMBER_OF_INIT_VARS =
       4, // number of thing that we will ask the user for in
@@ -43,7 +43,7 @@ typedef enum constant_values {
   SHA256_HASH_SIZE_HEX = 2 * SHA256_HASH_SIZE_BYTES + 1,
   RIPEMD160_KEY_SIZE_BYTES = 32,
   RIPEMD160_SALT_SIZE_BYTES = 16,
-  ACCOUNT_MAX_SIZE = 8 * MAXLEN + sizeof(int),
+  ACCOUNT_MAX_SIZE = 2 * 4 * MAXLEN + JSON_OVERHEAD_SIZE,
   CIPHER_ACCOUNT_MAX_SIZE =
       8 * (MAXLEN + (16 - (MAXLEN % 16)) + sizeof(int)),
 } values;

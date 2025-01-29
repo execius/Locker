@@ -157,27 +157,60 @@ free_resources:
 int display_accounts(cJSON **json_accounts_array,
                      int numberofaccounts,
                      const char **credentials_names,
-                     int number_of_creds) {
+                     int number_of_creds,
+                     char *searchterm) {
 
+  cJSON **items = malloc(number_of_creds * sizeof(cJSON *));
+  int found = 0;
   switch (numberofaccounts) {
   case 0:
-    printf("this user have no accounts "
-           "yet\n");
+    printf("this user have no accounts yet\n");
     break;
   default:
     break;
   }
-  for (int i = 0; i < numberofaccounts; i++) {
-    printf("%d>\n", i);
-    display_account(json_accounts_array[i],
-                    credentials_names, number_of_creds);
-    if (SUCCESS != errno)
-      goto end;
+  if (NULL == searchterm) {
+    for (int i = 0; i < numberofaccounts; i++) {
+      printf("%d>\n", i);
+      display_account(json_accounts_array[i],
+                      credentials_names, number_of_creds);
+      if (SUCCESS != errno)
+        goto end;
+    }
+  } else {
+
+    for (int i = 0; i < numberofaccounts; i++) {
+      for (int j = 0; j < number_of_creds; j++) {
+        items[j] = cJSON_GetObjectItemCaseSensitive(
+            json_accounts_array[i], credentials_names[j]);
+        if (NULL == items[j]) {
+          handle_cjson_error();
+          goto end;
+        }
+        if (NULL !=
+            stristr(items[j]->valuestring, searchterm))
+          found = 1;
+      }
+      if (1 == found) {
+        printf("%d>\n", i);
+        display_account(json_accounts_array[i],
+                        credentials_names, number_of_creds);
+        if (SUCCESS != errno)
+          goto end;
+        found = 0;
+      }
+    }
   }
 end:
+  if (items)
+    free(items);
   return errno;
 }
-int randpass(int length, char *password) {
+int randpass(int length, char *password, size_t maxlength) {
+  if (length >= maxlength) {
+    errno = ERROR_TOO_LONG_STRING;
+    goto end;
+  }
   unsigned char c;
   const char charset[] =
       "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefgh\

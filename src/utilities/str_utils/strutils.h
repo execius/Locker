@@ -7,4 +7,6 @@ void clear_terminal(void);
 void handle_cjson_error(void);
 int read_lines(unsigned char *dst, FILE *file,
                int num_lines, int maxlen);
+const char *stristr(const char *haystack,
+                    const char *needle);
 #endif // !STR_UTILS

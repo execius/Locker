@@ -56,3 +56,33 @@ int read_lines(unsigned char *dst, FILE *file,
              ? errno = SUCCESS
              : (errno = ERROR_BAD_ARGUMENT);
 }
+
+// Case-insensitive substring search function
+const char *stristr(const char *haystack,
+                    const char *needle) {
+  if (!haystack || !needle || !*needle) {
+    return NULL; // Handle NULL or empty strings safely
+  }
+  const char *h = haystack;
+  const char *n;
+
+  while (*h) {
+    const char *h_start = h;
+    n = needle;
+
+    // Compare characters case-insensitively
+    while (*h && *n &&
+           tolower((unsigned char)*h) ==
+               tolower((unsigned char)*n)) {
+      h++;
+      n++;
+    }
+    if (!*n) {
+      return h_start;
+    }
+
+    h = h_start + 1; // Move to next character in haystack
+  }
+
+  return NULL; // No match found
+}

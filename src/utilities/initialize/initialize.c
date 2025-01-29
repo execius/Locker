@@ -86,8 +86,6 @@ int initialize_user(const char *list_of_wanted_inf[MAXLEN],
                               config_folder,
                               accounts_folder, MAXLEN, pwd))
     return errno;
-  printf("%s\n%s\n%s\n%s\n", Locker_folder, config_folder,
-         users_folder, accounts_folder);
   char *dirs[] = {Locker_folder, config_folder,
                   users_folder, accounts_folder};
   init_dirs(dirs, numbr_of_dirs, maxlengh);
@@ -132,7 +130,7 @@ get_configs:
   get_data_into_json(json_configs,
                      list_of_config_parameters,
                      list_of_configs_clarifications,
-                     NUMBER_OF_CONFIGS, MAXLEN);
+                     NUMBER_OF_CONFIGS, maxlengh);
   if (SUCCESS != errno)
     return errno;
 

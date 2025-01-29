@@ -71,11 +71,13 @@ int main(int argc, char *argv[]) {
   int c;
   /*those will hold the values later for login*/
   char *username, *password, *password_length_str,
-      *random_password;
+      *random_password, *searchword;
   username = malloc(MAXLEN * sizeof(char) + 1);
   memset(username, 0, MAXLEN * sizeof(char));
   password = malloc(MAXLEN * sizeof(char) + 1);
   memset(password, 0, MAXLEN * sizeof(char));
+  searchword = malloc(MAXLEN * sizeof(char) + 1);
+  memset(searchword, 0, MAXLEN * sizeof(char));
   password_length_str = malloc(10 * sizeof(char));
   int password_length = 0;
 
@@ -87,9 +89,11 @@ int main(int argc, char *argv[]) {
   int uflg = 0, Pflg = 0, rflg = 0;
   int mflg = 0, vflg = 0, bflg = 0;
   int iflg = 0, nflg = 0, dflg = 0;
+  int sflg = 0;
 
   /*getting commandline options and inceasing flags*/
-  while ((c = getopt(argc, argv, ":u:P:ar:mvbind")) != -1) {
+  while ((c = getopt(argc, argv, ":u:P:ar:mvbinds:")) !=
+         -1) {
     switch (c) {
     case 'u':
       uflg++;
@@ -134,6 +138,10 @@ int main(int argc, char *argv[]) {
     case 'd':
       dflg++;
       break;
+    case 's':
+      sflg++;
+      strncpy(searchword, optarg, MAXLEN);
+      break;
     /*misuse handling*/
     case ':':
       fprintf(stderr, "Option -%c requires an operand\n",
@@ -170,7 +178,7 @@ int main(int argc, char *argv[]) {
       errno = ERROR_MEMORY_ALLOCATION;
       goto free_stuff;
     }
-    randpass(password_length, random_password);
+    randpass(password_length, random_password, MAXLEN);
     if (SUCCESS != errno) {
       goto free_stuff;
       return errno;
@@ -321,8 +329,6 @@ int main(int argc, char *argv[]) {
   /*cause it fails once but the number.. still increases
    * by one until the next check the error isnt flaged*/
 
-  printf("accounts fetched there are now %d accs\n",
-         number_of_accounts);
   fclose(accounts_file);
 
   /*handling the creation of a new user*/
@@ -357,7 +363,12 @@ int main(int argc, char *argv[]) {
   if (dflg != 0) {
     display_accounts(json_accounts_array,
                      number_of_accounts, account_creds_list,
-                     ACCOUNTS_INFO);
+                     ACCOUNTS_INFO, NULL);
+  }
+  if (sflg != 0) {
+    display_accounts(json_accounts_array,
+                     number_of_accounts, account_creds_list,
+                     ACCOUNTS_INFO, searchword);
   }
 
   if (mflg != 0) {
@@ -472,6 +483,8 @@ free_stuff:
     free(key);
   if (password)
     free(password);
+  if (searchword)
+    free(searchword);
   if (accounts_folder)
     free(accounts_folder);
   if (user_configs)
