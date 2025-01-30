@@ -14,6 +14,7 @@ int main(int argc, char *argv[]) {
   /* those two are the arrays , the latter is used in the
    * encrypting and writing process while the first is what
    * we read/modify during the runtime*/
+  cJSON **items = malloc(ACCOUNTS_INFO * sizeof(cJSON *));
 
   cJSON **json_accounts_array = NULL;
   cJSON **json_accounts_array_temp = NULL;
@@ -245,6 +246,7 @@ int main(int argc, char *argv[]) {
     goto free_stuff;
     return errno;
   }
+  memset(password, 0, MAXLEN * sizeof(char));
 
   /*defining the path of the folder of users accs
    * previously declared*/
@@ -528,11 +530,25 @@ int main(int argc, char *argv[]) {
       if (SUCCESS != errno) {
         goto free_stuff;
       }
+
+      for (int j = 0; j < ACCOUNTS_INFO; j++) {
+        items[j] = cJSON_GetObjectItemCaseSensitive(
+            json_accounts_array[i], account_creds_list[j]);
+        if (NULL == items[j]) {
+          printf("null\n");
+          handle_cjson_error();
+          continue;
+        }
+        memset(items[j]->valuestring, 0,
+               strlen(items[j]->valuestring) *
+                   sizeof(char));
+      }
     }
     accounts_file = fopen(user_accounts, "w");
     for (int i = 0; i < number_of_accounts; i++) {
-      if (NULL == json_accounts_array[i])
+      if (NULL == json_accounts_array[i]) {
         continue;
+      }
       json_str =
           (char *)cJSON_Print(json_accounts_array_temp[i]);
       if (NULL == json_str) {
@@ -566,12 +582,15 @@ int main(int argc, char *argv[]) {
                      number_of_accounts);
   }
 free_stuff:
+  if (items)
+    free(items);
   if (accounts_file)
     fclose(accounts_file);
   if (backup_accounts_file)
     fclose(backup_accounts_file);
   if (username)
     free(username);
+  memset(key, 0, KEY_SIZE_256);
   if (key)
     free(key);
   if (password)

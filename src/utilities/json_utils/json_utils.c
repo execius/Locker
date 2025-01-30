@@ -194,6 +194,7 @@ int free_cjson_array(cJSON **arr, int size) {
     return ERROR_NULL_VALUE_GIVEN;
 
   for (int i = 0; i < size; i++) {
+
     if (NULL != arr[i])
       cJSON_Delete(arr[i]);
   }
