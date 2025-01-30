@@ -17,7 +17,6 @@
 #include <unistd.h>
 
 #include "arrays_counters.h"
-#include "change_pass.h"
 #include "config_parser.h"
 #include "config_writer.h"
 #include "defined_values.h"

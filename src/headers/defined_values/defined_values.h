@@ -50,6 +50,6 @@ typedef enum constant_values {
 
 int define_paths(char *Locker_folder, char *users_folder,
                  char *configs_folder,
-                 char *accounts_folder, size_t maxlen,
-                 char *PWD);
+                 char *accounts_folder, char *backup_folder,
+                 size_t maxlen, char *PWD);
 #endif // !DEFINED_VALS

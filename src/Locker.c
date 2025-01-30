@@ -19,7 +19,13 @@ int main(int argc, char *argv[]) {
   cJSON **json_accounts_array_temp = NULL;
   /*this will have the configs , encryption options etc*/
   cJSON *configs_json = NULL;
-
+  /*the folder that has the backup account files
+   * of different users*/
+  char *backup_folder =
+      malloc(MAX_PATH_LENGHT * sizeof(char));
+  /*the file of the backup*/
+  char *user_accounts_backup =
+      malloc(MAX_PATH_LENGHT * sizeof(char));
   /*the folder that has the users accounts*/
   char *user_accounts =
       malloc(MAX_PATH_LENGHT * sizeof(char));
@@ -228,11 +234,16 @@ int main(int argc, char *argv[]) {
   /*defining the path of the folder of users accs
    * previously declared*/
   if (SUCCESS != define_paths(NULL, NULL, configs_folder,
-                              accounts_folder, MAXLEN, pwd))
+                              accounts_folder, NULL, MAXLEN,
+                              pwd))
     goto free_stuff;
   /*defining the path to the exact file that has that
    * user's accs */
   make_file_path(user_accounts, accounts_folder,
+                 (const char *)username, MAXLEN);
+  if (SUCCESS != errno)
+    goto free_stuff;
+  make_file_path(user_accounts_backup, backup_folder,
                  (const char *)username, MAXLEN);
 
   if (SUCCESS != errno)
@@ -267,7 +278,6 @@ int main(int argc, char *argv[]) {
   // Parse the JSON
   configs_json =
       cJSON_Parse((const char *)configs_json_str);
-
   if (NULL == configs_json) {
     handle_cjson_error();
     goto free_stuff;

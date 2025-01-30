@@ -4,8 +4,8 @@
  for a certain function*/
 int define_paths(char *Locker_folder, char *users_folder,
                  char *configs_folder,
-                 char *accounts_folder, size_t maxlen,
-                 char *PWD) {
+                 char *accounts_folder, char *backup_folder,
+                 size_t maxlen, char *PWD) {
 
   char *temp_Locker_folder =
       malloc(get_system_max_path() * sizeof(char));
@@ -30,6 +30,11 @@ int define_paths(char *Locker_folder, char *users_folder,
     if (SUCCESS != make_file_path(accounts_folder,
                                   temp_Locker_folder,
                                   "accounts", maxlen))
+      goto end;
+  if (NULL != backup_folder)
+    if (SUCCESS != make_file_path(backup_folder,
+                                  temp_Locker_folder,
+                                  "backup_folder", maxlen))
       goto end;
 
 end:

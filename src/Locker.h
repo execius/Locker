@@ -16,7 +16,7 @@ int simple_login(char *username, char *password) {
       /*makes the strings to the paths
          of the folders */
       define_paths(Locker_folder, users_folder, NULL, NULL,
-                   MAXLEN, pwd))
+                   NULL, MAXLEN, pwd))
     goto free_resources;
   login(users_folder, username, password, MAXLEN,
         SHA256_HASH_SIZE_BYTES, SHA256_SALT_SIZE,
@@ -31,13 +31,13 @@ free_resources:
 /*look at the initialize_user funtion
  * docs*/
 int simple_initialize(void) {
+  long MAX_PATH_LENGHT = get_system_max_path();
   if (SUCCESS !=
       initialize_user(
           list_of_config_parameters, NUMBER_OF_CONFIGS,
           MAXLEN, SHA256_HASH_SIZE_BYTES, SHA256_SALT_SIZE,
           SHA256_HASH_SIZE_HEX, SHA256_SALT_SIZE_HEX,
-          LINE_MAX_LENGHT, LINE_MAX_LENGHT, NUMBER_OF_DIRS,
-          EVP_sha256))
+          MAX_PATH_LENGHT, NUMBER_OF_DIRS, EVP_sha256))
     return errno;
   return (errno = SUCCESS);
 }

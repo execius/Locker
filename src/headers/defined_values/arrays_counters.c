@@ -25,6 +25,6 @@ const char *list_of_accounts_clarifications[] = {
 
 const size_t NUMBER_OF_CONFIGS =
     sizeof(list_of_config_parameters) / sizeof(char *);
-const size_t NUMBER_OF_DIRS = 4;
+const size_t NUMBER_OF_DIRS = 5;
 const size_t ACCOUNTS_INFO =
     sizeof(account_creds_list) / sizeof(char *);

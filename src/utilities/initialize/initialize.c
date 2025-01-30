@@ -60,20 +60,19 @@ int initialize_user(const char *list_of_wanted_inf[MAXLEN],
                     size_t bin_hash_len,
                     size_t bin_salt_len,
                     size_t hex_hash_len,
-                    size_t hex_salt_len, size_t line_maxlen,
-                    size_t path_maxlen, int numbr_of_dirs,
+                    size_t hex_salt_len, size_t path_maxlen,
+                    int numbr_of_dirs,
                     const EVP_MD *(*hash_function)(void)) {
-  char *Locker_folder = calloc(2 * maxlengh, sizeof(char));
-  char *config_folder =
-      calloc((2 * maxlengh), sizeof(char));
-  char *accounts_folder =
-      calloc((2 * maxlengh), sizeof(char));
-  char *users_folder = calloc((2 * maxlengh), sizeof(char));
+  char *Locker_folder = calloc(path_maxlen, sizeof(char));
+  char *backup_folder = calloc(path_maxlen, sizeof(char));
+  char *config_folder = calloc(path_maxlen, sizeof(char));
+  char *accounts_folder = calloc(path_maxlen, sizeof(char));
+  char *users_folder = calloc(path_maxlen, sizeof(char));
   char *password = calloc(maxlengh, sizeof(char));
   char *username = calloc(maxlengh, sizeof(char));
   char *config_file_path =
-      calloc(3 * maxlengh, sizeof(char));
-  char *user_accounts = calloc(3 * maxlengh, sizeof(char));
+      calloc(path_maxlen, sizeof(char));
+  char *user_accounts = calloc(path_maxlen, sizeof(char));
 
   char *configs_json_string = NULL;
   // check if malloc failed
@@ -84,10 +83,12 @@ int initialize_user(const char *list_of_wanted_inf[MAXLEN],
   /*initiating the configs and users paths*/
   if (SUCCESS != define_paths(Locker_folder, users_folder,
                               config_folder,
-                              accounts_folder, MAXLEN, pwd))
+                              accounts_folder, NULL, MAXLEN,
+                              pwd))
     return errno;
   char *dirs[] = {Locker_folder, config_folder,
-                  users_folder, accounts_folder};
+                  users_folder, accounts_folder,
+                  backup_folder};
   init_dirs(dirs, numbr_of_dirs, maxlengh);
   if (SUCCESS != errno) {
     return errno;
@@ -175,14 +176,24 @@ get_configs:
   fclose(config_file);
   cJSON_Delete(json_configs);
 free_resources:
-  free(username);
-  free(password);
-  free(config_file_path);
-  free(config_folder);
-  free(users_folder);
-  free(accounts_folder);
-  free(Locker_folder);
-  free(configs_json_string);
+  if (username)
+    free(username);
+  if (password)
+    free(password);
+  if (config_file_path)
+    free(config_file_path);
+  if (config_folder)
+    free(config_folder);
+  if (backup_folder)
+    free(backup_folder);
+  if (users_folder)
+    free(users_folder);
+  if (accounts_folder)
+    free(accounts_folder);
+  if (Locker_folder)
+    free(Locker_folder);
+  if (configs_json_string)
+    free(configs_json_string);
   return errno;
 }
 
@@ -190,7 +201,7 @@ free_resources:
  * if not it creates them*/
 
 int init_dirs(char **dirs_paths, int number_of_dirs,
-              size_t maxlengh) {
+              size_t path_maxlen) {
 
   /*check for null*/
   if (!dirs_paths) {
@@ -201,13 +212,13 @@ int init_dirs(char **dirs_paths, int number_of_dirs,
   mode_t mode = S_IRWXU;
   for (int i = 0; i < number_of_dirs; i++) {
     /*checking the str lenght is in limits*/
-    if ('\0' !=
-        dirs_paths[i][strnlen(dirs_paths[i], maxlengh)]) {
+    if ('\0' != dirs_paths[i][strnlen(dirs_paths[i],
+                                      path_maxlen)]) {
       log_error("eror in funtion init_dirs");
       return errno = ERROR_TOO_LONG_STRING;
     }
     /*check if dir exists and store return value in err*/
-    directory_exists(dirs_paths[i], maxlengh);
+    directory_exists(dirs_paths[i], path_maxlen);
     switch (errno) {
     /*if it exists continue to the next*/
     case SUCCESS:
