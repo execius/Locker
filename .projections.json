@@ -1,0 +1,11 @@
+{
+    "src/*.c": {
+        "alternate": "src/{}.h",
+        "type": "source"
+    },
+    "src/*.h": {
+        "alternate": "src/{}.c",
+        "type": "header"
+    }
+}
+

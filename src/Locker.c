@@ -73,6 +73,10 @@ int main(int argc, char *argv[]) {
   long account_num, num = 0;
   char *endptr;
 
+  /*this is for the case of deleting an account*/
+  char *delete_acc_number_str = malloc(100 * sizeof(char));
+  int delete_acc_number = 0;
+
   /* this handles the commandline arguments*/
 
   /*keeps track of the commandline options */
@@ -97,10 +101,10 @@ int main(int argc, char *argv[]) {
   int uflg = 0, Pflg = 0, rflg = 0;
   int mflg = 0, vflg = 0, bflg = 0;
   int iflg = 0, nflg = 0, dflg = 0;
-  int sflg = 0, Rflg = 0;
+  int sflg = 0, Rflg = 0, Dflg = 0;
 
   /*getting commandline options and inceasing flags*/
-  while ((c = getopt(argc, argv, ":u:P:ar:mvbinds:R")) !=
+  while ((c = getopt(argc, argv, ":u:P:ar:mvbinds:RD:")) !=
          -1) {
     switch (c) {
     case 'u':
@@ -126,8 +130,6 @@ int main(int argc, char *argv[]) {
       /*getting the lengh of a random password to
        * generate it*/
       strncpy(password_length_str, optarg, 10);
-      password_length_str[strcspn(password_length_str,
-                                  "\n")] = '\0';
       password_length =
           strtol(password_length_str, &endptr, 10);
       if (*endptr != '\0' || num <= 0) {
@@ -136,6 +138,18 @@ int main(int argc, char *argv[]) {
         goto free_stuff;
       }
       rflg++;
+      break;
+    case 'D':
+      /*getting the number the account to delete*/
+      strncpy(delete_acc_number_str, optarg, 100);
+      delete_acc_number =
+          strtol(delete_acc_number_str, &endptr, 10);
+      if (*endptr != '\0') {
+        printf("Invalid argument: %s\n",
+               delete_acc_number_str);
+        goto free_stuff;
+      }
+      Dflg++;
       break;
     case 'v':
       vflg++;
@@ -407,11 +421,34 @@ int main(int argc, char *argv[]) {
                      number_of_accounts, account_creds_list,
                      ACCOUNTS_INFO, searchword);
   }
+  if (Dflg != 0) {
+    if (delete_acc_number > number_of_accounts ||
+        delete_acc_number < 0) {
+      printf("account number out of range\n");
+      errno = ERROR_BAD_ARGUMENT;
+      goto free_stuff;
+    }
+    printf("deleting account %d:\n", delete_acc_number);
+    display_account(json_accounts_array[delete_acc_number],
+                    account_creds_list, ACCOUNTS_INFO);
+    if (SUCCESS != errno)
+      goto free_stuff;
+    cJSON_Delete(json_accounts_array[delete_acc_number]);
+    json_accounts_array[delete_acc_number] = NULL;
+  }
 
   if (mflg != 0) {
     account_choice = malloc(10 * sizeof(char *));
     modify_choice = malloc(10 * sizeof(char *));
     char *newline;
+    if (NULL == account_choice) {
+      errno = ERROR_MEMORY_ALLOCATION;
+      goto free_stuff;
+    }
+    if (NULL == modify_choice) {
+      errno = ERROR_MEMORY_ALLOCATION;
+      goto free_stuff;
+    }
   get_mod_number:
     printf("What do you want to modify :\n");
     for (int i = 0; i < ACCOUNTS_INFO; i++) {
@@ -429,11 +466,6 @@ int main(int argc, char *argv[]) {
         num < 0) {
       clear_terminal();
       printf("Invalid input: %s\n", modify_choice);
-
-      if (NULL == modify_choice) {
-        errno = ERROR_MEMORY_ALLOCATION;
-        goto free_stuff;
-      }
       goto get_mod_number;
     }
   get_account_number:
@@ -486,6 +518,8 @@ int main(int argc, char *argv[]) {
                                (i + 1) * sizeof(cJSON *))))
         return ERROR_MEMORY_ALLOCATION;
 
+      if (NULL == json_accounts_array[i])
+        continue;
       encrypt_json(json_accounts_array[i],
                    json_accounts_array_temp + i,
                    (unsigned char *)username, key,
@@ -497,6 +531,8 @@ int main(int argc, char *argv[]) {
     }
     accounts_file = fopen(user_accounts, "w");
     for (int i = 0; i < number_of_accounts; i++) {
+      if (NULL == json_accounts_array[i])
+        continue;
       json_str =
           (char *)cJSON_Print(json_accounts_array_temp[i]);
       if (NULL == json_str) {
@@ -511,6 +547,8 @@ int main(int argc, char *argv[]) {
       backup_accounts_file =
           fopen(user_accounts_backup, "w");
       for (int i = 0; i < number_of_accounts; i++) {
+        if (NULL == json_accounts_array[i])
+          continue;
         json_str = (char *)cJSON_Print(
             json_accounts_array_temp[i]);
         if (NULL == json_str) {
@@ -558,6 +596,8 @@ free_stuff:
     free(password_length_str);
   if (configs_json)
     cJSON_Delete(configs_json);
+  if (delete_acc_number_str)
+    free(delete_acc_number_str);
   printf("%d\n", errno);
   return errno;
 }
