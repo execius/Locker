@@ -34,7 +34,7 @@ int define_paths(char *Locker_folder, char *users_folder,
   if (NULL != backup_folder)
     if (SUCCESS != make_file_path(backup_folder,
                                   temp_Locker_folder,
-                                  "backup_folder", maxlen))
+                                  "backup", maxlen))
       goto end;
 
 end:

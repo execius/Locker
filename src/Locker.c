@@ -38,6 +38,8 @@ int main(int argc, char *argv[]) {
   /*the path to the file of the accont of that specific
    * users*/
   FILE *accounts_file = NULL;
+  /*accounts backup file*/
+  FILE *backup_accounts_file = NULL;
   /*same*/
   FILE *configs_file = NULL;
   /*this is for storing the parsed strings from the jsons*/
@@ -95,10 +97,10 @@ int main(int argc, char *argv[]) {
   int uflg = 0, Pflg = 0, rflg = 0;
   int mflg = 0, vflg = 0, bflg = 0;
   int iflg = 0, nflg = 0, dflg = 0;
-  int sflg = 0;
+  int sflg = 0, Rflg = 0;
 
   /*getting commandline options and inceasing flags*/
-  while ((c = getopt(argc, argv, ":u:P:ar:mvbinds:")) !=
+  while ((c = getopt(argc, argv, ":u:P:ar:mvbinds:R")) !=
          -1) {
     switch (c) {
     case 'u':
@@ -144,6 +146,9 @@ int main(int argc, char *argv[]) {
     case 'd':
       dflg++;
       break;
+    case 'R':
+      Rflg++;
+      break;
     case 's':
       sflg++;
       strncpy(searchword, optarg, MAXLEN);
@@ -152,12 +157,12 @@ int main(int argc, char *argv[]) {
     case ':':
       fprintf(stderr, "Option -%c requires an operand\n",
               optopt);
-      return SUCCESS;
+      goto free_stuff;
       break;
     case '?':
       fprintf(stderr, "Unrecognized option: '-%c'\n",
               optopt);
-      return SUCCESS;
+      goto free_stuff;
       break;
     }
   }
@@ -171,10 +176,6 @@ int main(int argc, char *argv[]) {
     goto free_stuff;
     return SUCCESS;
     break;
-  }
-  if (bflg != 0) {
-    printf("the backup option is still in work\n");
-    goto free_stuff;
   }
   if (rflg != 0) {
     random_password =
@@ -234,8 +235,8 @@ int main(int argc, char *argv[]) {
   /*defining the path of the folder of users accs
    * previously declared*/
   if (SUCCESS != define_paths(NULL, NULL, configs_folder,
-                              accounts_folder, NULL, MAXLEN,
-                              pwd))
+                              accounts_folder,
+                              backup_folder, MAXLEN, pwd))
     goto free_stuff;
   /*defining the path to the exact file that has that
    * user's accs */
@@ -254,6 +255,32 @@ int main(int argc, char *argv[]) {
 
   if (SUCCESS != errno) {
     goto free_stuff;
+  }
+  if (Rflg != 0) {
+    accounts_file = fopen(user_accounts, "w");
+    if (NULL == accounts_file) {
+      goto free_stuff;
+    }
+    backup_accounts_file = fopen(user_accounts_backup, "r");
+    if (NULL == accounts_file) {
+      goto free_stuff;
+    }
+
+    size_t bytes_read;
+    char buffer[MAXLEN];
+    while ((bytes_read = fread(buffer, 1, MAXLEN,
+                               backup_accounts_file)) > 0) {
+      size_t bytes_written =
+          fwrite(buffer, 1, bytes_read, accounts_file);
+      if (bytes_written != bytes_read) {
+        perror("error while copying backup");
+        goto free_stuff;
+      }
+    }
+    fclose(accounts_file);
+    fclose(backup_accounts_file);
+    accounts_file = NULL;
+    backup_accounts_file = NULL;
   }
 
   /*now opening the accounts file and doing the decryption
@@ -480,13 +507,31 @@ int main(int argc, char *argv[]) {
       fputs("\n", accounts_file);
       free(json_str);
     }
+    if (bflg != 0) {
+      backup_accounts_file =
+          fopen(user_accounts_backup, "w");
+      for (int i = 0; i < number_of_accounts; i++) {
+        json_str = (char *)cJSON_Print(
+            json_accounts_array_temp[i]);
+        if (NULL == json_str) {
+          handle_cjson_error();
+          goto free_stuff;
+        }
+        fputs(json_str, backup_accounts_file);
+        fputs("\n", backup_accounts_file);
+        free(json_str);
+      }
+    }
     free_cjson_array(json_accounts_array,
                      number_of_accounts);
     free_cjson_array(json_accounts_array_temp,
                      number_of_accounts);
   }
-  fclose(accounts_file);
 free_stuff:
+  if (accounts_file)
+    fclose(accounts_file);
+  if (backup_accounts_file)
+    fclose(backup_accounts_file);
   if (username)
     free(username);
   if (key)
@@ -497,6 +542,10 @@ free_stuff:
     free(searchword);
   if (accounts_folder)
     free(accounts_folder);
+  if (backup_folder)
+    free(backup_folder);
+  if (user_accounts_backup)
+    free(user_accounts_backup);
   if (user_configs)
     free(user_configs);
   if (user_accounts)
