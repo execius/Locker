@@ -28,8 +28,9 @@ make
 
 ## Usage 
 
+
+# Initialize new user (interactive)
 ```bash
-# Initialize new user
 ./Locker -i
 ```
 
@@ -79,8 +80,7 @@ graph TD
     C --> D[AES-256-128,192]
     C --> E[camelia-256-128,192]
     D --> G[Encrypted JSON]
-    E --> G
-    F --> G
+    E --> G  
 ```
 
 ## Development Status 
