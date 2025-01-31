@@ -10,7 +10,7 @@ markdown
 A security-focused command-line password manager with multiple encryption schemes and secure memory handling.
 
 ## Features 
-- **8 Encryption Schemes** with credential-derived keys
+- **6 Encryption Schemes** with credential-derived keys
 - Secure memory zeroization 
 - JSON data handling with libjson
 - OpenSSL-powered cryptography (libssl)
@@ -69,17 +69,16 @@ graph TD
     A[Credentials] --> B[Key Derivation]
     B --> C{Encryption}
     C --> D[AES-256-128,192]
-    C --> E[camelia]
-    C --> F[...]
+    C --> E[camelia-256-128,192]
     D --> G[Encrypted JSON]
     E --> G
     F --> G
 ```
 
 ## Development Status 
-```plaintext
+plaintext
 ███████████████████████░░ 85% 
-```
+
 - Core functionality complete
 - Memory security implemented
 - Testing ongoing
