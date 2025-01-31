@@ -1,4 +1,4 @@
-Here's the complete README.md ready for copying:
+
 
 ```markdown
 # Locker - Secure CLI Password Manager 🔒
