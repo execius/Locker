@@ -27,7 +27,7 @@ make
 ```
 
 ## Usage 
-```bash
+bash
 # Initialize new user
 ./Locker -i
 
@@ -48,7 +48,7 @@ make
 
 # Restore backup:
 ./Locker -u <user> -P <pass> -R
-```
+
 
 ## Command Reference 📖
 | Option | Action                  | Arguments       |
@@ -95,6 +95,4 @@ graph TD
 
 ## License 📄
 MIT License - See [LICENSE](LICENSE) for details
-```
 
-Just copy all content between the triple backticks (including the security diagram and status indicator) into a new file called `README.md` in your project root.
