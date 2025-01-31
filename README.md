@@ -1,6 +1,6 @@
 
 
-```markdown
+markdown
 # Locker - Secure CLI Password Manager 🔒
 
 ![Security](https://img.shields.io/badge/Security-Level_3_Critical-red)
