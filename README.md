@@ -27,28 +27,36 @@ make
 ```
 
 ## Usage 
-bash
+
+```bash
 # Initialize new user
 ./Locker -i
+```
 
 # Add account (interactive):
+```bash
 ./Locker -u <user> -P <pass> -n
-
+```
 # List accounts:
+```bash
 ./Locker -u <user> -P <pass> -d
-
+```
 # Generate password:
+```bash
 ./Locker -u <user> -P <pass> -r 16
-
+```
 # Delete account #2:
+```bash
 ./Locker -u <user> -P <pass> -D 2
-
+```
 # Create backup:
+```bash
 ./Locker -u <user> -P <pass> -b
-
+```
 # Restore backup:
+```bash
 ./Locker -u <user> -P <pass> -R
-
+```
 
 ## Command Reference 📖
 | Option | Action                  | Arguments       |
@@ -76,8 +84,9 @@ graph TD
 ```
 
 ## Development Status 
-plaintext
-███████████████████████░░ 85% 
+```plaintext
+███████████████████████░░ 85%
+```
 
 - Core functionality complete
 - Memory security implemented
