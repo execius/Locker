@@ -68,8 +68,8 @@ bash
 graph TD
     A[Credentials] --> B[Key Derivation]
     B --> C{Encryption}
-    C --> D[AES-256-GCM]
-    C --> E[ChaCha20]
+    C --> D[AES-256-128,192]
+    C --> E[camelia]
     C --> F[...]
     D --> G[Encrypted JSON]
     E --> G
