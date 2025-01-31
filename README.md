@@ -33,7 +33,6 @@ make
 git clone https://github.com/yourusername/Locker.git
 sudo dnf install openssl-devel cjson-devel libb64-devel
 cd Locker
- 
 make
 ```
 ### Debian/ubuntu/debian based distros
