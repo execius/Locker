@@ -19,10 +19,27 @@ A security-focused command-line password manager with multiple encryption scheme
 - Secure password generator
 
 ## Installation ⚙️
+
+### Arch/void/arch based distros
 ```bash
 git clone https://github.com/yourusername/Locker.git
 cd Locker
-sudo apt-get install libssl-dev libjson-c-dev  # Debian/Ubuntu
+sudo pacman -S openssl cjson libb64
+make
+```
+### fedora/centos/RHEL
+```bash
+# Debian/Ubuntu
+git clone https://github.com/yourusername/Locker.git
+cd Locker
+sudo apt-get install libssl-dev libjson-c-dev  
+make
+```
+### Debian/ubuntu/debian based distros
+```
+git clone https://github.com/yourusername/Locker.git
+cd Locker
+sudo dnf install openssl-devel cjson-devel libb64-devel  
 make
 ```
 
