@@ -31,15 +31,16 @@ make
 ```bash
 # Debian/Ubuntu
 git clone https://github.com/yourusername/Locker.git
+sudo dnf install openssl-devel cjson-devel libb64-devel
 cd Locker
-sudo apt-get install libssl-dev libjson-c-dev  
+ 
 make
 ```
 ### Debian/ubuntu/debian based distros
 ```
 git clone https://github.com/yourusername/Locker.git
 cd Locker
-sudo dnf install openssl-devel cjson-devel libb64-devel  
+sudo apt-get install libssl-dev libjson-c-dev   
 make
 ```
 
