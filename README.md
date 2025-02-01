@@ -53,27 +53,27 @@ make
 
 # Add account (interactive):
 ```bash
-./Locker -u <user> -P <pass> -n
+./Locker -u <user>  -n
 ```
 # List accounts:
 ```bash
-./Locker -u <user> -P <pass> -d
+./Locker -u <user> -d
 ```
 # Generate password:
 ```bash
-./Locker -u <user> -P <pass> -r 16
+./Locker -u <user> -r 16
 ```
 # Delete account #2:
 ```bash
-./Locker -u <user> -P <pass> -D 2
+./Locker -u <user> -D 2
 ```
 # Create backup:
 ```bash
-./Locker -u <user> -P <pass> -b
+./Locker -u  <user> -b
 ```
 # Restore backup:
 ```bash
-./Locker -u <user> -P <pass> -R
+./Locker -u <user> -R
 ```
 
 ## Command Reference 📖
@@ -81,7 +81,6 @@ make
 |--------|-------------------------|-----------------|
 | `-i`   | Initialize user         | None            |
 | `-u`   | Username                | Required        |
-| `-P`   | Master password         | Required        |
 | `-n`   | Add account             | None            |
 | `-d`   | List accounts           | None            |
 | `-D`   | Delete account          | Account number  |
