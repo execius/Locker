@@ -24,8 +24,7 @@ A security-focused command-line password manager with multiple encryption scheme
 ```bash
 git clone https://github.com/yourusername/Locker.git
 cd Locker
-sudo pacman -S openssl cjson libb64
-make
+makepkg -si
 ```
 ### fedora/centos/RHEL
 ```bash
