@@ -6,6 +6,15 @@ int main(int argc, char *argv[]) {
    * decrypting them and do any reading or modification
    * needed then rewriting them into the file*/
 
+
+  /*used when getting the password in order not to print
+   * it while the user enters it*/
+  struct termios oldt, newt;
+
+  /* those handle cased where the user interrupts the program*/
+  signal(SIGINT, signal_handler);  // Ctrl+C
+  signal(SIGTSTP, signal_handler); // Ctrl+Z
+  
   /*the accs are stored in a json array the json data
    * structure is provided by the Cjson library*/
 
@@ -14,7 +23,7 @@ int main(int argc, char *argv[]) {
   /* those two are the arrays , the latter is used in the
    * encrypting and writing process while the first is what
    * we read/modify during the runtime*/
-  cJSON **items = malloc(ACCOUNTS_INFO * sizeof(cJSON *));
+  cJSON **items = calloc(ACCOUNTS_INFO , sizeof(cJSON *));
 
   cJSON **json_accounts_array = NULL;
   cJSON **json_accounts_array_temp = NULL;
@@ -23,19 +32,16 @@ int main(int argc, char *argv[]) {
   /*the folder that has the backup account files
    * of different users*/
   char *backup_folder =
-      malloc(MAX_PATH_LENGHT * sizeof(char));
+      calloc(MAX_PATH_LENGHT , sizeof(char));
   /*the file of the backup*/
   char *user_accounts_backup =
-      malloc(MAX_PATH_LENGHT * sizeof(char));
+      calloc(MAX_PATH_LENGHT , sizeof(char));
   /*the folder that has the users accounts*/
   char *user_accounts =
-      malloc(MAX_PATH_LENGHT * sizeof(char));
-  memset(user_accounts, 0, MAX_PATH_LENGHT * sizeof(char));
+      calloc(MAX_PATH_LENGHT , sizeof(char));
   /*same with configs folder*/
   char *accounts_folder =
-      malloc(MAX_PATH_LENGHT * sizeof(char));
-  memset(accounts_folder, 0,
-         MAX_PATH_LENGHT * sizeof(char));
+      calloc(MAX_PATH_LENGHT , sizeof(char));
   /*the path to the file of the accont of that specific
    * users*/
   FILE *accounts_file = NULL;
@@ -55,12 +61,10 @@ int main(int argc, char *argv[]) {
   /*the folder that has the configs of each user
    * ie :encryption type*/
   char *configs_folder = NULL;
-  configs_folder = malloc(MAX_PATH_LENGHT * sizeof(char));
-  memset(configs_folder, 0, MAX_PATH_LENGHT * sizeof(char));
+  configs_folder = calloc(MAX_PATH_LENGHT , sizeof(char));
   /*the actual file of that specific user's config file*/
   char *user_configs = NULL;
-  user_configs = malloc(MAX_PATH_LENGHT * sizeof(char));
-  memset(user_configs, 0, MAX_PATH_LENGHT * sizeof(char));
+  user_configs = calloc(MAX_PATH_LENGHT , sizeof(char));
   /*the encryption scheme that this user have chosen
    * during the creating of the user*/
 
@@ -85,19 +89,15 @@ int main(int argc, char *argv[]) {
   /*those will hold the values later for login*/
   char *username, *password, *password_length_str,
       *random_password, *searchword;
-  username = malloc(MAXLEN * sizeof(char) + 1);
-  memset(username, 0, MAXLEN * sizeof(char));
-  password = malloc(MAXLEN * sizeof(char) + 1);
-  memset(password, 0, MAXLEN * sizeof(char));
-  searchword = malloc(MAXLEN * sizeof(char) + 1);
-  memset(searchword, 0, MAXLEN * sizeof(char));
-  password_length_str = malloc(10 * sizeof(char));
+  username = calloc(MAXLEN , sizeof(char) + 1);
+  password = calloc(MAXLEN , sizeof(char) + 1);
+  searchword = calloc(MAXLEN , sizeof(char) + 1);
+  password_length_str = calloc(10 , sizeof(char));
   int password_length = 0;
 
   /*this is a key derived from the password*/
   unsigned char *key;
-  key = malloc(KEY_SIZE_256 * sizeof(char));
-  memset(password, 0, KEY_SIZE_256 * sizeof(char));
+  key = calloc(KEY_SIZE_256 , sizeof(char));
   /*flags to check if an option is given*/
   int uflg = 0, Pflg = 0, rflg = 0;
   int mflg = 0, vflg = 0, bflg = 0;
@@ -115,8 +115,6 @@ int main(int argc, char *argv[]) {
       break;
     case 'P':
       Pflg++;
-      /*if -P get password*/
-      strncpy(password, optarg, MAXLEN);
       break;
     case 'b':
       bflg++;
@@ -181,6 +179,9 @@ int main(int argc, char *argv[]) {
       break;
     }
   }
+
+  
+
   /*handling flags */
 
   switch (vflg) {
@@ -212,8 +213,8 @@ int main(int argc, char *argv[]) {
   }
   /*checking that a username and a password were created
    * before preceeding */
-  if ((uflg != 1 || Pflg != 1) && iflg == 0) {
-    log_error("provide one username and one password");
+  if (uflg != 1  && iflg == 0) {
+    log_error("provide one username ");
     goto free_stuff;
     return SUCCESS;
   }
@@ -224,12 +225,28 @@ int main(int argc, char *argv[]) {
     goto free_stuff;
   }
 
+  /*getting the users password*/
+
+
+  /*this is to hide the password 
+   * when the user types*/
+disable_echo(&oldt, &newt);
+get_password:
+  printf("hello %s,please provide the \
+  password\npassword>",username);
+  fgets(password,MAXLEN,stdin);
+  if(2 > strlen(password))
+  {
+    printf("\npassword too short\n");
+    goto get_password;
+  }
+restore_echo(&oldt);
   /*authentication of the user */
 
   simple_login(username, password);
   switch (errno) {
   case SUCCESS:
-    printf("login success\n");
+    printf("\nlogin success\n");
     break;
   default:
     goto free_stuff;
@@ -417,11 +434,15 @@ int main(int argc, char *argv[]) {
     display_accounts(json_accounts_array,
                      number_of_accounts, account_creds_list,
                      ACCOUNTS_INFO, NULL);
+    sleep(SLEEP_DURATION);
+    clear_terminal();
   }
   if (sflg != 0) {
     display_accounts(json_accounts_array,
                      number_of_accounts, account_creds_list,
                      ACCOUNTS_INFO, searchword);
+    sleep(SLEEP_DURATION);
+    clear_terminal();
   }
   if (Dflg != 0) {
     if (delete_acc_number > number_of_accounts ||

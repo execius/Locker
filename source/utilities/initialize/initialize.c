@@ -69,10 +69,15 @@ int initialize_user(const char *list_of_wanted_inf[MAXLEN],
   char *accounts_folder = calloc(path_maxlen, sizeof(char));
   char *users_folder = calloc(path_maxlen, sizeof(char));
   char *password = calloc(maxlengh, sizeof(char));
+  char *repeat_password = calloc(maxlengh, sizeof(char));
   char *username = calloc(maxlengh, sizeof(char));
   char *config_file_path =
       calloc(path_maxlen, sizeof(char));
   char *user_accounts = calloc(path_maxlen, sizeof(char));
+
+  /*used when getting the password in order not to print
+   * it while the user enters it*/
+  struct termios oldt, newt;
 
   char *configs_json_string = NULL;
   // check if malloc failed
@@ -102,13 +107,24 @@ get_user:
     printf("invalid input\n");
     goto get_user;
   }
+disable_echo(&oldt, &newt);
 get_password:
-  printf("password> ");
-  fgets(password, MAXLEN, stdin);
+  printf("\npassword> ");
+  fgets(password, maxlengh, stdin);
+  printf("\nrepeat password> ");
+  fgets(repeat_password, maxlengh, stdin);
   if (2 > strlen(password)) {
     printf("invalid input\n");
     goto get_password;
   }
+  if(strncmp(password,repeat_password,maxlengh))
+  {
+    printf("\nthe passwords do not match\n");
+    memset(password,0,maxlengh);
+    memset(repeat_password,0,maxlengh);
+    goto get_password;
+  }
+  restore_echo(&oldt);
   // making the user
   if (SUCCESS != make_user(users_folder, password, username,
                            maxlengh, bin_hash_len,

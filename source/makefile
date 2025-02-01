@@ -21,7 +21,5 @@ optimization_testing :
 	$(CC) $(OPFLGS) $(DEPENDENCIES) $(FILES) -o $@
 debug :
 	$(CC)  $(DEBFLGS) $(DEPENDENCIES) $(FILES) -o $@
-clean:
-	rm debug optimization_testing Locker
 
 

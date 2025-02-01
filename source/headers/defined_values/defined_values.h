@@ -23,6 +23,7 @@
 size_t get_system_max_path(void);
 
 typedef enum constant_values {
+  SLEEP_DURATION = 30 , //seconds
   NUMBER_OF_ENCRYPTION_OPTIONS = 6,
   JSON_OVERHEAD_SIZE =
       4, // for two brackets ans newlinw chars

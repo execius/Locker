@@ -86,3 +86,16 @@ const char *stristr(const char *haystack,
 
   return NULL; // No match found
 }
+
+/*those are used to hide the text when getting a password*/
+void disable_echo(struct termios *oldt, struct termios *newt) {
+    tcgetattr(STDIN_FILENO, oldt);  
+    *newt = *oldt;
+    newt->c_lflag &= ~(ECHO);        
+    tcsetattr(STDIN_FILENO, TCSANOW, newt);  
+}
+
+void restore_echo(struct termios *oldt) {
+    tcsetattr(STDIN_FILENO, TCSANOW, oldt);  
+}
+

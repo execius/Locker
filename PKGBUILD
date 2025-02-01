@@ -8,13 +8,17 @@ license=('MIT')
 depends=('openssl' 'cjson' 'libb64')
 makedepends=('gcc' 'make')
 
+
+prepare() {
+    mkdir -p "$srcdir/source"  # Ensure the directory exists
+    cp -r "$startdir/source" "$srcdir/"  # Copy your source directory to srcdir
+}
 build() {
-    cd "$srcdir/"
+    cd "$srcdir/source"
     make
 }
 
 package() {
-    cd "$srcdir/"
+    cd "$srcdir/source"
 	  install -Dm755 Locker "$pkgdir/usr/bin/Locker"
-    make clean
 }

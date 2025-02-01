@@ -2,6 +2,19 @@
 
 /*****FUNTIONALITY FUNCTIONS *****/
 
+void signal_handler(int signal) {
+    // Clear the terminal screen
+    printf("\033[2J\033[1;1H");  // Clear the screen and move the cursor to top-left corner
+
+    // Display a message based on the signal received
+    if (signal == SIGINT) {
+        printf("Received SIGINT (Ctrl+C). Exiting gracefully...\n");
+    } else if (signal == SIGTSTP) {
+        printf("Received SIGTSTP (Ctrl+Z). Exiting gracefully...\n");
+    }
+  clear_terminal();
+  exit(0);
+}
 /*self explanatory i guess*/
 int simple_login(char *username, char *password) {
   if (!username || !password) {
