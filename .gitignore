@@ -1,3 +1,4 @@
+pkg/
 source/.clang-format
 source/.projections.json
 .projections
