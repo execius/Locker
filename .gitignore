@@ -1,8 +1,8 @@
-pkg/
 source/.clang-format
 source/.projections.json
 .projections
 source/pkg/
 src/
+pkg/
 *.pkg.tar.zst
 *.tar.gz
