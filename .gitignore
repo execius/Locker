@@ -1,5 +1,8 @@
 source/.clang-format
 source/.projections.json
+source/Locker
+source/optimization-testing
+source/debug
 .projections
 source/pkg/
 src/
