@@ -22,14 +22,14 @@ A security-focused command-line password manager with multiple encryption scheme
 
 ### Arch/void/arch based distros
 ```bash
-git clone https://github.com/yourusername/Locker.git
+git clone https://github.com/execius/Locker.git
 cd Locker
 makepkg -si
 ```
 ### fedora/centos/RHEL
 ```bash
 # Debian/Ubuntu
-git clone https://github.com/yourusername/Locker.git
+git clone https://github.com/execius/Locker.git
 sudo dnf install openssl-devel cjson-devel libb64-devel
 cd Locker
 make
