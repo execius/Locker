@@ -36,7 +36,7 @@ make
 ```
 ### Debian/ubuntu/debian based distros
 ```
-git clone https://github.com/yourusername/Locker.git
+git clone https://github.com/execius/Locker.git
 cd Locker
 sudo apt-get install libssl-dev libjson-c-dev   
 make
